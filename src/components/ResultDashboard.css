@@ -938,3 +938,70 @@
     justify-content: center;
     margin-top: var(--spacing-2xl);
 }
+
+/* Validation Column */
+.validation-cell {
+    min-width: 120px;
+    text-align: center;
+}
+
+.validation-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    cursor: pointer;
+    user-select: none;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+}
+
+.validation-checkbox:hover {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.validation-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.validation-checkbox .checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--neutral-600);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-base);
+    flex-shrink: 0;
+}
+
+.validation-checkbox .checkmark::after {
+    content: '';
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform var(--transition-base);
+}
+
+.validation-checkbox.validated .checkmark {
+    background: var(--success-400);
+    border-color: var(--success-400);
+}
+
+.validation-checkbox.validated .checkmark::after {
+    transform: rotate(45deg) scale(1);
+}
+
+.validation-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--neutral-500);
+    transition: color var(--transition-base);
+}
+
+.validation-checkbox.validated .validation-label {
+    color: var(--success-400);
+}

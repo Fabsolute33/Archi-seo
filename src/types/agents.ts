@@ -153,6 +153,7 @@ export interface ContentTableRow {
         depuis: string[] | MaillageArticle[];
     };
     metaDescription: string;
+    validated?: boolean;
 }
 
 export interface ContentDesign {

@@ -70,6 +70,16 @@ export function ResultDashboard() {
         resetAll
     } = useAgentStore();
 
+    // État pour gérer les articles validés (rédigés)
+    const [validatedArticles, setValidatedArticles] = useState<Record<number, boolean>>({});
+
+    const handleValidationChange = (index: number) => {
+        setValidatedArticles(prev => ({
+            ...prev,
+            [index]: !prev[index]
+        }));
+    };
+
     const isComplete = coordinatorSummary.status === 'completed';
 
     if (!isComplete) return null;
@@ -211,6 +221,7 @@ export function ResultDashboard() {
                                             <th>Score</th>
                                             <th>Maillage</th>
                                             <th>Meta-Description</th>
+                                            <th>Validation</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -293,6 +304,19 @@ export function ResultDashboard() {
                                                     <div className="meta-description" title={row.metaDescription}>
                                                         {row.metaDescription?.substring(0, 80)}...
                                                     </div>
+                                                </td>
+                                                <td className="validation-cell">
+                                                    <label className={`validation-checkbox ${validatedArticles[idx] ? 'validated' : ''}`}>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={validatedArticles[idx] || false}
+                                                            onChange={() => handleValidationChange(idx)}
+                                                        />
+                                                        <span className="checkmark"></span>
+                                                        <span className="validation-label">
+                                                            {validatedArticles[idx] ? 'Rédigé' : 'À rédiger'}
+                                                        </span>
+                                                    </label>
                                                 </td>
                                                 <td className="actions-cell">
                                                     <CopyButton text={`${row.titreH1}\n\n${row.metaDescription}`} />

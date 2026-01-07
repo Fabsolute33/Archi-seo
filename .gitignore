@@ -5,6 +5,9 @@ node_modules/
 dist/
 build/
 
+# Firebase service account keys (NEVER COMMIT!)
+*-firebase-adminsdk-*.json
+
 # Environment files
 .env
 .env.local

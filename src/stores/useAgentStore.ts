@@ -30,6 +30,7 @@ const createInitialAgentState = <T>(): AgentState<T> => ({
 export const useAgentStore = create<AgentStore>((set, get) => ({
     businessDescription: '',
     apiKey: '',
+    questionnaireAnswers: null,
 
     // Initial Agent States
     strategicAnalysis: createInitialAgentState<StrategicAnalysis>(),
@@ -47,6 +48,7 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
             initializeGemini(key);
         }
     },
+    setQuestionnaireAnswers: (answers) => set({ questionnaireAnswers: answers }),
 
     runAllAgents: async () => {
         const { businessDescription, apiKey } = get();
@@ -187,6 +189,7 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
 
     resetAll: () => set({
         businessDescription: '',
+        questionnaireAnswers: null,
         strategicAnalysis: createInitialAgentState<StrategicAnalysis>(),
         clusterArchitecture: createInitialAgentState<ClusterArchitecture>(),
         contentDesign: createInitialAgentState<ContentDesign>(),
@@ -198,6 +201,7 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
 
     restoreFromProject: (project) => set({
         businessDescription: project.businessDescription,
+        questionnaireAnswers: project.questionnaireAnswers || null,
         strategicAnalysis: {
             status: project.strategicAnalysis ? 'completed' : 'idle',
             data: project.strategicAnalysis,

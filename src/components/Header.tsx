@@ -1,4 +1,6 @@
-import { Zap, Settings, FolderOpen } from 'lucide-react';
+import { useEffect } from 'react';
+import { Zap, Settings, FolderOpen, LogIn, LogOut } from 'lucide-react';
+import { useAuthStore } from '../stores/useAuthStore';
 import './Header.css';
 
 interface HeaderProps {
@@ -7,6 +9,13 @@ interface HeaderProps {
 }
 
 export function Header({ onOpenSettings, onOpenProfile }: HeaderProps) {
+    const { user, isLoading, initialize, login, logout } = useAuthStore();
+
+    useEffect(() => {
+        const unsubscribe = initialize();
+        return unsubscribe;
+    }, [initialize]);
+
     return (
         <header className="header">
             <div className="header-container">
@@ -21,17 +30,47 @@ export function Header({ onOpenSettings, onOpenProfile }: HeaderProps) {
                 </div>
 
                 <nav className="header-nav">
-                    <button className="header-settings-btn" onClick={onOpenProfile}>
-                        <FolderOpen size={20} />
-                        <span>Mes Projets</span>
-                    </button>
+                    {user && (
+                        <button className="header-settings-btn" onClick={onOpenProfile}>
+                            <FolderOpen size={20} />
+                            <span>Mes Projets</span>
+                        </button>
+                    )}
                     <button className="header-settings-btn" onClick={onOpenSettings}>
                         <Settings size={20} />
                         <span>Configuration</span>
                     </button>
+
+                    {user ? (
+                        <div className="header-user">
+                            {user.photoURL && (
+                                <img
+                                    src={user.photoURL}
+                                    alt={user.displayName || 'Avatar'}
+                                    className="header-user-avatar"
+                                />
+                            )}
+                            <span className="header-user-name">{user.displayName?.split(' ')[0]}</span>
+                            <button
+                                className="header-auth-btn logout"
+                                onClick={logout}
+                                disabled={isLoading}
+                            >
+                                <LogOut size={18} />
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            className="header-auth-btn login"
+                            onClick={login}
+                            disabled={isLoading}
+                        >
+                            <LogIn size={18} />
+                            <span>{isLoading ? 'Connexion...' : 'Connexion'}</span>
+                        </button>
+                    )}
                 </nav>
             </div>
         </header>
     );
 }
-

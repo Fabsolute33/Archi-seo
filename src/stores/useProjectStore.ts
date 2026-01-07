@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { SEOProject } from '../types/agents';
 import { useAgentStore } from './useAgentStore';
+import { useAuthStore } from './useAuthStore';
 import {
     saveProject,
     getProjects,
@@ -36,6 +37,12 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     saveCurrentProject: async () => {
         const { currentProjectName, currentProjectId } = get();
         const agentStore = useAgentStore.getState();
+        const userId = useAuthStore.getState().user?.uid;
+
+        if (!userId) {
+            set({ error: 'Vous devez être connecté pour sauvegarder' });
+            return;
+        }
 
         if (!currentProjectName.trim()) {
             set({ error: 'Le nom du projet est requis' });
@@ -54,6 +61,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
                 createdAt: currentProjectId ? get().projects.find(p => p.id === projectId)?.createdAt || now : now,
                 updatedAt: now,
                 businessDescription: agentStore.businessDescription,
+                questionnaireAnswers: agentStore.questionnaireAnswers || undefined,
                 strategicAnalysis: agentStore.strategicAnalysis.data,
                 clusterArchitecture: agentStore.clusterArchitecture.data,
                 contentDesign: agentStore.contentDesign.data,
@@ -63,7 +71,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
                 coordinatorSummary: agentStore.coordinatorSummary.data,
             };
 
-            await saveProject(project);
+            await saveProject(userId, project);
 
             // Update local state
             const projects = get().projects;
@@ -86,10 +94,17 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     },
 
     loadProjects: async () => {
+        const userId = useAuthStore.getState().user?.uid;
+
+        if (!userId) {
+            set({ projects: [], isLoading: false });
+            return;
+        }
+
         set({ isLoading: true, error: null });
 
         try {
-            const projects = await getProjects();
+            const projects = await getProjects(userId);
             set({ projects, isLoading: false });
         } catch (error) {
             console.error('Error loading projects:', error);
@@ -101,10 +116,17 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     },
 
     loadProject: async (id: string) => {
+        const userId = useAuthStore.getState().user?.uid;
+
+        if (!userId) {
+            set({ error: 'Vous devez être connecté' });
+            return;
+        }
+
         set({ isLoading: true, error: null });
 
         try {
-            const project = await getProject(id);
+            const project = await getProject(userId, id);
 
             if (project) {
                 // Restore to agent store
@@ -131,10 +153,17 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     },
 
     deleteProject: async (id: string) => {
+        const userId = useAuthStore.getState().user?.uid;
+
+        if (!userId) {
+            set({ error: 'Vous devez être connecté' });
+            return;
+        }
+
         set({ isLoading: true, error: null });
 
         try {
-            await deleteProjectFromDb(id);
+            await deleteProjectFromDb(userId, id);
 
             const projects = get().projects.filter(p => p.id !== id);
             const currentProjectId = get().currentProjectId === id ? null : get().currentProjectId;

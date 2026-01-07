@@ -12,7 +12,7 @@ Répondez à quelques questions pour que nos 7 agents IA analysent votre busines
 💡 Plus vous êtes précis, plus l'analyse sera chirurgicale.`;
 
 export function BusinessInputForm() {
-    const { setBusinessDescription, runAllAgents, apiKey, coordinatorSummary } = useAgentStore();
+    const { setBusinessDescription, runAllAgents, apiKey, coordinatorSummary, setQuestionnaireAnswers } = useAgentStore();
     const { setProjectName, saveCurrentProject, currentProjectName, isLoading: isSaving } = useProjectStore();
     const [isGenerating, setIsGenerating] = useState(false);
 
@@ -21,6 +21,9 @@ export function BusinessInputForm() {
 
         // Set project name before running analysis
         setProjectName(answers.projectName);
+
+        // Store questionnaire answers for later saving
+        setQuestionnaireAnswers(answers);
 
         const formattedDescription = formatAnswersForAgent(answers);
         setBusinessDescription(formattedDescription);
@@ -66,7 +69,7 @@ export function BusinessInputForm() {
                     </p>
                 </div>
 
-                {isComplete && currentProjectName && (
+                {currentProjectName && (
                     <div className="project-save-status">
                         <span className="project-name-badge">
                             📁 {currentProjectName}

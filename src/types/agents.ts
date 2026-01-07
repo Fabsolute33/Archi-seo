@@ -427,6 +427,7 @@ export interface AgentState<T> {
 export interface AgentStore {
     businessDescription: string;
     apiKey: string;
+    questionnaireAnswers: QuestionnaireAnswers | null;
 
     // Agent States
     strategicAnalysis: AgentState<StrategicAnalysis>;
@@ -440,18 +441,33 @@ export interface AgentStore {
     // Actions
     setBusinessDescription: (desc: string) => void;
     setApiKey: (key: string) => void;
+    setQuestionnaireAnswers: (answers: QuestionnaireAnswers) => void;
     runAllAgents: () => Promise<void>;
     resetAll: () => void;
     restoreFromProject: (project: SEOProject) => void;
 }
 
 // Project type for saved analyses
+export interface QuestionnaireAnswers {
+    projectName: string;
+    siteType: string;
+    sector: string;
+    location: string;
+    domainAuthority: string;
+    budget: string;
+    teamSize: string;
+    mainGoal: string;
+    targetKeyword: string;
+    constraints: string;
+}
+
 export interface SEOProject {
     id: string;
     name: string;
     createdAt: number;
     updatedAt: number;
     businessDescription: string;
+    questionnaireAnswers?: QuestionnaireAnswers;
     strategicAnalysis: StrategicAnalysis | null;
     clusterArchitecture: ClusterArchitecture | null;
     contentDesign: ContentDesign | null;

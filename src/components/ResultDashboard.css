@@ -3,8 +3,9 @@
 }
 
 .result-container {
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
+    padding: 0 var(--spacing-lg);
 }
 
 /* Quick Wins Section */
@@ -356,9 +357,11 @@
 /* Content Table */
 .content-table-wrapper {
     overflow-x: auto;
-    max-width: 100%;
-    margin: 0 -var(--spacing-lg);
-    padding: 0 var(--spacing-lg);
+    width: 100%;
+    margin: 0;
+    padding: var(--spacing-md);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-lg);
 }
 
 .content-table {
@@ -1004,4 +1007,46 @@
 
 .validation-checkbox.validated .validation-label {
     color: var(--success-400);
+}
+
+/* Copy for Generator Button */
+.copy-generator-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+}
+
+.copy-generator-btn:hover {
+    background: linear-gradient(135deg, var(--primary-400), var(--accent-400));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.copy-generator-btn:active {
+    transform: translateY(0);
+}
+
+.copy-generator-btn.copied {
+    background: linear-gradient(135deg, var(--success-500), var(--success-400));
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.copy-generator-btn span {
+    line-height: 1;
+}
+
+.actions-cell {
+    min-width: 120px;
+    text-align: center;
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useAgentStore } from '../stores/useAgentStore';
+import type { ContentTableRow } from '../types/agents';
 import {
     ChevronDown,
     ChevronUp,
@@ -13,9 +14,98 @@ import {
     Award,
     Copy,
     Check,
-    RefreshCcw
+    RefreshCcw,
+    ClipboardCopy
 } from 'lucide-react';
 import './ResultDashboard.css';
+
+// Fonction pour formater l'article en prompt pour générateur
+function formatArticleForGenerator(row: ContentTableRow): string {
+    const lsiKeywords = row.carburant?.lsi?.join(', ') || '';
+
+    return `📝 INSTRUCTIONS DE RÉDACTION D'ARTICLE SEO
+
+═══════════════════════════════════════════════════════════════
+
+📌 INFORMATIONS GÉNÉRALES
+──────────────────────────
+• Cluster/Thématique : ${row.cluster}
+• Intent de recherche : ${row.intent}
+• Score de priorité : Volume ${row.score?.volume}/10 | Difficulté ${row.score?.difficulte}/10 | Impact ${row.score?.impact}/10
+
+═══════════════════════════════════════════════════════════════
+
+🎯 TITRE H1 (Click-Magnet)
+──────────────────────────
+${row.titreH1}
+
+═══════════════════════════════════════════════════════════════
+
+💡 ANGLE DIFFÉRENCIANT
+──────────────────────
+${row.angle}
+
+🔥 TRIGGER ÉMOTIONNEL
+─────────────────────
+${row.trigger}
+
+═══════════════════════════════════════════════════════════════
+
+🔑 CARBURANT SÉMANTIQUE (À intégrer naturellement)
+──────────────────────────────────────────────────
+• Terme Autoritaire : ${row.carburant?.termeAutoritaire || '-'}
+• Entité Google : ${row.carburant?.entiteGoogle || '-'}
+• Mots-clés LSI : ${lsiKeywords || '-'}
+
+═══════════════════════════════════════════════════════════════
+
+❓ QUESTION PAA POUR H2 PRINCIPAL
+─────────────────────────────────
+${row.paa}
+
+═══════════════════════════════════════════════════════════════
+
+📐 FORMAT SNIPPET (Position 0)
+──────────────────────────────
+Format recommandé : ${row.snippetFormat}
+→ Structurer le contenu pour obtenir la Position 0 avec ce format
+
+═══════════════════════════════════════════════════════════════
+
+🏷️ SCHEMA MARKUP
+─────────────────
+Type de schema : ${row.schema}
+
+═══════════════════════════════════════════════════════════════
+
+🎁 APPÂT SXO À INTÉGRER
+───────────────────────
+Type : ${row.appatSXO}
+Placement suggéré : Après le H2 principal ou dans une section dédiée
+Objectif : Augmenter le temps passé sur la page et l'engagement
+
+═══════════════════════════════════════════════════════════════
+
+📄 META-DESCRIPTION CTR BOOSTER
+───────────────────────────────
+${row.metaDescription}
+
+═══════════════════════════════════════════════════════════════
+
+✅ CHECKLIST DE RÉDACTION
+─────────────────────────
+□ Titre H1 avec chiffre/année ✓
+□ Angle différenciant intégré
+□ Trigger émotionnel présent dès l'intro
+□ Question PAA utilisée comme H2
+□ Mots-clés LSI naturellement intégrés
+□ Format snippet respecté pour Position 0
+□ Appât SXO créé et intégré
+□ Schema markup prêt à implémenter
+□ Meta-description < 155 caractères
+
+═══════════════════════════════════════════════════════════════`;
+}
 
 interface AccordionProps {
     title: string;
@@ -54,6 +144,38 @@ function CopyButton({ text }: { text: string }) {
     return (
         <button className="copy-btn" onClick={handleCopy}>
             {copied ? <Check size={14} /> : <Copy size={14} />}
+        </button>
+    );
+}
+
+// Bouton pour copier les instructions de rédaction pour le générateur
+function CopyForGeneratorButton({ row }: { row: ContentTableRow }) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        const formattedText = formatArticleForGenerator(row);
+        await navigator.clipboard.writeText(formattedText);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+        <button
+            className={`copy-generator-btn ${copied ? 'copied' : ''}`}
+            onClick={handleCopy}
+            title="Copier les instructions pour le générateur d'articles"
+        >
+            {copied ? (
+                <>
+                    <Check size={14} />
+                    <span>Copié !</span>
+                </>
+            ) : (
+                <>
+                    <ClipboardCopy size={14} />
+                    <span>Copier brief</span>
+                </>
+            )}
         </button>
     );
 }
@@ -319,7 +441,7 @@ export function ResultDashboard() {
                                                     </label>
                                                 </td>
                                                 <td className="actions-cell">
-                                                    <CopyButton text={`${row.titreH1}\n\n${row.metaDescription}`} />
+                                                    <CopyForGeneratorButton row={row} />
                                                 </td>
                                             </tr>
                                         ))}

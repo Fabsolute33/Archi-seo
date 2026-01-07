@@ -2,10 +2,6 @@
 	"folders": [
 		{
 			"path": "."
-		},
-		{
-			"name": "git respositery",
-			"path": "git respositery"
 		}
 	],
 	"settings": {}

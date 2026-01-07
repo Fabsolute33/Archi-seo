@@ -348,12 +348,12 @@ export function ResultDashboard() {
                             <div className="snippets-section">
                                 <h4>Templates de Snippets</h4>
                                 <div className="snippets-grid">
-                                    {snippetStrategy.data.templates.slice(0, 6).map((template, idx) => (
+                                    {snippetStrategy.data.snippetsParArticle.slice(0, 6).map((snippet: { article: string; formatChoisi: string; template: { type: string; reponse?: string; intro?: string; items?: string[] } }, idx: number) => (
                                         <div key={idx} className="snippet-card">
-                                            <span className={`snippet-type ${template.type}`}>{template.type}</span>
-                                            <h5>{template.question}</h5>
-                                            <p>{template.reponse}</p>
-                                            <CopyButton text={template.reponse} />
+                                            <span className={`snippet-type ${snippet.formatChoisi}`}>{snippet.formatChoisi}</span>
+                                            <h5>{snippet.article}</h5>
+                                            <p>{snippet.template.type === 'definition' ? snippet.template.reponse : snippet.template.intro}</p>
+                                            <CopyButton text={snippet.template.type === 'definition' ? (snippet.template.reponse || '') : (snippet.template.intro || '')} />
                                         </div>
                                     ))}
                                 </div>

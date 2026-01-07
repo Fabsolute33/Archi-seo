@@ -91,7 +91,7 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
                 authorityStrategy: { ...createInitialAgentState(), status: 'running', startedAt: Date.now() },
             });
 
-            const [contentResult, technicalResult, snippetResult, authorityResult] = await Promise.all([
+            const [contentResult, technicalResult, , authorityResult] = await Promise.all([
                 runContentDesigner(businessDescription, strategicResult, clusterResult),
                 runTechnicalOptimizer(businessDescription, clusterResult),
                 runSnippetMaster(businessDescription, { tableauContenu: [], planningPublication: [] }).catch(() => null), // Will be called after content design

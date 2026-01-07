@@ -82,6 +82,17 @@ export function BusinessInputForm() {
                     </div>
                 )}
 
+                <BusinessQuestionnaire
+                    onComplete={handleQuestionnaireComplete}
+                    disabled={isGenerating}
+                />
+
+                {!apiKey && (
+                    <div className="api-key-warning">
+                        ⚠️ Configurez votre clé API Gemini dans les paramètres pour commencer
+                    </div>
+                )}
+
                 <div className="workflow-preview">
                     <h4>🔄 WORKFLOW DE COLLABORATION</h4>
                     <div className="workflow-visual">

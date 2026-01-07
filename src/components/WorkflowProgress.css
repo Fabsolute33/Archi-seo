@@ -1,0 +1,165 @@
+.workflow-progress-section {
+    padding: var(--spacing-2xl) var(--spacing-lg);
+}
+
+.workflow-progress-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.workflow-progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+}
+
+.workflow-progress-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--neutral-100);
+}
+
+.progress-count {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary-400);
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: rgba(139, 92, 246, 0.15);
+    border-radius: var(--radius-full);
+}
+
+.agents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.agent-progress-card {
+    position: relative;
+    padding: var(--spacing-lg);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-base);
+    overflow: hidden;
+}
+
+.agent-progress-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--agent-color, var(--neutral-700));
+    opacity: 0.3;
+    transition: opacity var(--transition-base);
+}
+
+.agent-progress-card.completed::before {
+    opacity: 1;
+}
+
+.agent-progress-card.running {
+    border-color: var(--agent-color);
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+}
+
+.agent-progress-card.running::before {
+    opacity: 1;
+    animation: progressPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.agent-progress-card.error {
+    border-color: var(--error-500);
+}
+
+.agent-progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.agent-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    color: white;
+}
+
+.agent-status-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-completed {
+    width: 24px;
+    height: 24px;
+    color: var(--success-400);
+}
+
+.status-running {
+    width: 24px;
+    height: 24px;
+    color: var(--primary-400);
+    animation: spin 1s linear infinite;
+}
+
+.status-error {
+    width: 24px;
+    height: 24px;
+    color: var(--error-400);
+}
+
+.status-idle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--neutral-500);
+    background: var(--neutral-800);
+    border-radius: var(--radius-full);
+}
+
+.agent-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutral-100);
+    margin-bottom: var(--spacing-xs);
+}
+
+.agent-description {
+    font-size: 0.8125rem;
+    color: var(--neutral-500);
+}
+
+.agent-error {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    font-size: 0.75rem;
+    color: var(--error-400);
+    background: rgba(244, 63, 94, 0.1);
+    border-radius: var(--radius-md);
+}

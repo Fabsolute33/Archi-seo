@@ -1,0 +1,251 @@
+.business-input-section {
+    padding: var(--spacing-3xl) var(--spacing-lg);
+}
+
+.business-input-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Startup Message */
+.startup-message {
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+    border: 1px solid var(--primary-500);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-glow);
+}
+
+.startup-message pre {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--neutral-200);
+    white-space: pre-wrap;
+    margin: 0;
+}
+
+.business-input-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.business-input-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: var(--spacing-lg);
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-400) 100%);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-glow);
+    animation: glow 3s ease-in-out infinite;
+}
+
+.business-input-icon .icon {
+    width: 32px;
+    height: 32px;
+    color: white;
+}
+
+.business-input-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    background: linear-gradient(135deg, var(--neutral-50) 0%, var(--primary-300) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.business-input-header p {
+    font-size: 1.0625rem;
+    color: var(--neutral-400);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.business-input-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.business-textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: var(--spacing-lg);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--neutral-100);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    resize: vertical;
+    transition: all var(--transition-base);
+    outline: none;
+}
+
+.business-textarea::placeholder {
+    color: var(--neutral-500);
+}
+
+.business-textarea:focus {
+    border-color: var(--primary-400);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15), var(--shadow-glow);
+}
+
+.business-textarea:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.input-hint {
+    margin-top: var(--spacing-sm);
+    font-size: 0.8125rem;
+    color: var(--neutral-500);
+    line-height: 1.5;
+}
+
+.input-hint strong {
+    color: var(--neutral-400);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    font-size: 1.0625rem;
+}
+
+.api-key-warning {
+    padding: var(--spacing-md);
+    font-size: 0.875rem;
+    color: var(--warning-400);
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+/* Workflow Preview */
+.workflow-preview {
+    margin-top: var(--spacing-2xl);
+    padding: var(--spacing-xl);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+}
+
+.workflow-preview h4 {
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutral-300);
+    margin-bottom: var(--spacing-lg);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.workflow-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.workflow-step {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: var(--radius-lg);
+    min-width: 250px;
+    justify-content: center;
+}
+
+.workflow-step.small {
+    min-width: auto;
+    padding: var(--spacing-sm) var(--spacing-md);
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.workflow-step.final {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+    border-color: var(--accent-500);
+}
+
+.step-icon {
+    font-size: 1.25rem;
+}
+
+.step-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutral-200);
+}
+
+.step-role {
+    font-size: 0.75rem;
+    color: var(--neutral-400);
+}
+
+.workflow-arrow {
+    color: var(--primary-400);
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.workflow-parallel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    background: rgba(236, 72, 153, 0.05);
+    border: 1px dashed rgba(236, 72, 153, 0.3);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 400px;
+}
+
+.parallel-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.parallel-agents {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    justify-content: center;
+}
+
+@media (max-width: 640px) {
+    .workflow-step {
+        min-width: 200px;
+    }
+
+    .parallel-agents {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .workflow-step.small {
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+}

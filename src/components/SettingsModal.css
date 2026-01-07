@@ -1,0 +1,104 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    animation: fadeIn var(--transition-base) ease-out;
+}
+
+.modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    padding: var(--spacing-xl);
+    background: var(--neutral-900);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xl);
+    animation: slideUp var(--transition-base) ease-out;
+}
+
+.modal-close {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: var(--neutral-400);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.modal-close:hover {
+    color: var(--neutral-100);
+    background: var(--glass-hover);
+}
+
+.modal-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.modal-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--spacing-md);
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-400) 100%);
+    border-radius: var(--radius-xl);
+    color: white;
+}
+
+.modal-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--neutral-100);
+    margin-bottom: var(--spacing-xs);
+}
+
+.modal-header p {
+    font-size: 0.875rem;
+    color: var(--neutral-400);
+}
+
+.modal-body {
+    margin-bottom: var(--spacing-xl);
+}
+
+.modal-body .input-hint {
+    margin-top: var(--spacing-sm);
+    font-size: 0.8125rem;
+    color: var(--neutral-500);
+}
+
+.modal-body .input-hint a {
+    color: var(--primary-400);
+    text-decoration: underline;
+}
+
+.modal-body .input-hint a:hover {
+    color: var(--primary-300);
+}
+
+.modal-footer {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+}
+
+.modal-footer .btn {
+    min-width: 120px;
+}

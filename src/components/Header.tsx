@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Zap, Settings, FolderOpen, LogIn, LogOut } from 'lucide-react';
 import { useAuthStore } from '../stores/useAuthStore';
+import { useProjectStore } from '../stores/useProjectStore';
 import './Header.css';
 
 interface HeaderProps {
@@ -10,6 +11,7 @@ interface HeaderProps {
 
 export function Header({ onOpenSettings, onOpenProfile }: HeaderProps) {
     const { user, isLoading, initialize, login, logout } = useAuthStore();
+    const { currentProjectName } = useProjectStore();
 
     useEffect(() => {
         const unsubscribe = initialize();
@@ -27,6 +29,12 @@ export function Header({ onOpenSettings, onOpenProfile }: HeaderProps) {
                         <h1 className="header-title">SEO Domination</h1>
                         <span className="header-subtitle">Multi-Agent System</span>
                     </div>
+                    {currentProjectName && (
+                        <div className="header-project-indicator">
+                            <span className="header-project-separator">|</span>
+                            <span className="header-project-name">{currentProjectName}</span>
+                        </div>
+                    )}
                 </div>
 
                 <nav className="header-nav">

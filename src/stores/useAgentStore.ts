@@ -8,8 +8,10 @@ import type {
     TechnicalOptimization,
     SnippetStrategy,
     AuthorityStrategy,
-    CoordinatorSummary
+    CoordinatorSummary,
+    ContentTableRow
 } from '../types/agents';
+import type { ContentAuditResult } from '../types/auditTypes';
 import { initializeGemini } from '../services/GeminiService';
 import { runStrategicAnalyzer } from '../services/agents/StrategicAnalyzerAgent';
 import { runClusterArchitect } from '../services/agents/ClusterArchitectAgent';
@@ -18,6 +20,8 @@ import { runTechnicalOptimizer } from '../services/agents/TechnicalOptimizerAgen
 import { runSnippetMaster } from '../services/agents/SnippetMasterAgent';
 import { runAuthorityBuilder } from '../services/agents/AuthorityBuilderAgent';
 import { runCoordinator } from '../services/agents/CoordinatorAgent';
+import { runContentAuditor } from '../services/agents/ContentAuditorAgent';
+import { scrapeUrl } from '../services/WebScraperService';
 
 const createInitialAgentState = <T>(): AgentState<T> => ({
     status: 'idle',
@@ -40,6 +44,14 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
     snippetStrategy: createInitialAgentState<SnippetStrategy>(),
     authorityStrategy: createInitialAgentState<AuthorityStrategy>(),
     coordinatorSummary: createInitialAgentState<CoordinatorSummary>(),
+
+    // Content Audit State
+    contentAudit: {
+        status: 'idle' as const,
+        result: null as ContentAuditResult | null,
+        error: null as string | null,
+        targetKeyword: undefined as string | undefined,
+    },
 
     setBusinessDescription: (desc: string) => set({ businessDescription: desc }),
     setApiKey: (key: string) => {
@@ -252,4 +264,96 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
             completedAt: project.updatedAt,
         },
     }),
+
+    // Content Audit Actions
+    runContentAudit: async (url: string, targetKeyword?: string) => {
+        const { apiKey } = get();
+
+        if (!apiKey) {
+            set({ contentAudit: { status: 'error', result: null, error: 'Clé API manquante', targetKeyword } });
+            return;
+        }
+
+        try {
+            // Step 1: Scraping
+            set({ contentAudit: { status: 'scraping', result: null, error: null, targetKeyword } });
+            const scrapedContent = await scrapeUrl(url);
+
+            // Step 2: Analysis with Agent 9
+            set({ contentAudit: { status: 'analyzing', result: null, error: null, targetKeyword } });
+            const auditResult = await runContentAuditor(scrapedContent, targetKeyword);
+
+            // Combine results
+            const fullResult: ContentAuditResult = {
+                url,
+                scrapedContent,
+                ...auditResult
+            };
+
+            set({ contentAudit: { status: 'completed', result: fullResult, error: null, targetKeyword } });
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Erreur lors de l\'audit';
+            set({ contentAudit: { status: 'error', result: null, error: errorMessage, targetKeyword } });
+        }
+    },
+
+    resetContentAudit: () => set({
+        contentAudit: { status: 'idle', result: null, error: null, targetKeyword: undefined }
+    }),
+
+    addSuggestedArticle: (article: ContentTableRow) => {
+        const state = get();
+        const currentContent = state.contentDesign.data;
+
+        if (currentContent) {
+            // Add to existing content table
+            set({
+                contentDesign: {
+                    ...state.contentDesign,
+                    data: {
+                        ...currentContent,
+                        tableauContenu: [...currentContent.tableauContenu, article]
+                    }
+                }
+            });
+        } else {
+            // Create new content design with this article
+            set({
+                contentDesign: {
+                    status: 'completed',
+                    data: {
+                        tableauContenu: [article],
+                        planningPublication: []
+                    },
+                    error: null,
+                    startedAt: Date.now(),
+                    completedAt: Date.now()
+                }
+            });
+        }
+    },
+
+    // Toggle validation status of an article
+    toggleArticleValidation: (index: number) => {
+        const state = get();
+        const currentContent = state.contentDesign.data;
+
+        if (currentContent && currentContent.tableauContenu[index]) {
+            const updatedTableau = [...currentContent.tableauContenu];
+            updatedTableau[index] = {
+                ...updatedTableau[index],
+                validated: !updatedTableau[index].validated
+            };
+
+            set({
+                contentDesign: {
+                    ...state.contentDesign,
+                    data: {
+                        ...currentContent,
+                        tableauContenu: updatedTableau
+                    }
+                }
+            });
+        }
+    },
 }));

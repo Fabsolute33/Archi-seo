@@ -189,18 +189,9 @@ export function ResultDashboard() {
         snippetStrategy,
         authorityStrategy,
         coordinatorSummary,
-        resetAll
+        resetAll,
+        toggleArticleValidation
     } = useAgentStore();
-
-    // État pour gérer les articles validés (rédigés)
-    const [validatedArticles, setValidatedArticles] = useState<Record<number, boolean>>({});
-
-    const handleValidationChange = (index: number) => {
-        setValidatedArticles(prev => ({
-            ...prev,
-            [index]: !prev[index]
-        }));
-    };
 
     const isComplete = coordinatorSummary.status === 'completed';
 
@@ -428,15 +419,15 @@ export function ResultDashboard() {
                                                     </div>
                                                 </td>
                                                 <td className="validation-cell">
-                                                    <label className={`validation-checkbox ${validatedArticles[idx] ? 'validated' : ''}`}>
+                                                    <label className={`validation-checkbox ${row.validated ? 'validated' : ''}`}>
                                                         <input
                                                             type="checkbox"
-                                                            checked={validatedArticles[idx] || false}
-                                                            onChange={() => handleValidationChange(idx)}
+                                                            checked={row.validated || false}
+                                                            onChange={() => toggleArticleValidation(idx)}
                                                         />
                                                         <span className="checkmark"></span>
                                                         <span className="validation-label">
-                                                            {validatedArticles[idx] ? 'Rédigé' : 'À rédiger'}
+                                                            {row.validated ? 'Rédigé' : 'À rédiger'}
                                                         </span>
                                                     </label>
                                                 </td>

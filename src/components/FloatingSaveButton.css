@@ -1,0 +1,147 @@
+/* Floating Save Button - Sticky Floppy Disk */
+.floating-save-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow:
+        0 4px 15px rgba(102, 126, 234, 0.4),
+        0 8px 30px rgba(118, 75, 162, 0.2);
+
+    color: white;
+
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: floatIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes floatIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.floating-save-button:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow:
+        0 6px 20px rgba(102, 126, 234, 0.5),
+        0 12px 40px rgba(118, 75, 162, 0.3);
+}
+
+.floating-save-button:active:not(:disabled) {
+    transform: translateY(-1px) scale(1.02);
+}
+
+.floating-save-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.floating-save-button.success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow:
+        0 4px 15px rgba(16, 185, 129, 0.4),
+        0 8px 30px rgba(5, 150, 105, 0.2);
+    animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.floating-save-button .spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Tooltip on hover */
+.floating-save-button::before {
+    content: attr(title);
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%);
+
+    background: rgba(15, 23, 42, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.floating-save-button::after {
+    content: '';
+    position: absolute;
+    right: calc(100% + 4px);
+    top: 50%;
+    transform: translateY(-50%);
+
+    border: 6px solid transparent;
+    border-left-color: rgba(15, 23, 42, 0.95);
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.floating-save-button:hover::before,
+.floating-save-button:hover::after {
+    opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .floating-save-button {
+        bottom: 1rem;
+        right: 1rem;
+        width: 48px;
+        height: 48px;
+    }
+
+    .floating-save-button::before,
+    .floating-save-button::after {
+        display: none;
+    }
+}

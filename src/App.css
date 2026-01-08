@@ -4,8 +4,54 @@
     flex-direction: column;
 }
 
+/* Tab Navigation */
+.app-tabs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 70px;
+    z-index: 90;
+}
+
+.app-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--neutral-500);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.app-tab:hover {
+    color: var(--primary-600);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.app-tab.active {
+    color: white;
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
 .main-content {
     flex: 1;
+}
+
+/* Audit Container */
+.audit-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .app-footer {
@@ -27,4 +73,20 @@
 .app-footer a:hover {
     color: var(--primary-300);
     text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .app-tabs {
+        padding: 0.5rem 1rem;
+    }
+
+    .app-tab {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .app-tab span:last-child {
+        display: none;
+    }
 }

@@ -438,6 +438,14 @@ export interface AgentStore {
     authorityStrategy: AgentState<AuthorityStrategy>;
     coordinatorSummary: AgentState<CoordinatorSummary>;
 
+    // Content Audit State
+    contentAudit: {
+        status: 'idle' | 'scraping' | 'analyzing' | 'completed' | 'error';
+        result: import('../types/auditTypes').ContentAuditResult | null;
+        error: string | null;
+        targetKeyword?: string;
+    };
+
     // Actions
     setBusinessDescription: (desc: string) => void;
     setApiKey: (key: string) => void;
@@ -445,6 +453,12 @@ export interface AgentStore {
     runAllAgents: () => Promise<void>;
     resetAll: () => void;
     restoreFromProject: (project: SEOProject) => void;
+
+    // Content Audit Actions
+    runContentAudit: (url: string, targetKeyword?: string) => Promise<void>;
+    resetContentAudit: () => void;
+    addSuggestedArticle: (article: ContentTableRow) => void;
+    toggleArticleValidation: (index: number) => void;
 }
 
 // Project type for saved analyses

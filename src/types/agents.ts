@@ -127,6 +127,15 @@ export interface MaillageArticle {
     ancre: string;
 }
 
+// Image suggestion for AI generation (Google Nano Bana / DALL-E / Midjourney)
+export interface ImageSuggestion {
+    type: 'infographie' | 'photo-produit' | 'schema' | 'illustration' | 'capture-ecran' | 'avant-apres' | 'portrait-expert';
+    description: string;          // Description courte du visuel
+    generationPrompt: string;     // Prompt optimisé pour Google Nano Bana / IA générative
+    placement: string;            // Où placer l'image dans l'article
+    altText: string;              // Texte alternatif SEO-optimisé
+}
+
 export interface ContentTableRow {
     cluster: string;
     titreH1: string;
@@ -154,6 +163,8 @@ export interface ContentTableRow {
     };
     metaDescription: string;
     validated?: boolean;
+    sgeOptimization?: SGEOptimization;
+    imageSuggestions?: ImageSuggestion[];  // 2-4 images suggérées par article
 }
 
 export interface ContentDesign {
@@ -284,6 +295,23 @@ export interface SnippetStrategy {
         intentVocale?: string;
     }[];
     syntheseStrategie: SyntheseStrategie;
+}
+
+// SGE/AI Overviews Optimization Types (Module 4)
+export interface StructuredAnswer {
+    question: string;
+    answer: string;
+    format: 'concise' | 'detailed' | 'list' | 'comparison';
+    wordCount: number;
+}
+
+export interface SGEOptimization {
+    citabilityScore: number;           // 0-100
+    entityCoverage: string[];          // Entités Google couvertes
+    structuredAnswers: StructuredAnswer[];
+    aiOverviewPotential: 'high' | 'medium' | 'low';
+    optimizationTips: string[];        // Conseils d'amélioration
+    keyFactsExtracted: string[];       // Faits clés citables
 }
 
 // Agent 6 - Authority Builder Output

@@ -23,6 +23,28 @@ import './ResultDashboard.css';
 function formatArticleForGenerator(row: ContentTableRow): string {
     const lsiKeywords = row.carburant?.lsi?.join(', ') || '';
 
+    // Section SGE si disponible
+    const sgeSection = row.sgeOptimization ? `
+═══════════════════════════════════════════════════════════════
+
+🤖 OPTIMISATION SGE / AI OVERVIEWS (Google)
+────────────────────────────────────────────
+• Score de Citabilité : ${row.sgeOptimization.citabilityScore}/100 (${row.sgeOptimization.aiOverviewPotential?.toUpperCase()})
+• Entités à couvrir : ${row.sgeOptimization.entityCoverage?.join(', ') || 'N/A'}
+
+📝 RÉPONSES STRUCTURÉES À INTÉGRER:
+${row.sgeOptimization.structuredAnswers?.map((sa, i) => `
+${i + 1}. Question: "${sa.question}"
+   Réponse (${sa.format}, ~${sa.wordCount} mots): "${sa.answer}"
+`).join('') || '   Aucune réponse structurée disponible'}
+
+💡 CONSEILS D'OPTIMISATION SGE:
+${row.sgeOptimization.optimizationTips?.map(tip => `   • ${tip}`).join('\n') || '   Aucun conseil disponible'}
+
+📊 FAITS CLÉS CITABLES:
+${row.sgeOptimization.keyFactsExtracted?.map(fact => `   → ${fact}`).join('\n') || '   Aucun fait clé disponible'}
+` : '';
+
     return `📝 INSTRUCTIONS DE RÉDACTION D'ARTICLE SEO
 
 ═══════════════════════════════════════════════════════════════
@@ -85,13 +107,7 @@ Placement suggéré : Après le H2 principal ou dans une section dédiée
 Objectif : Augmenter le temps passé sur la page et l'engagement
 
 ═══════════════════════════════════════════════════════════════
-
-📄 META-DESCRIPTION CTR BOOSTER
-───────────────────────────────
-${row.metaDescription}
-
-═══════════════════════════════════════════════════════════════
-
+${sgeSection}
 ✅ CHECKLIST DE RÉDACTION
 ─────────────────────────
 □ Titre H1 avec chiffre/année ✓
@@ -101,8 +117,7 @@ ${row.metaDescription}
 □ Mots-clés LSI naturellement intégrés
 □ Format snippet respecté pour Position 0
 □ Appât SXO créé et intégré
-□ Schema markup prêt à implémenter
-□ Meta-description < 155 caractères
+□ Schema markup prêt à implémenter${row.sgeOptimization ? '\n□ Réponses structurées SGE intégrées\n□ Entités Google couvertes\n□ Faits citables inclus' : ''}
 
 ═══════════════════════════════════════════════════════════════`;
 }
@@ -330,10 +345,10 @@ export function ResultDashboard() {
                                             <th>Format Snippet</th>
                                             <th>Schema</th>
                                             <th>Appât SXO</th>
+                                            <th>Images IA</th>
                                             <th>Intent</th>
                                             <th>Score</th>
-                                            <th>Maillage</th>
-                                            <th>Meta-Description</th>
+                                            <th>SGE Score</th>
                                             <th>Validation</th>
                                             <th>Actions</th>
                                         </tr>
@@ -374,6 +389,33 @@ export function ResultDashboard() {
                                                     <span className="schema-badge">{row.schema}</span>
                                                 </td>
                                                 <td className="sxo-cell">{row.appatSXO}</td>
+                                                <td className="images-cell">
+                                                    {row.imageSuggestions?.length ? (
+                                                        <div className="images-prompts-list">
+                                                            {row.imageSuggestions.map((img, i) => (
+                                                                <div key={i} className="image-prompt-item">
+                                                                    <div className="image-prompt-header">
+                                                                        <span className={`image-type-badge ${img.type}`}>
+                                                                            {img.type === 'infographie' ? '📊' :
+                                                                                img.type === 'photo-produit' ? '📸' :
+                                                                                    img.type === 'schema' ? '📐' :
+                                                                                        img.type === 'illustration' ? '🎨' :
+                                                                                            img.type === 'avant-apres' ? '🔄' : '🖼️'}
+                                                                        </span>
+                                                                        <span className="image-type-label">{img.type}</span>
+                                                                        <CopyButton text={img.generationPrompt} />
+                                                                    </div>
+                                                                    <div className="image-prompt-text">
+                                                                        {img.generationPrompt}
+                                                                    </div>
+                                                                    <div className="image-alt-text">Alt: {img.altText}</div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <span className="images-na">-</span>
+                                                    )}
+                                                </td>
                                                 <td className="intent-cell">
                                                     <span className={`intent-badge ${row.intent?.toLowerCase()}`}>{row.intent}</span>
                                                 </td>
@@ -389,34 +431,18 @@ export function ResultDashboard() {
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td className="maillage-cell">
-                                                    <div className="maillage-details">
-                                                        <div className="maillage-vers" title="Liens vers">
-                                                            <strong>→</strong>
-                                                            {Array.isArray(row.maillage?.vers) && row.maillage.vers.length > 0 ? (
-                                                                row.maillage.vers.slice(0, 2).map((link, i) => (
-                                                                    <span key={i} className="link-tag">
-                                                                        {typeof link === 'string' ? link : link.article}
-                                                                    </span>
-                                                                ))
-                                                            ) : '-'}
+                                                <td className="sge-score-cell">
+                                                    {row.sgeOptimization ? (
+                                                        <div
+                                                            className={`sge-score-badge ${row.sgeOptimization.aiOverviewPotential}`}
+                                                            title={`Score: ${row.sgeOptimization.citabilityScore}/100\n\nEntités: ${row.sgeOptimization.entityCoverage?.join(', ')}\n\nConseils: ${row.sgeOptimization.optimizationTips?.slice(0, 2).join(' | ')}`}
+                                                        >
+                                                            <span className="sge-score-value">{row.sgeOptimization.citabilityScore}</span>
+                                                            <span className="sge-score-potential">{row.sgeOptimization.aiOverviewPotential}</span>
                                                         </div>
-                                                        <div className="maillage-depuis" title="Liens depuis">
-                                                            <strong>←</strong>
-                                                            {Array.isArray(row.maillage?.depuis) && row.maillage.depuis.length > 0 ? (
-                                                                row.maillage.depuis.slice(0, 2).map((link, i) => (
-                                                                    <span key={i} className="link-tag">
-                                                                        {typeof link === 'string' ? link : link.article}
-                                                                    </span>
-                                                                ))
-                                                            ) : '-'}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="meta-cell">
-                                                    <div className="meta-description" title={row.metaDescription}>
-                                                        {row.metaDescription?.substring(0, 80)}...
-                                                    </div>
+                                                    ) : (
+                                                        <span className="sge-score-na">N/A</span>
+                                                    )}
                                                 </td>
                                                 <td className="validation-cell">
                                                     <label className={`validation-checkbox ${row.validated ? 'validated' : ''}`}>

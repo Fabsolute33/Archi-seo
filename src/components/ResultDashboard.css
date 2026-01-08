@@ -1050,3 +1050,191 @@
     min-width: 120px;
     text-align: center;
 }
+
+/* SGE Score Column */
+.sge-score-cell {
+    min-width: 100px;
+    text-align: center;
+}
+
+.sge-score-badge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    cursor: help;
+    transition: all var(--transition-base);
+}
+
+.sge-score-badge:hover {
+    transform: scale(1.05);
+}
+
+.sge-score-badge.high {
+    background: rgba(34, 197, 94, 0.2);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.sge-score-badge.medium {
+    background: rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.sge-score-badge.low {
+    background: rgba(244, 63, 94, 0.2);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.sge-score-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.sge-score-badge.high .sge-score-value {
+    color: var(--success-400);
+}
+
+.sge-score-badge.medium .sge-score-value {
+    color: var(--warning-400);
+}
+
+.sge-score-badge.low .sge-score-value {
+    color: var(--error-400);
+}
+
+.sge-score-potential {
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sge-score-badge.high .sge-score-potential {
+    color: var(--success-400);
+}
+
+.sge-score-badge.medium .sge-score-potential {
+    color: var(--warning-400);
+}
+
+.sge-score-badge.low .sge-score-potential {
+    color: var(--error-400);
+}
+
+.sge-score-na {
+    font-size: 0.75rem;
+    color: var(--neutral-600);
+    font-style: italic;
+}
+
+/* Images IA Column */
+.images-cell {
+    min-width: 280px;
+    max-width: 350px;
+}
+
+.images-prompts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.image-prompt-item {
+    padding: var(--spacing-sm);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--primary-400);
+}
+
+.image-prompt-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+}
+
+.image-type-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    font-size: 0.8rem;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+
+.image-type-badge.infographie {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.image-type-badge.photo-produit {
+    background: rgba(6, 182, 212, 0.2);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.image-type-badge.schema {
+    background: rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.image-type-badge.illustration {
+    background: rgba(236, 72, 153, 0.2);
+    border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.image-type-badge.capture-ecran {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.image-type-badge.avant-apres {
+    background: rgba(34, 197, 94, 0.2);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.image-type-badge.portrait-expert {
+    background: rgba(244, 63, 94, 0.2);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.image-type-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--neutral-300);
+}
+
+.image-prompt-text {
+    font-size: 0.75rem;
+    color: var(--accent-400);
+    background: rgba(6, 182, 212, 0.1);
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    font-family: 'Monaco', 'Menlo', monospace;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    word-break: break-word;
+}
+
+.image-prompt-text:hover {
+    background: rgba(6, 182, 212, 0.2);
+    color: var(--accent-300);
+}
+
+.image-alt-text {
+    font-size: 0.6875rem;
+    color: var(--neutral-500);
+    margin-top: var(--spacing-xs);
+    font-style: italic;
+}
+
+.images-na {
+    font-size: 0.75rem;
+    color: var(--neutral-600);
+}

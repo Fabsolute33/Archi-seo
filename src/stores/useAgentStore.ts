@@ -21,6 +21,7 @@ import { runSnippetMaster } from '../services/agents/SnippetMasterAgent';
 import { runAuthorityBuilder } from '../services/agents/AuthorityBuilderAgent';
 import { runCoordinator } from '../services/agents/CoordinatorAgent';
 import { runContentAuditor } from '../services/agents/ContentAuditorAgent';
+import { runSGEOptimizer, enrichArticlesWithSGE } from '../services/agents/SGEOptimizerAgent';
 import { scrapeUrl } from '../services/WebScraperService';
 
 const createInitialAgentState = <T>(): AgentState<T> => ({
@@ -147,6 +148,37 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
                     completedAt: Date.now()
                 }
             });
+
+            // Agent SGE: Optimize content for AI Overviews
+            try {
+                const sgeOptimizations = await runSGEOptimizer(
+                    businessDescription,
+                    strategicResult,
+                    contentResult.tableauContenu
+                );
+
+                // Enrich articles with SGE data
+                const enrichedContent = enrichArticlesWithSGE(
+                    contentResult.tableauContenu,
+                    sgeOptimizations
+                );
+
+                // Update content design with SGE-enriched articles
+                set({
+                    contentDesign: {
+                        status: 'completed',
+                        data: {
+                            ...contentResult,
+                            tableauContenu: enrichedContent
+                        },
+                        error: null,
+                        startedAt: get().contentDesign.startedAt,
+                        completedAt: Date.now()
+                    }
+                });
+            } catch (sgeError) {
+                console.warn('SGE optimization failed, continuing without SGE data:', sgeError);
+            }
 
             // Agent 7: Coordinator (Final)
             set({ coordinatorSummary: { ...createInitialAgentState(), status: 'running', startedAt: Date.now() } });

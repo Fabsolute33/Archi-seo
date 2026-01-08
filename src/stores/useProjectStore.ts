@@ -23,6 +23,7 @@ interface ProjectStore {
     loadProject: (id: string) => Promise<void>;
     deleteProject: (id: string) => Promise<void>;
     resetProject: () => void;
+    createNewProject: () => void;
 }
 
 export const useProjectStore = create<ProjectStore>((set, get) => ({
@@ -182,5 +183,12 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
         currentProjectId: null,
         currentProjectName: '',
         error: null
-    })
+    }),
+
+    createNewProject: () => {
+        // Reset agent store data first
+        useAgentStore.getState().resetAll();
+        // Reset project identifiers to create a fresh project
+        set({ currentProjectId: null, currentProjectName: '', error: null });
+    }
 }));

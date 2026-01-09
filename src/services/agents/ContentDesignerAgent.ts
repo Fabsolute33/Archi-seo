@@ -19,11 +19,7 @@ MISSIONS:
    8. Appât SXO (calculateur, checklist, infographie, template, quiz)
    9. Intent & Funnel (BOFU/MOFU/TOFU)
    10. Score de Priorité (Volume 1-10, Difficulté 1-10, Impact Business 1-10)
-   11. Suggestions d'Images IA (2-4 visuels avec prompts Google Nano Bana)
-       - Types: infographie, photo-produit, schema, illustration, capture-ecran, avant-apres, portrait-expert
-       - Prompt optimisé pour génération IA (descriptif, style, couleurs, composition)
-       - Placement suggéré dans l'article
-       - Alt text SEO-friendly
+   11. Suggestions d'Images IA (2 à 5 visuels VARIÉS et DIRECTEMENT liés au SUJET de l'article)
 
 2. **Optimiser pour la visibilité**
    - Appâts SXO pour augmenter le temps sur page
@@ -39,12 +35,129 @@ FORMATS INTERDITS:
 ❌ "Tout savoir sur Y"
 ❌ "Introduction à Z"
 
-CONSEILS POUR LES PROMPTS D'IMAGES (Google Nano Bana):
-- Sois TRÈS descriptif: sujet, style, couleurs, composition, éclairage
-- Inclus le style: "professional", "modern", "minimalist", "corporate", "flat design"
-- Précise le format: "16:9", "square", "vertical"
-- Évite le texte dans l'image: "no text", "clean layout"
-- Adapte au contexte business: "business setting", "professional environment"
+═══════════════════════════════════════════════════════════════════════════════
+INSTRUCTIONS DÉTAILLÉES POUR LES PROMPTS D'IMAGES (Google Gemini)
+═══════════════════════════════════════════════════════════════════════════════
+
+## CHOISIR LA CATÉGORIE D'IMAGE
+
+### PHOTOGRAPHIE (category: "photography")
+Pour : articles lifestyle, témoignages, cas pratiques, guides visuels
+Quand : besoin d'authenticité, d'émotion, de contexte réel
+
+### INFOGRAPHIE (category: "infographic")
+Pour : statistiques, comparaisons, processus étape par étape, données chiffrées
+Quand : besoin de clarifier des informations complexes, visualiser des données
+
+### ILLUSTRATION (category: "illustration")
+Pour : concepts abstraits, explications pédagogiques, contenu créatif
+Quand : besoin de simplification, de storytelling visuel, d'originalité
+
+### SCHÉMA/DIAGRAMME (category: "schema")
+Pour : processus techniques, architectures, flux de travail, relations entre éléments
+Quand : besoin de précision, de logique, d'explication structurée
+
+---
+
+## STYLES VISUELS PAR CATÉGORIE
+
+### Styles PHOTOGRAPHIE:
+- "professional photography" → rendu corporate/professionnel
+- "editorial style photography" → articles de presse/magazine
+- "high-quality stock photo aesthetic" → look propre et universel
+- "modern minimalist photography" → contenu tech/design
+- "lifestyle photography" → contenu bien-être/quotidien
+- "documentary style" → contenu informatif/éducatif
+
+### Styles INFOGRAPHIE:
+- "modern infographic design" → style contemporain et clair
+- "minimalist data visualization" → épuré, focus sur les données
+- "professional business infographic" → corporate et sérieux
+- "flat design infographic" → style flat moderne
+- "isometric infographic illustration" → perspective 3D stylisée
+
+### Styles ILLUSTRATION:
+- "flat vector illustration" → style plat, moderne
+- "line art illustration" → épuré, minimaliste
+- "hand-drawn illustration style" → chaleureux, humain
+- "digital art illustration" → contemporain, détaillé
+- "minimalist geometric illustration" → abstrait, simple
+- "editorial illustration style" → sophistiqué, magazine
+
+### Styles SCHÉMA/DIAGRAMME:
+- "clean technical diagram" → précis et professionnel
+- "flowchart visualization" → flux logique clair
+- "system architecture diagram" → technique structuré
+- "minimalist process diagram" → simple et efficace
+- "blueprint style schematic" → technique détaillé
+
+---
+
+## STRUCTURE DU PROMPT (tous les éléments)
+
+1. **STYLE VISUEL** (obligatoire) - choisi parmi les styles ci-dessus
+2. **SUJET PRINCIPAL** (obligatoire) - description spécifique et concrète
+3. **COMPOSITION** - angle, layout, point focal, format (16:9, square, vertical)
+4. **ÉCLAIRAGE/RENDU** - natural daylight, soft diffused, flat lighting, etc.
+5. **PALETTE DE COULEURS** - blue and white, earth tones, vibrant colors, etc.
+6. **ATMOSPHÈRE** - professional, innovative, calm, dynamic, etc.
+7. **CONTEXTE** - modern office, outdoor, minimalist setting, etc.
+8. **QUALITÉ** - ajouter "Professional quality, sharp focus, high resolution"
+
+---
+
+## ÉLÉMENTS NÉGATIFS OBLIGATOIRES (negativePrompt)
+
+### Pour PHOTOGRAPHIE:
+"text, watermark, logo, signature, blurry faces, distorted hands, low quality, pixelated, oversaturated, cartoon style, amateur photography, cluttered composition, harsh shadows"
+
+### Pour INFOGRAPHIE:
+"photorealistic, photograph, cluttered, too much text, unreadable fonts, complex 3D rendering, messy layout, low contrast, blurry, pixelated, watermark"
+
+### Pour ILLUSTRATION:
+"photorealistic, photograph, 3D render, blurry, pixelated, overdetailed, cluttered, text, watermark, low quality, inconsistent style"
+
+### Pour SCHÉMA/DIAGRAMME:
+"decorative elements, artistic flourishes, photorealistic, complex textures, gradients, shadows, 3D effects, cluttered, illegible text, watermark"
+
+---
+
+## TEMPLATES DE PROMPTS PAR CATÉGORIE
+
+### TEMPLATE PHOTOGRAPHIE:
+"[STYLE], [SUJET PRINCIPAL], [COMPOSITION], [ÉCLAIRAGE], [PALETTE], [ATMOSPHÈRE], [CONTEXTE]. Professional quality, sharp focus, high resolution, 8K detail."
+
+### TEMPLATE INFOGRAPHIE:
+"[STYLE], [DONNÉES À VISUALISER], [LAYOUT], [PALETTE], [ÉLÉMENTS VISUELS] (icons, charts), minimal text, clean organized design, professional quality, high contrast."
+
+### TEMPLATE ILLUSTRATION:
+"[STYLE], [CONCEPT À ILLUSTRER], [COMPOSITION], [PALETTE], [AMBIANCE], clean lines, professional quality, suitable for editorial use."
+
+### TEMPLATE SCHÉMA/DIAGRAMME:
+"[STYLE], [SYSTÈME/PROCESSUS], [TYPE DE STRUCTURE] (flowchart, hierarchy), [PALETTE SIMPLE], clear labels and connections, minimalist design, technical precision."
+
+---
+
+## RÈGLES CRITIQUES POUR LES PROMPTS IMAGES
+
+⚠️ OBLIGATOIRE - RESPECTE CES RÈGLES ABSOLUMENT :
+
+1. **RÉDIGÉ EN FRANÇAIS** - Tous les prompts doivent être écrits en français
+2. **2 À 5 IMAGES PAR ARTICLE** - Varie les types et les angles
+3. **DIRECTEMENT LIÉ AU SUJET** - Chaque prompt doit être SPÉCIFIQUE au titre H1 et au contenu de l'article
+4. **VARIER LES VISUELS** - Ne pas répéter le même type d'image, alterner entre photographie, infographie, illustration, schéma
+5. **DESCRIPTIF ET CONCRET** - Décris précisément la scène, les objets, les personnes, le contexte
+6. **PAS DE VISUELS GÉNÉRIQUES** - Chaque image doit être unique et pertinente pour l'article spécifique
+7. **COHÉRENCE AVEC LE FUNNEL** - BOFU = images plus commerciales, TOFU = images éducatives
+
+### STRUCTURE D'UN BON PROMPT (en français) :
+"[Style visuel], [description précise de la scène liée au sujet de l'article], [composition], [éclairage], [palette de couleurs], [atmosphère]. Qualité professionnelle, netteté parfaite, haute résolution."
+
+### Exemple pour un article sur "Comment choisir son architecte" :
+✅ BON : "Photographie professionnelle, un architecte concentré examine des plans de construction sur une grande table lumineuse dans un cabinet moderne, vue de trois-quarts, lumière naturelle douce, tons blancs et bois clair, atmosphère professionnelle et créative. Qualité professionnelle, netteté parfaite."
+❌ MAUVAIS : "Photo professionnelle d'un bureau moderne" (trop générique, pas lié au sujet)
+
+═══════════════════════════════════════════════════════════════════════════════
 
 FORMAT DE RÉPONSE OBLIGATOIRE (JSON):
 {
@@ -67,25 +180,44 @@ FORMAT DE RÉPONSE OBLIGATOIRE (JSON):
       "score": {"volume": 8, "difficulte": 5, "impact": 9, "prioriteGlobale": 22},
       "imageSuggestions": [
         {
-          "type": "infographie",
-          "description": "Infographie montrant les étapes clés du processus",
-          "generationPrompt": "Professional infographic showing step-by-step process for [SUJET], modern flat design, business blue and white color scheme, clean minimalist layout, no text, 16:9 aspect ratio, high detail",
-          "placement": "Introduction - vue d'ensemble du sujet",
-          "altText": "[Mot-clé principal] - infographie des étapes"
+          "type": "photo-produit",
+          "category": "photography",
+          "style": "photographie professionnelle",
+          "description": "Photo illustrant le sujet principal de l'article",
+          "generationPrompt": "Photographie professionnelle, [DESCRIPTION PRÉCISE DE LA SCÈNE LIÉE AU TITRE H1], cadrage à hauteur des yeux avec faible profondeur de champ, éclairage naturel doux depuis de grandes fenêtres, palette de couleurs harmonieuse, atmosphère professionnelle et inspirante. Qualité professionnelle, netteté parfaite, haute résolution.",
+          "negativePrompt": "texte, filigrane, logo, visages flous, mains déformées, basse qualité, pixelisé, photographie amateur, composition encombrée",
+          "placement": "Introduction - accroche visuelle",
+          "altText": "[Mot-clé principal] - illustration réaliste"
         },
         {
-          "type": "photo-produit",
-          "description": "Photo professionnelle du produit/service en contexte",
-          "generationPrompt": "Professional product photography of [PRODUIT] in modern office setting, soft natural lighting, clean white background, commercial advertising style, high detail, 4K quality",
-          "placement": "Section principale - démonstration",
-          "altText": "[Produit/Service] - photo professionnelle"
+          "type": "infographie",
+          "category": "infographic",
+          "style": "infographie moderne",
+          "description": "Infographie des étapes ou données clés liées au sujet",
+          "generationPrompt": "Infographie moderne et professionnelle, visualisation des [ÉTAPES/DONNÉES SPÉCIFIQUES AU SUJET] avec icônes numérotées et flèches de progression, représentation basée sur des icônes plutôt que du texte, palette bleu et blanc avec accents orangés, fond blanc épuré, disposition horizontale équilibrée, texte minimal. Qualité professionnelle, contraste élevé.",
+          "negativePrompt": "photoréaliste, photographie, encombré, trop de texte, polices illisibles, rendu 3D complexe, mise en page désordonnée, filigrane",
+          "placement": "Après H2 - synthèse du processus",
+          "altText": "[Sujet] - infographie des étapes clés"
+        },
+        {
+          "type": "illustration",
+          "category": "illustration",
+          "style": "illustration vectorielle flat",
+          "description": "Illustration conceptuelle du thème de l'article",
+          "generationPrompt": "Illustration vectorielle flat design, représentation visuelle de [CONCEPT CLÉ DE L'ARTICLE] avec personnages stylisés et éléments graphiques modernes, composition équilibrée, palette de couleurs vives et harmonieuses, style éditorial professionnel, adapté au web. Qualité professionnelle, lignes nettes.",
+          "negativePrompt": "photoréaliste, photographie, rendu 3D, flou, pixelisé, trop détaillé, encombré, texte, filigrane, style incohérent",
+          "placement": "Section conseil - appui visuel",
+          "altText": "[Concept] - illustration explicative"
         },
         {
           "type": "schema",
-          "description": "Schéma explicatif simplifié du concept",
-          "generationPrompt": "Clean technical diagram explaining [CONCEPT], minimalist vector style, blue accent colors on white background, professional business infographic, no text labels, square format",
-          "placement": "Après H2 explicatif",
-          "altText": "[Concept] - schéma explicatif"
+          "category": "schema",
+          "style": "diagramme technique épuré",
+          "description": "Schéma explicatif du processus ou concept clé",
+          "generationPrompt": "Diagramme technique épuré, architecture visuelle de [PROCESSUS/SYSTÈME LIÉ AU SUJET] avec formes géométriques simples reliées par des flèches directionnelles, disposition hiérarchique, palette bleu et gris sur fond blanc, connexions claires et logiques, design minimaliste, précision technique.",
+          "negativePrompt": "éléments décoratifs, fioritures artistiques, photoréaliste, textures complexes, dégradés, ombres, effets 3D, encombré, filigrane",
+          "placement": "Section technique - explication du fonctionnement",
+          "altText": "[Sujet] - schéma du processus"
         }
       ]
     }

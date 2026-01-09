@@ -3,9 +3,15 @@
 }
 
 .result-container {
-    max-width: 100%;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 0 var(--spacing-lg);
+}
+
+.result-container-full {
+    width: 100%;
+    padding: 0 var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
 }
 
 /* Quick Wins Section */

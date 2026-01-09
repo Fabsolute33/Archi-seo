@@ -96,50 +96,7 @@ export function BusinessInputForm() {
                     </div>
                 )}
 
-                <div className="workflow-preview">
-                    <h4>🔄 WORKFLOW DE COLLABORATION</h4>
-                    <div className="workflow-visual">
-                        <div className="workflow-step active">
-                            <span className="step-icon">🔍</span>
-                            <span className="step-name">Agent 1</span>
-                            <span className="step-role">Strategic Analyzer</span>
-                        </div>
-                        <div className="workflow-arrow">↓</div>
-                        <div className="workflow-step">
-                            <span className="step-icon">🏗️</span>
-                            <span className="step-name">Agent 2</span>
-                            <span className="step-role">Cluster Architect</span>
-                        </div>
-                        <div className="workflow-arrow">↓</div>
-                        <div className="workflow-parallel">
-                            <div className="parallel-label">En parallèle</div>
-                            <div className="parallel-agents">
-                                <div className="workflow-step small">
-                                    <span className="step-icon">✍️</span>
-                                    <span className="step-name">Agent 3</span>
-                                </div>
-                                <div className="workflow-step small">
-                                    <span className="step-icon">⚙️</span>
-                                    <span className="step-name">Agent 4</span>
-                                </div>
-                                <div className="workflow-step small">
-                                    <span className="step-icon">🎯</span>
-                                    <span className="step-name">Agent 5</span>
-                                </div>
-                                <div className="workflow-step small">
-                                    <span className="step-icon">🏆</span>
-                                    <span className="step-name">Agent 6</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="workflow-arrow">↓</div>
-                        <div className="workflow-step final">
-                            <span className="step-icon">🎬</span>
-                            <span className="step-name">Agent 7</span>
-                            <span className="step-role">Coordinator</span>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </section>
     );

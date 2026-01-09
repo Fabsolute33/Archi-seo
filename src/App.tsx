@@ -1,61 +1,56 @@
 import { useState } from 'react';
-import { Compass, Search } from 'lucide-react';
 import { Header } from './components/Header';
+import { Sidebar, ViewType } from './components/Sidebar';
 import { BusinessInputForm } from './components/BusinessInputForm';
 import { WorkflowProgress } from './components/WorkflowProgress';
 import { ResultDashboard } from './components/ResultDashboard';
 import { SettingsModal } from './components/SettingsModal';
 import { ProfileModal } from './components/ProfileModal';
+import { AboutModal } from './components/AboutModal';
 import { ContentAuditInput } from './components/ContentAuditInput';
 import { ContentAuditResults } from './components/ContentAuditResults';
 import { FloatingSaveButton } from './components/FloatingSaveButton';
 import './App.css';
 
-type TabType = 'strategy' | 'audit';
-
 function App() {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState<TabType>('strategy');
+    const [isAboutOpen, setIsAboutOpen] = useState(false);
+    const [currentView, setCurrentView] = useState<ViewType>('strategy');
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     return (
-        <div className="app">
-            <Header
+        <div className={`app ${isSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}>
+            <Sidebar
+                currentView={currentView}
+                onViewChange={setCurrentView}
+                isCollapsed={isSidebarCollapsed}
+                onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                 onOpenSettings={() => setIsSettingsOpen(true)}
-                onOpenProfile={() => setIsProfileOpen(true)}
+                onOpenProjects={() => setIsProfileOpen(true)}
+                onOpenAbout={() => setIsAboutOpen(true)}
             />
 
-            {/* Tab Navigation */}
-            <nav className="app-tabs">
-                <button
-                    className={`app-tab ${activeTab === 'strategy' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('strategy')}
-                >
-                    <Compass size={18} />
-                    Nouvelle Stratégie
-                </button>
-                <button
-                    className={`app-tab ${activeTab === 'audit' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('audit')}
-                >
-                    <Search size={18} />
-                    Audit de Contenu
-                </button>
-            </nav>
+            <Header />
 
-            <main className="main-content">
-                {activeTab === 'strategy' && (
+            <main className={`main-content ${currentView === 'results' ? 'full-width-view' : ''}`}>
+                {currentView === 'strategy' && (
                     <>
                         <BusinessInputForm />
                         <WorkflowProgress />
-                        <ResultDashboard />
                     </>
                 )}
 
-                {activeTab === 'audit' && (
+                {currentView === 'audit' && (
                     <div className="audit-container">
                         <ContentAuditInput />
                         <ContentAuditResults />
+                    </div>
+                )}
+
+                {currentView === 'results' && (
+                    <div className="results-container">
+                        <ResultDashboard />
                     </div>
                 )}
             </main>
@@ -77,6 +72,11 @@ function App() {
             <ProfileModal
                 isOpen={isProfileOpen}
                 onClose={() => setIsProfileOpen(false)}
+            />
+
+            <AboutModal
+                isOpen={isAboutOpen}
+                onClose={() => setIsAboutOpen(false)}
             />
 
             <FloatingSaveButton />

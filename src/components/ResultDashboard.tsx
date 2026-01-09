@@ -324,150 +324,157 @@ export function ResultDashboard() {
                             </div>
                         </Accordion>
                     )}
+                </div>
+            </div>
 
-                    {/* Content Design */}
-                    {contentDesign.data && (
-                        <Accordion
-                            title="Tableau de Contenu"
-                            icon={<FileText size={18} />}
-                            color="#ec4899"
-                        >
-                            <div className="content-table-wrapper">
-                                <table className="content-table content-table-full">
-                                    <thead>
-                                        <tr>
-                                            <th>Cluster</th>
-                                            <th>Titre H1</th>
-                                            <th>Angle</th>
-                                            <th>Trigger</th>
-                                            <th>Carburant Sémantique</th>
-                                            <th>PAA (H2)</th>
-                                            <th>Format Snippet</th>
-                                            <th>Schema</th>
-                                            <th>Appât SXO</th>
-                                            <th>Images IA</th>
-                                            <th>Intent</th>
-                                            <th>Score</th>
-                                            <th>SGE Score</th>
-                                            <th>Validation</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {contentDesign.data.tableauContenu.map((row, idx) => (
-                                            <tr key={idx}>
-                                                <td className="cluster-cell">{row.cluster}</td>
-                                                <td className="title-cell">{row.titreH1}</td>
-                                                <td className="angle-cell">{row.angle}</td>
-                                                <td className="trigger-cell">
-                                                    <span className={`trigger-badge ${row.trigger?.toLowerCase().replace(/[^a-z]/g, '') || ''}`}>
-                                                        {row.trigger}
-                                                    </span>
-                                                </td>
-                                                <td className="carburant-cell">
-                                                    <div className="carburant-details">
-                                                        <div className="carburant-item" title="Terme Autoritaire">
-                                                            <strong>🏛️</strong> {row.carburant?.termeAutoritaire || '-'}
-                                                        </div>
-                                                        <div className="carburant-item" title="Entité Google">
-                                                            <strong>🔍</strong> {row.carburant?.entiteGoogle || '-'}
-                                                        </div>
-                                                        <div className="carburant-lsi" title="LSI Keywords">
-                                                            {row.carburant?.lsi?.slice(0, 3).map((lsi, i) => (
-                                                                <span key={i} className="lsi-tag">{lsi}</span>
-                                                            )) || '-'}
-                                                        </div>
+            {/* Content Design - Full Width */}
+            {contentDesign.data && (
+                <div className="result-container-full">
+                    <Accordion
+                        title="Tableau de Contenu"
+                        icon={<FileText size={18} />}
+                        color="#ec4899"
+                    >
+                        <div className="content-table-wrapper">
+                            <table className="content-table content-table-full">
+                                <thead>
+                                    <tr>
+                                        <th>Cluster</th>
+                                        <th>Titre H1</th>
+                                        <th>Angle</th>
+                                        <th>Trigger</th>
+                                        <th>Carburant Sémantique</th>
+                                        <th>PAA (H2)</th>
+                                        <th>Format Snippet</th>
+                                        <th>Schema</th>
+                                        <th>Appât SXO</th>
+                                        <th>Images IA</th>
+                                        <th>Intent</th>
+                                        <th>Score</th>
+                                        <th>SGE Score</th>
+                                        <th>Validation</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {contentDesign.data.tableauContenu.map((row, idx) => (
+                                        <tr key={idx}>
+                                            <td className="cluster-cell">{row.cluster}</td>
+                                            <td className="title-cell">{row.titreH1}</td>
+                                            <td className="angle-cell">{row.angle}</td>
+                                            <td className="trigger-cell">
+                                                <span className={`trigger-badge ${row.trigger?.toLowerCase().replace(/[^a-z]/g, '') || ''}`}>
+                                                    {row.trigger}
+                                                </span>
+                                            </td>
+                                            <td className="carburant-cell">
+                                                <div className="carburant-details">
+                                                    <div className="carburant-item" title="Terme Autoritaire">
+                                                        <strong>🏛️</strong> {row.carburant?.termeAutoritaire || '-'}
                                                     </div>
-                                                </td>
-                                                <td className="paa-cell">{row.paa}</td>
-                                                <td className="snippet-cell">
-                                                    <span className={`snippet-badge ${row.snippetFormat}`}>
-                                                        {row.snippetFormat}
-                                                    </span>
-                                                </td>
-                                                <td className="schema-cell">
-                                                    <span className="schema-badge">{row.schema}</span>
-                                                </td>
-                                                <td className="sxo-cell">{row.appatSXO}</td>
-                                                <td className="images-cell">
-                                                    {row.imageSuggestions?.length ? (
-                                                        <div className="images-prompts-list">
-                                                            {row.imageSuggestions.map((img, i) => (
-                                                                <div key={i} className="image-prompt-item">
-                                                                    <div className="image-prompt-header">
-                                                                        <span className={`image-type-badge ${img.type}`}>
-                                                                            {img.type === 'infographie' ? '📊' :
-                                                                                img.type === 'photo-produit' ? '📸' :
-                                                                                    img.type === 'schema' ? '📐' :
-                                                                                        img.type === 'illustration' ? '🎨' :
-                                                                                            img.type === 'avant-apres' ? '🔄' : '🖼️'}
-                                                                        </span>
-                                                                        <span className="image-type-label">{img.type}</span>
-                                                                        <CopyButton text={img.generationPrompt} />
-                                                                    </div>
-                                                                    <div className="image-prompt-text">
-                                                                        {img.generationPrompt}
-                                                                    </div>
-                                                                    <div className="image-alt-text">Alt: {img.altText}</div>
+                                                    <div className="carburant-item" title="Entité Google">
+                                                        <strong>🔍</strong> {row.carburant?.entiteGoogle || '-'}
+                                                    </div>
+                                                    <div className="carburant-lsi" title="LSI Keywords">
+                                                        {row.carburant?.lsi?.slice(0, 3).map((lsi, i) => (
+                                                            <span key={i} className="lsi-tag">{lsi}</span>
+                                                        )) || '-'}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="paa-cell">{row.paa}</td>
+                                            <td className="snippet-cell">
+                                                <span className={`snippet-badge ${row.snippetFormat}`}>
+                                                    {row.snippetFormat}
+                                                </span>
+                                            </td>
+                                            <td className="schema-cell">
+                                                <span className="schema-badge">{row.schema}</span>
+                                            </td>
+                                            <td className="sxo-cell">{row.appatSXO}</td>
+                                            <td className="images-cell">
+                                                {row.imageSuggestions?.length ? (
+                                                    <div className="images-prompts-list">
+                                                        {row.imageSuggestions.map((img, i) => (
+                                                            <div key={i} className="image-prompt-item">
+                                                                <div className="image-prompt-header">
+                                                                    <span className={`image-type-badge ${img.type}`}>
+                                                                        {img.type === 'infographie' ? '📊' :
+                                                                            img.type === 'photo-produit' ? '📸' :
+                                                                                img.type === 'schema' ? '📐' :
+                                                                                    img.type === 'illustration' ? '🎨' :
+                                                                                        img.type === 'avant-apres' ? '🔄' : '🖼️'}
+                                                                    </span>
+                                                                    <span className="image-type-label">{img.type}</span>
+                                                                    <CopyButton text={img.generationPrompt} />
                                                                 </div>
-                                                            ))}
-                                                        </div>
-                                                    ) : (
-                                                        <span className="images-na">-</span>
-                                                    )}
-                                                </td>
-                                                <td className="intent-cell">
-                                                    <span className={`intent-badge ${row.intent?.toLowerCase()}`}>{row.intent}</span>
-                                                </td>
-                                                <td className="score-cell">
-                                                    <div className="score-badges">
-                                                        <span title="Volume">📈 {row.score?.volume}</span>
-                                                        <span title="Difficulté">🔧 {row.score?.difficulte}</span>
-                                                        <span title="Impact">⚡ {row.score?.impact}</span>
+                                                                <div className="image-prompt-text" title={img.generationPrompt}>
+                                                                    {img.generationPrompt.length > 50
+                                                                        ? img.generationPrompt.substring(0, 50) + '...'
+                                                                        : img.generationPrompt}
+                                                                </div>
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                    {row.score?.prioriteGlobale && (
-                                                        <div className="priority-total">
-                                                            Total: {row.score.prioriteGlobale}
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td className="sge-score-cell">
-                                                    {row.sgeOptimization ? (
-                                                        <div
-                                                            className={`sge-score-badge ${row.sgeOptimization.aiOverviewPotential}`}
-                                                            title={`Score: ${row.sgeOptimization.citabilityScore}/100\n\nEntités: ${row.sgeOptimization.entityCoverage?.join(', ')}\n\nConseils: ${row.sgeOptimization.optimizationTips?.slice(0, 2).join(' | ')}`}
-                                                        >
-                                                            <span className="sge-score-value">{row.sgeOptimization.citabilityScore}</span>
-                                                            <span className="sge-score-potential">{row.sgeOptimization.aiOverviewPotential}</span>
-                                                        </div>
-                                                    ) : (
-                                                        <span className="sge-score-na">N/A</span>
-                                                    )}
-                                                </td>
-                                                <td className="validation-cell">
-                                                    <label className={`validation-checkbox ${row.validated ? 'validated' : ''}`}>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={row.validated || false}
-                                                            onChange={() => toggleArticleValidation(idx)}
-                                                        />
-                                                        <span className="checkmark"></span>
-                                                        <span className="validation-label">
-                                                            {row.validated ? 'Rédigé' : 'À rédiger'}
-                                                        </span>
-                                                    </label>
-                                                </td>
-                                                <td className="actions-cell">
-                                                    <CopyForGeneratorButton row={row} />
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </Accordion>
-                    )}
+                                                ) : (
+                                                    <span className="images-na">-</span>
+                                                )}
+                                            </td>
+                                            <td className="intent-cell">
+                                                <span className={`intent-badge ${row.intent?.toLowerCase()}`}>{row.intent}</span>
+                                            </td>
+                                            <td className="score-cell">
+                                                <div className="score-badges">
+                                                    <span title="Volume">📈 {row.score?.volume}</span>
+                                                    <span title="Difficulté">🔧 {row.score?.difficulte}</span>
+                                                    <span title="Impact">⚡ {row.score?.impact}</span>
+                                                </div>
+                                                {row.score?.prioriteGlobale && (
+                                                    <div className="priority-total">
+                                                        Total: {row.score.prioriteGlobale}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td className="sge-score-cell">
+                                                {row.sgeOptimization ? (
+                                                    <div
+                                                        className={`sge-score-badge ${row.sgeOptimization.aiOverviewPotential}`}
+                                                        title={`Score: ${row.sgeOptimization.citabilityScore}/100\n\nEntités: ${row.sgeOptimization.entityCoverage?.join(', ')}\n\nConseils: ${row.sgeOptimization.optimizationTips?.slice(0, 2).join(' | ')}`}
+                                                    >
+                                                        <span className="sge-score-value">{row.sgeOptimization.citabilityScore}</span>
+                                                        <span className="sge-score-potential">{row.sgeOptimization.aiOverviewPotential}</span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="sge-score-na">N/A</span>
+                                                )}
+                                            </td>
+                                            <td className="validation-cell">
+                                                <label className={`validation-checkbox ${row.validated ? 'validated' : ''}`}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={row.validated || false}
+                                                        onChange={() => toggleArticleValidation(idx)}
+                                                    />
+                                                    <span className="checkmark"></span>
+                                                    <span className="validation-label">
+                                                        {row.validated ? 'Rédigé' : 'À rédiger'}
+                                                    </span>
+                                                </label>
+                                            </td>
+                                            <td className="actions-cell">
+                                                <CopyForGeneratorButton row={row} />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </Accordion>
+                </div>
+            )}
 
+            <div className="result-container">
+                <div className="agents-results">
                     {/* Technical Optimization */}
                     {technicalOptimization.data && (
                         <Accordion

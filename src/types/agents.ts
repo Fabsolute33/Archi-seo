@@ -127,11 +127,14 @@ export interface MaillageArticle {
     ancre: string;
 }
 
-// Image suggestion for AI generation (Google Nano Bana / DALL-E / Midjourney)
+// Image suggestion for AI generation (Google Nano Bana / DALL-E / Midjourney / Gemini)
 export interface ImageSuggestion {
-    type: 'infographie' | 'photo-produit' | 'schema' | 'illustration' | 'capture-ecran' | 'avant-apres' | 'portrait-expert';
+    type: 'infographie' | 'photo-produit' | 'schema' | 'illustration' | 'capture-ecran' | 'avant-apres' | 'portrait-expert' | 'diagramme';
+    category: 'photography' | 'infographic' | 'illustration' | 'schema';  // Catégorie principale
+    style: string;                // Style visuel choisi (ex: "professional photography", "flat vector illustration")
     description: string;          // Description courte du visuel
-    generationPrompt: string;     // Prompt optimisé pour Google Nano Bana / IA générative
+    generationPrompt: string;     // Prompt optimisé pour Google Gemini / IA générative
+    negativePrompt: string;       // Éléments à éviter dans la génération
     placement: string;            // Où placer l'image dans l'article
     altText: string;              // Texte alternatif SEO-optimisé
 }

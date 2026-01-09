@@ -1,32 +1,21 @@
 import { useEffect } from 'react';
-import { Zap, Settings, FolderOpen, LogIn, LogOut, PlusCircle } from 'lucide-react';
+import { Zap, LogIn, LogOut } from 'lucide-react';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useProjectStore } from '../stores/useProjectStore';
 import './Header.css';
 
 interface HeaderProps {
-    onOpenSettings: () => void;
-    onOpenProfile: () => void;
+    // No specific props needed for now if navigation is external
 }
 
-export function Header({ onOpenSettings, onOpenProfile }: HeaderProps) {
+export function Header({ }: HeaderProps) {
     const { user, isLoading, initialize, login, logout } = useAuthStore();
-    const { currentProjectName, createNewProject } = useProjectStore();
+    const { currentProjectName } = useProjectStore();
 
     useEffect(() => {
         const unsubscribe = initialize();
         return unsubscribe;
     }, [initialize]);
-
-    const handleNewProject = () => {
-        if (currentProjectName) {
-            if (window.confirm('Créer un nouveau projet ? Les modifications non sauvegardées seront perdues.')) {
-                createNewProject();
-            }
-        } else {
-            createNewProject();
-        }
-    };
 
     return (
         <header className="header">
@@ -48,22 +37,7 @@ export function Header({ onOpenSettings, onOpenProfile }: HeaderProps) {
                 </div>
 
                 <nav className="header-nav">
-                    {user && (
-                        <button className="header-new-btn" onClick={handleNewProject} title="Nouveau Projet">
-                            <PlusCircle size={20} />
-                            <span>Nouveau</span>
-                        </button>
-                    )}
-                    {user && (
-                        <button className="header-settings-btn" onClick={onOpenProfile}>
-                            <FolderOpen size={20} />
-                            <span>Mes Projets</span>
-                        </button>
-                    )}
-                    <button className="header-settings-btn" onClick={onOpenSettings}>
-                        <Settings size={20} />
-                        <span>Configuration</span>
-                    </button>
+                    {/* Les boutons de navigation sont maintenant dans la Sidebar */}
 
                     {user ? (
                         <div className="header-user">

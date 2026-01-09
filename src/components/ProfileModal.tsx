@@ -36,6 +36,13 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         e.stopPropagation();
         if (window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
             await deleteProject(id);
+            // Recharger la liste des projets après suppression
+            await loadProjects();
+            // Si plus aucun projet, fermer le modal (retour à l'accueil)
+            const updatedProjects = useProjectStore.getState().projects;
+            if (updatedProjects.length === 0) {
+                onClose();
+            }
         }
     };
 

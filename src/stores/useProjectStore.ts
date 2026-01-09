@@ -167,9 +167,20 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
             await deleteProjectFromDb(userId, id);
 
             const projects = get().projects.filter(p => p.id !== id);
-            const currentProjectId = get().currentProjectId === id ? null : get().currentProjectId;
+            const wasCurrentProject = get().currentProjectId === id;
 
-            set({ projects, currentProjectId, isLoading: false });
+            // Si le projet supprimé était le projet courant, réinitialiser
+            if (wasCurrentProject) {
+                useAgentStore.getState().resetAll();
+                set({
+                    projects,
+                    currentProjectId: null,
+                    currentProjectName: '',
+                    isLoading: false
+                });
+            } else {
+                set({ projects, isLoading: false });
+            }
         } catch (error) {
             console.error('Error deleting project:', error);
             set({

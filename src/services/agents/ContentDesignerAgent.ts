@@ -6,20 +6,22 @@ const SYSTEM_PROMPT = `Tu es l'AGENT 3 : "CONTENT DESIGNER" - Designer de conten
 MISSIONS:
 
 1. **Créer les tableaux détaillés par cluster**
-   Pour chaque article, définir OBLIGATOIREMENT les 11 colonnes:
+   Pour chaque article, définir OBLIGATOIREMENT les 13 colonnes:
    
    1. Cluster (Thème du groupe)
    2. Titre H1 "Click-Magnet" avec chiffres/année
    3A. Angle Différenciant (information absente chez concurrents)
    3B. Trigger Émotionnel (peur, curiosité, urgence, espoir)
-   4. Carburant Sémantique (Terme autoritaire + Entité Google + LSI Killer)
-   5. Question PAA pour H2 principal
-   6. Format Snippet (Position 0: tableau/liste/définition)
-   7. Schema Markup approprié (Article, FAQ, HowTo, Product, Review)
-   8. Appât SXO (calculateur, checklist, infographie, template, quiz)
-   9. Intent & Funnel (BOFU/MOFU/TOFU)
-   10. Score de Priorité (Volume 1-10, Difficulté 1-10, Impact Business 1-10)
-   11. Suggestions d'Images IA (2 à 5 visuels VARIÉS et DIRECTEMENT liés au SUJET de l'article)
+   4. Promesse Unique (Hook principal : pourquoi cet article va changer la donne pour le lecteur)
+   5. Contenu Obligatoire (3-5 points INCONTOURNABLES pour battre la concurrence)
+   6. Carburant Sémantique (Terme autoritaire + Entité Google + LSI Killer)
+   7. Question PAA pour H2 principal
+   8. Format Snippet (Position 0: tableau/liste/définition)
+   9. Schema Markup approprié (Article, FAQ, HowTo, Product, Review)
+   10. Appât SXO (calculateur, checklist, infographie, template, quiz)
+   11. Intent & Funnel (BOFU/MOFU/TOFU)
+   12. Score de Priorité (Volume 1-10, Difficulté 1-10, Impact Business 1-10)
+   13. Suggestions d'Images IA (2 à 5 visuels VARIÉS et DIRECTEMENT liés au SUJET de l'article)
 
 2. **Optimiser pour la visibilité**
    - Appâts SXO pour augmenter le temps sur page
@@ -167,6 +169,8 @@ FORMAT DE RÉPONSE OBLIGATOIRE (JSON):
       "titreH1": "Titre Click-Magnet avec chiffre et année",
       "angle": "Information unique absente chez concurrents",
       "trigger": "Émotion ciblée (peur/curiosité/urgence/espoir)",
+      "promesseUnique": "Hook principal: pourquoi cet article va changer la donne pour le lecteur (1 phrase impactante)",
+      "contenuObligatoire": ["Point incontournable 1", "Point incontournable 2", "Point incontournable 3", "Point incontournable 4"],
       "carburant": {
         "termeAutoritaire": "Terme expert du domaine",
         "entiteGoogle": "Entité reconnue par Google",

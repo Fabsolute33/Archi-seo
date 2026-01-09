@@ -11,10 +11,12 @@ import type {
     CoordinatorSummary,
     ContentTableRow,
     NewsTransformerInput,
-    NewsTransformerResult
+    NewsTransformerResult,
+    NewsAnalysis
 } from '../types/agents';
 import type { ContentAuditResult } from '../types/auditTypes';
 import { initializeGemini } from '../services/GeminiService';
+import { initializeGroundedGemini } from '../services/GroundedGeminiService';
 import { runStrategicAnalyzer } from '../services/agents/StrategicAnalyzerAgent';
 import { runClusterArchitect } from '../services/agents/ClusterArchitectAgent';
 import { runContentDesigner } from '../services/agents/ContentDesignerAgent';
@@ -63,6 +65,8 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
         formData: null as NewsTransformerInput | null,
         result: null as NewsTransformerResult | null,
         error: null as string | null,
+        savedAnalyses: [] as NewsAnalysis[],
+        currentAnalysisId: null as string | null,
     },
 
     setBusinessDescription: (desc: string) => set({ businessDescription: desc }),
@@ -70,6 +74,7 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
         set({ apiKey: key });
         if (key) {
             initializeGemini(key);
+            initializeGroundedGemini(key);
         }
     },
     setQuestionnaireAnswers: (answers) => set({ questionnaireAnswers: answers }),
@@ -306,13 +311,15 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
             startedAt: project.createdAt,
             completedAt: project.updatedAt,
         },
-        // Restore News Transformer data
+        // Restore News Transformer data with analyses array
         newsTransformer: project.newsTransformerData ? {
-            status: project.newsTransformerData.result ? 'completed' : 'idle',
-            formData: project.newsTransformerData.formData,
-            result: project.newsTransformerData.result,
+            status: 'idle' as const,
+            formData: null,
+            result: null,
             error: null,
-        } : { status: 'idle', formData: null, result: null, error: null },
+            savedAnalyses: project.newsTransformerData.analyses || [],
+            currentAnalysisId: project.newsTransformerData.currentAnalysisId || null,
+        } : { status: 'idle' as const, formData: null, result: null, error: null, savedAnalyses: [], currentAnalysisId: null },
     }),
 
     // Content Audit Actions
@@ -409,26 +416,110 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
 
     // News Transformer Actions
     runNewsTransformerAgent: async (formData: NewsTransformerInput) => {
-        const { apiKey } = get();
+        const { apiKey, newsTransformer } = get();
 
         if (!apiKey) {
-            set({ newsTransformer: { status: 'error', formData, result: null, error: 'Clé API manquante' } });
+            set({ newsTransformer: { ...newsTransformer, status: 'error', formData, result: null, error: 'Clé API manquante' } });
             return;
         }
 
         try {
-            set({ newsTransformer: { status: 'running', formData, result: null, error: null } });
+            set({ newsTransformer: { ...newsTransformer, status: 'running', formData, result: null, error: null } });
 
             const result = await runNewsTransformer(formData);
 
-            set({ newsTransformer: { status: 'completed', formData, result, error: null } });
+            set({ newsTransformer: { ...get().newsTransformer, status: 'completed', formData, result, error: null } });
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la transformation';
-            set({ newsTransformer: { status: 'error', formData, result: null, error: errorMessage } });
+            set({ newsTransformer: { ...get().newsTransformer, status: 'error', formData, result: null, error: errorMessage } });
         }
     },
 
-    resetNewsTransformer: () => set({
-        newsTransformer: { status: 'idle', formData: null, result: null, error: null }
-    }),
+    resetNewsTransformer: () => {
+        const { newsTransformer } = get();
+        set({
+            newsTransformer: {
+                ...newsTransformer,
+                status: 'idle',
+                formData: null,
+                result: null,
+                error: null,
+                currentAnalysisId: null
+            }
+        });
+    },
+
+    saveCurrentNewsAnalysis: () => {
+        const { newsTransformer } = get();
+        if (!newsTransformer.formData || !newsTransformer.result) return;
+
+        const newAnalysis: NewsAnalysis = {
+            id: `news-${Date.now()}`,
+            createdAt: Date.now(),
+            sourceUrl: newsTransformer.formData.url,
+            formData: newsTransformer.formData,
+            result: newsTransformer.result,
+        };
+
+        const existingIndex = newsTransformer.savedAnalyses.findIndex(
+            a => a.id === newsTransformer.currentAnalysisId
+        );
+
+        let updatedAnalyses: NewsAnalysis[];
+        if (existingIndex >= 0) {
+            // Update existing
+            updatedAnalyses = [...newsTransformer.savedAnalyses];
+            updatedAnalyses[existingIndex] = { ...newAnalysis, id: newsTransformer.currentAnalysisId! };
+        } else {
+            // Add new
+            updatedAnalyses = [newAnalysis, ...newsTransformer.savedAnalyses];
+        }
+
+        set({
+            newsTransformer: {
+                ...newsTransformer,
+                savedAnalyses: updatedAnalyses,
+                currentAnalysisId: existingIndex >= 0 ? newsTransformer.currentAnalysisId : newAnalysis.id,
+            }
+        });
+    },
+
+    loadNewsAnalysis: (id: string) => {
+        const { newsTransformer } = get();
+        const analysis = newsTransformer.savedAnalyses.find(a => a.id === id);
+        if (!analysis) return;
+
+        set({
+            newsTransformer: {
+                ...newsTransformer,
+                status: analysis.result ? 'completed' : 'idle',
+                formData: analysis.formData,
+                result: analysis.result,
+                error: null,
+                currentAnalysisId: id,
+            }
+        });
+    },
+
+    deleteNewsAnalysis: (id: string) => {
+        const { newsTransformer } = get();
+        const updatedAnalyses = newsTransformer.savedAnalyses.filter(a => a.id !== id);
+
+        // If we deleted the current analysis, reset
+        const shouldReset = newsTransformer.currentAnalysisId === id;
+
+        set({
+            newsTransformer: shouldReset ? {
+                status: 'idle',
+                formData: null,
+                result: null,
+                error: null,
+                savedAnalyses: updatedAnalyses,
+                currentAnalysisId: null,
+            } : {
+                ...newsTransformer,
+                savedAnalyses: updatedAnalyses,
+            }
+        });
+    },
 }));

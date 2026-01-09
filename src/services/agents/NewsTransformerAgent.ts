@@ -1,4 +1,4 @@
-import { generateWithGemini } from '../GeminiService';
+import { generateWithGrounding, type GroundingSource } from '../GroundedGeminiService';
 import type { NewsTransformerInput, NewsTransformerResult, SEOAngle } from '../../types/agents';
 
 const SYSTEM_PROMPT = `# PROMPT SYSTÈME - NEWS TO SEO TRANSFORMER
@@ -141,10 +141,23 @@ Si le score est 🟡 ou 🟢, génère exactement **5 angles d'exploitation uniq
   }
 }`;
 
+export interface NewsTransformerResultWithSources {
+  result: NewsTransformerResult;
+  sources: GroundingSource[];
+  searchQueries: string[];
+}
+
 export async function runNewsTransformer(
-    input: NewsTransformerInput
+  input: NewsTransformerInput
 ): Promise<NewsTransformerResult> {
-    const userPrompt = `
+  const grounded = await runNewsTransformerWithGrounding(input);
+  return grounded.result;
+}
+
+export async function runNewsTransformerWithGrounding(
+  input: NewsTransformerInput
+): Promise<NewsTransformerResultWithSources> {
+  const userPrompt = `
 Transforme cet article en opportunités SEO :
 
 **URL de l'article source :**
@@ -180,87 +193,93 @@ ${input.articlesExistants || 'Aucun'}
 Analyse cette actualité et génère les 5 angles SEO stratégiques selon le format JSON défini.
   `.trim();
 
-    return generateWithGemini(
-        SYSTEM_PROMPT,
-        userPrompt,
-        (text) => {
-            const parsed = JSON.parse(text);
+  const grounded = await generateWithGrounding<NewsTransformerResult>(
+    SYSTEM_PROMPT,
+    userPrompt,
+    (text) => {
+      const parsed = JSON.parse(text);
 
-            // Handle non-rentable case
-            if (parsed.scoreRentabilite === '🔴') {
-                return {
-                    scoreRentabilite: '🔴' as const,
-                    justificationScore: parsed.justificationScore || 'Article non rentable',
-                    angles: [],
-                    planAction: null,
-                    maillageInterne: null,
-                    quickWin: null,
-                    nonRentable: {
-                        raisons: parsed.nonRentable?.raisons || [],
-                        typesAPrilegier: parsed.nonRentable?.typesAPrilegier || [],
-                        recommandationAlternative: parsed.nonRentable?.recommandationAlternative || ''
-                    }
-                };
-            }
+      // Handle non-rentable case
+      if (parsed.scoreRentabilite === '🔴') {
+        return {
+          scoreRentabilite: '🔴' as const,
+          justificationScore: parsed.justificationScore || 'Article non rentable',
+          angles: [],
+          planAction: null,
+          maillageInterne: null,
+          quickWin: null,
+          nonRentable: {
+            raisons: parsed.nonRentable?.raisons || [],
+            typesAPrilegier: parsed.nonRentable?.typesAPrilegier || [],
+            recommandationAlternative: parsed.nonRentable?.recommandationAlternative || ''
+          }
+        };
+      }
 
-            // Parse angles
-            const angles: SEOAngle[] = (parsed.angles || []).map((angle: Partial<SEOAngle>, index: number) => ({
-                numero: angle.numero || index + 1,
-                titre: angle.titre || '',
-                typeIntention: angle.typeIntention || 'Info',
-                elementDifferenciateur: angle.elementDifferenciateur || '',
-                motCleCible: angle.motCleCible || '',
-                difficulteSEO: angle.difficulteSEO || 'Moyen',
-                promesseUnique: angle.promesseUnique || '',
-                contenuObligatoire: angle.contenuObligatoire || [],
-                requetesLSI: angle.requetesLSI || [],
-                featuredSnippet: {
-                    formatRecommande: angle.featuredSnippet?.formatRecommande || 'Liste numérotée',
-                    questionPAA: angle.featuredSnippet?.questionPAA || ''
-                },
-                strategiePublication: {
-                    timing: angle.strategiePublication?.timing || 'Approfondi 3-5 jours',
-                    longueurCible: angle.strategiePublication?.longueurCible || '2000-3000',
-                    miseAJour: angle.strategiePublication?.miseAJour || 'Trimestrielle'
-                },
-                potentielConversion: angle.potentielConversion || '',
-                visuels: angle.visuels || []
-            }));
+      // Parse angles
+      const angles: SEOAngle[] = (parsed.angles || []).map((angle: Partial<SEOAngle>, index: number) => ({
+        numero: angle.numero || index + 1,
+        titre: angle.titre || '',
+        typeIntention: angle.typeIntention || 'Info',
+        elementDifferenciateur: angle.elementDifferenciateur || '',
+        motCleCible: angle.motCleCible || '',
+        difficulteSEO: angle.difficulteSEO || 'Moyen',
+        promesseUnique: angle.promesseUnique || '',
+        contenuObligatoire: angle.contenuObligatoire || [],
+        requetesLSI: angle.requetesLSI || [],
+        featuredSnippet: {
+          formatRecommande: angle.featuredSnippet?.formatRecommande || 'Liste numérotée',
+          questionPAA: angle.featuredSnippet?.questionPAA || ''
+        },
+        strategiePublication: {
+          timing: angle.strategiePublication?.timing || 'Approfondi 3-5 jours',
+          longueurCible: angle.strategiePublication?.longueurCible || '2000-3000',
+          miseAJour: angle.strategiePublication?.miseAJour || 'Trimestrielle'
+        },
+        potentielConversion: angle.potentielConversion || '',
+        visuels: angle.visuels || []
+      }));
 
-            return {
-                scoreRentabilite: parsed.scoreRentabilite || '🟡',
-                justificationScore: parsed.justificationScore || '',
-                angles,
-                planAction: parsed.planAction ? {
-                    priorite1: {
-                        angle: parsed.planAction.priorite1?.angle || 1,
-                        titre: parsed.planAction.priorite1?.titre || '',
-                        raison: parsed.planAction.priorite1?.raison || '',
-                        roi: parsed.planAction.priorite1?.roi || 'Moyen',
-                        tempsProduction: parsed.planAction.priorite1?.tempsProduction || ''
-                    },
-                    priorite2: {
-                        angle: parsed.planAction.priorite2?.angle || 2,
-                        titre: parsed.planAction.priorite2?.titre || '',
-                        raison: parsed.planAction.priorite2?.raison || '',
-                        roi: parsed.planAction.priorite2?.roi || 'Moyen',
-                        tempsProduction: parsed.planAction.priorite2?.tempsProduction || ''
-                    },
-                    priorite3: {
-                        angle: parsed.planAction.priorite3?.angle || 3,
-                        titre: parsed.planAction.priorite3?.titre || '',
-                        raison: parsed.planAction.priorite3?.raison || '',
-                        roi: parsed.planAction.priorite3?.roi || 'Moyen',
-                        tempsProduction: parsed.planAction.priorite3?.tempsProduction || ''
-                    }
-                } : null,
-                maillageInterne: parsed.maillageInterne ? {
-                    articlesALier: parsed.maillageInterne.articlesALier || [],
-                    architecture: parsed.maillageInterne.architecture || ''
-                } : null,
-                quickWin: parsed.quickWin || null,
-                nonRentable: null
-            };
-        }
-    );
+      return {
+        scoreRentabilite: parsed.scoreRentabilite || '🟡',
+        justificationScore: parsed.justificationScore || '',
+        angles,
+        planAction: parsed.planAction ? {
+          priorite1: {
+            angle: parsed.planAction.priorite1?.angle || 1,
+            titre: parsed.planAction.priorite1?.titre || '',
+            raison: parsed.planAction.priorite1?.raison || '',
+            roi: parsed.planAction.priorite1?.roi || 'Moyen',
+            tempsProduction: parsed.planAction.priorite1?.tempsProduction || ''
+          },
+          priorite2: {
+            angle: parsed.planAction.priorite2?.angle || 2,
+            titre: parsed.planAction.priorite2?.titre || '',
+            raison: parsed.planAction.priorite2?.raison || '',
+            roi: parsed.planAction.priorite2?.roi || 'Moyen',
+            tempsProduction: parsed.planAction.priorite2?.tempsProduction || ''
+          },
+          priorite3: {
+            angle: parsed.planAction.priorite3?.angle || 3,
+            titre: parsed.planAction.priorite3?.titre || '',
+            raison: parsed.planAction.priorite3?.raison || '',
+            roi: parsed.planAction.priorite3?.roi || 'Moyen',
+            tempsProduction: parsed.planAction.priorite3?.tempsProduction || ''
+          }
+        } : null,
+        maillageInterne: parsed.maillageInterne ? {
+          articlesALier: parsed.maillageInterne.articlesALier || [],
+          architecture: parsed.maillageInterne.architecture || ''
+        } : null,
+        quickWin: parsed.quickWin || null,
+        nonRentable: null
+      };
+    }
+  );
+
+  return {
+    result: grounded.result,
+    sources: grounded.sources,
+    searchQueries: grounded.searchQueries
+  };
 }

@@ -45,6 +45,19 @@ ${row.sgeOptimization.optimizationTips?.map(tip => `   • ${tip}`).join('\n') |
 ${row.sgeOptimization.keyFactsExtracted?.map(fact => `   → ${fact}`).join('\n') || '   Aucun fait clé disponible'}
 ` : '';
 
+    // Section News SEO (Promesse Unique et Contenu Obligatoire) si disponible
+    const newsSeoSection = (row.promesseUnique || row.contenuObligatoire?.length) ? `
+═══════════════════════════════════════════════════════════════
+
+🎯 PROMESSE UNIQUE (Hook principal)
+────────────────────────────────────
+${row.promesseUnique || 'Non défini'}
+
+📋 CONTENU OBLIGATOIRE (Points à couvrir absolument)
+────────────────────────────────────────────────────
+${row.contenuObligatoire?.map((c, i) => `${i + 1}. ${c}`).join('\n') || 'Non défini'}
+` : '';
+
     return `📝 INSTRUCTIONS DE RÉDACTION D'ARTICLE SEO
 
 ═══════════════════════════════════════════════════════════════
@@ -107,7 +120,7 @@ Placement suggéré : Après le H2 principal ou dans une section dédiée
 Objectif : Augmenter le temps passé sur la page et l'engagement
 
 ═══════════════════════════════════════════════════════════════
-${sgeSection}
+${newsSeoSection}${sgeSection}
 ✅ CHECKLIST DE RÉDACTION
 ─────────────────────────
 □ Titre H1 avec chiffre/année ✓
@@ -117,7 +130,7 @@ ${sgeSection}
 □ Mots-clés LSI naturellement intégrés
 □ Format snippet respecté pour Position 0
 □ Appât SXO créé et intégré
-□ Schema markup prêt à implémenter${row.sgeOptimization ? '\n□ Réponses structurées SGE intégrées\n□ Entités Google couvertes\n□ Faits citables inclus' : ''}
+□ Schema markup prêt à implémenter${row.sgeOptimization ? '\n□ Réponses structurées SGE intégrées\n□ Entités Google couvertes\n□ Faits citables inclus' : ''}${row.promesseUnique ? '\n□ Promesse unique respectée' : ''}${row.contenuObligatoire?.length ? '\n□ Tous les contenus obligatoires couverts' : ''}
 
 ═══════════════════════════════════════════════════════════════`;
 }
@@ -343,6 +356,7 @@ export function ResultDashboard() {
                                         <th>Titre H1</th>
                                         <th>Angle</th>
                                         <th>Trigger</th>
+                                        <th>Promesse & Contenu</th>
                                         <th>Carburant Sémantique</th>
                                         <th>PAA (H2)</th>
                                         <th>Format Snippet</th>
@@ -350,7 +364,6 @@ export function ResultDashboard() {
                                         <th>Appât SXO</th>
                                         <th>Images IA</th>
                                         <th>Intent</th>
-                                        <th>Score</th>
                                         <th>SGE Score</th>
                                         <th>Validation</th>
                                         <th>Actions</th>
@@ -366,6 +379,39 @@ export function ResultDashboard() {
                                                 <span className={`trigger-badge ${row.trigger?.toLowerCase().replace(/[^a-z]/g, '') || ''}`}>
                                                     {row.trigger}
                                                 </span>
+                                            </td>
+                                            <td className="promesse-contenu-cell">
+                                                {(row.promesseUnique || row.contenuObligatoire?.length) ? (
+                                                    <div className="promesse-contenu-content">
+                                                        {row.promesseUnique && (
+                                                            <div className="promesse-unique">
+                                                                <span className="promesse-icon">🎯</span>
+                                                                <span className="promesse-text" title={row.promesseUnique}>
+                                                                    {row.promesseUnique.length > 60
+                                                                        ? row.promesseUnique.substring(0, 60) + '...'
+                                                                        : row.promesseUnique}
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                        {row.contenuObligatoire && row.contenuObligatoire.length > 0 && (
+                                                            <div className="contenu-obligatoire">
+                                                                <span className="contenu-header">📋 Contenu :</span>
+                                                                <ul className="contenu-list">
+                                                                    {row.contenuObligatoire.slice(0, 3).map((c, i) => (
+                                                                        <li key={i} title={c}>
+                                                                            {c.length > 40 ? c.substring(0, 40) + '...' : c}
+                                                                        </li>
+                                                                    ))}
+                                                                    {row.contenuObligatoire.length > 3 && (
+                                                                        <li className="more-items">+{row.contenuObligatoire.length - 3} autres...</li>
+                                                                    )}
+                                                                </ul>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <span className="promesse-na">-</span>
+                                                )}
                                             </td>
                                             <td className="carburant-cell">
                                                 <div className="carburant-details">
@@ -422,18 +468,6 @@ export function ResultDashboard() {
                                             </td>
                                             <td className="intent-cell">
                                                 <span className={`intent-badge ${row.intent?.toLowerCase()}`}>{row.intent}</span>
-                                            </td>
-                                            <td className="score-cell">
-                                                <div className="score-badges">
-                                                    <span title="Volume">📈 {row.score?.volume}</span>
-                                                    <span title="Difficulté">🔧 {row.score?.difficulte}</span>
-                                                    <span title="Impact">⚡ {row.score?.impact}</span>
-                                                </div>
-                                                {row.score?.prioriteGlobale && (
-                                                    <div className="priority-total">
-                                                        Total: {row.score.prioriteGlobale}
-                                                    </div>
-                                                )}
                                             </td>
                                             <td className="sge-score-cell">
                                                 {row.sgeOptimization ? (

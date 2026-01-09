@@ -28,7 +28,16 @@ export async function generateWithGemini<T>(
         }
     });
 
-    const fullPrompt = `${systemPrompt}\n\n---\n\n${userPrompt}\n\n---\n\nIMPORTANT: Réponds UNIQUEMENT avec un JSON valide, sans markdown, sans backticks, sans texte avant ou après.`;
+    // Generate current date context for freshness
+    const now = new Date();
+    const dateContext = `📅 CONTEXTE TEMPOREL: Nous sommes le ${now.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    })}. L'année en cours est ${now.getFullYear()}. Utilise UNIQUEMENT des données, tendances et références actualisées à cette date. Évite toute référence obsolète.`;
+
+    const fullPrompt = `${dateContext}\n\n${systemPrompt}\n\n---\n\n${userPrompt}\n\n---\n\nIMPORTANT: Réponds UNIQUEMENT avec un JSON valide, sans markdown, sans backticks, sans texte avant ou après.`;
 
     const result = await model.generateContent(fullPrompt);
     const response = result.response;

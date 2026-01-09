@@ -16,7 +16,10 @@ import {
     Lightbulb,
     Image,
     PlusCircle,
-    Save
+    Save,
+    Trash2,
+    History,
+    Plus
 } from 'lucide-react';
 import { useAgentStore } from '../stores/useAgentStore';
 import { useProjectStore } from '../stores/useProjectStore';
@@ -33,7 +36,16 @@ const CONTENT_TYPES = [
 ];
 
 export function NewsTransformerSection() {
-    const { newsTransformer, runNewsTransformerAgent, resetNewsTransformer, apiKey, addSuggestedArticle } = useAgentStore();
+    const {
+        newsTransformer,
+        runNewsTransformerAgent,
+        resetNewsTransformer,
+        apiKey,
+        addSuggestedArticle,
+        saveCurrentNewsAnalysis,
+        loadNewsAnalysis,
+        deleteNewsAnalysis
+    } = useAgentStore();
     const { saveCurrentProject, currentProjectName, isLoading: isSaving } = useProjectStore();
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
     const [addedAngles, setAddedAngles] = useState<number[]>([]);
@@ -74,6 +86,44 @@ export function NewsTransformerSection() {
             contraintes: '',
             articlesExistants: ''
         });
+        setAddedAngles([]);
+    };
+
+    const handleSaveAnalysis = async () => {
+        saveCurrentNewsAnalysis();
+        if (currentProjectName) {
+            await saveCurrentProject();
+        }
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+    };
+
+    const handleLoadAnalysis = (id: string) => {
+        loadNewsAnalysis(id);
+        // Sync form data with loaded analysis
+        const analysis = newsTransformer.savedAnalyses.find(a => a.id === id);
+        if (analysis) {
+            setFormData(analysis.formData);
+            setAddedAngles([]);
+        }
+    };
+
+    const formatDate = (timestamp: number) => {
+        return new Date(timestamp).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
+    const truncateUrl = (url: string, maxLength = 30) => {
+        try {
+            const hostname = new URL(url).hostname;
+            return hostname.length > maxLength ? hostname.slice(0, maxLength) + '...' : hostname;
+        } catch {
+            return url.slice(0, maxLength) + '...';
+        }
     };
 
     const handleTypeContenuChange = (type: string) => {
@@ -119,11 +169,18 @@ export function NewsTransformerSection() {
             'Transac': 'BOFU'
         };
 
+        // Determine emotional trigger from intent type
+        const triggerMap: Record<string, string> = {
+            'Info': 'Curiosité',
+            'Commercial': 'Espoir',
+            'Transac': 'Urgence'
+        };
+
         return {
             cluster: formData.secteur,
             titreH1: angle.titre,
             angle: angle.elementDifferenciateur,
-            trigger: angle.promesseUnique,
+            trigger: triggerMap[angle.typeIntention] || 'Curiosité',
             carburant: {
                 termeAutoritaire: formData.expertise,
                 entiteGoogle: formData.secteur,
@@ -145,7 +202,10 @@ export function NewsTransformerSection() {
             },
             metaDescription: `${angle.promesseUnique} - Découvrez ${angle.contenuObligatoire[0] || 'notre guide complet'}.`,
             validated: false,
-            imageSuggestions
+            imageSuggestions,
+            // News SEO specific fields
+            promesseUnique: angle.promesseUnique,
+            contenuObligatoire: angle.contenuObligatoire
         };
     };
 
@@ -161,6 +221,25 @@ export function NewsTransformerSection() {
             setCopiedIndex(index);
             setTimeout(() => setCopiedIndex(null), 2000);
         }
+    };
+
+    // Generate complete instructions for an angle (used for copy button)
+    const generateAngleInstructions = (angle: SEOAngle): string => {
+        const contenuListe = angle.contenuObligatoire
+            .map((c, i) => `${i + 1}. ${c}`)
+            .join('\n');
+
+        return `📌 TITRE: ${angle.titre}
+
+🎯 PROMESSE UNIQUE:
+${angle.promesseUnique}
+
+📋 CONTENU OBLIGATOIRE:
+${contenuListe}
+
+🔑 MOT-CLÉ CIBLE: ${angle.motCleCible}
+⏱️ TIMING: ${angle.strategiePublication.timing}
+📝 LONGUEUR: ${angle.strategiePublication.longueurCible} mots`;
     };
 
     const downloadResults = () => {
@@ -339,8 +418,8 @@ ${result.quickWin}
                 </span>
                 <button
                     className="copy-btn"
-                    onClick={() => copyToClipboard(angle.titre, index)}
-                    title="Copier le titre"
+                    onClick={() => copyToClipboard(generateAngleInstructions(angle), index)}
+                    title="Copier les instructions complètes"
                 >
                     {copiedIndex === index ? <CheckCircle2 size={16} /> : <Copy size={16} />}
                 </button>
@@ -470,334 +549,395 @@ ${result.quickWin}
                 </div>
             </div>
 
-            {newsTransformer.status === 'idle' || newsTransformer.status === 'error' ? (
-                <form className="transformer-form" onSubmit={handleSubmit}>
-                    {newsTransformer.error && (
-                        <div className="error-message">
-                            <XCircle size={20} />
-                            <span>{newsTransformer.error}</span>
-                        </div>
-                    )}
-
-                    <div className="info-bubble">
-                        <div className="info-bubble-icon">💡</div>
-                        <div className="info-bubble-content">
-                            <h4>Comment utiliser cette fonctionnalité ?</h4>
-                            <ol>
-                                <li><strong>Collez l'URL</strong> d'un article d'actualité ou d'un contenu concurrent que vous souhaitez exploiter</li>
-                                <li><strong>Décrivez votre expertise</strong> : votre secteur, votre spécialité et votre audience cible</li>
-                                <li><strong>Cliquez sur "Générer"</strong> pour obtenir 5 angles SEO uniques</li>
-                                <li><strong>Recevez</strong> un score de rentabilité (🟢🟡🔴), des angles détaillés et un plan d'action priorisé</li>
-                            </ol>
-                            <p className="info-tip">
-                                <strong>Astuce :</strong> Plus vous êtes précis dans vos descriptions, plus les angles générés seront pertinents et exploitables !
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="form-section">
-                        <h3>📋 Informations sur l'article source</h3>
-
-                        <div className="form-group">
-                            <label htmlFor="url">URL de l'article source *</label>
-                            <input
-                                type="url"
-                                id="url"
-                                value={formData.url}
-                                onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                                placeholder="https://exemple.com/article-actualite"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-section">
-                        <h3>🏢 Votre expertise</h3>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="secteur">Secteur d'activité *</label>
-                                <input
-                                    type="text"
-                                    id="secteur"
-                                    value={formData.secteur}
-                                    onChange={(e) => setFormData({ ...formData, secteur: e.target.value })}
-                                    placeholder="Ex: Plomberie d'urgence et détection de fuites"
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="expertise">Expertise principale *</label>
-                                <input
-                                    type="text"
-                                    id="expertise"
-                                    value={formData.expertise}
-                                    onChange={(e) => setFormData({ ...formData, expertise: e.target.value })}
-                                    placeholder="Ex: Réparation de chaudières à condensation"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="motCle">Mot-clé principal ciblé (optionnel)</label>
-                                <input
-                                    type="text"
-                                    id="motCle"
-                                    value={formData.motCle}
-                                    onChange={(e) => setFormData({ ...formData, motCle: e.target.value })}
-                                    placeholder="Ex: fuite eau urgence"
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="audience">Audience cible *</label>
-                                <input
-                                    type="text"
-                                    id="audience"
-                                    value={formData.audience}
-                                    onChange={(e) => setFormData({ ...formData, audience: e.target.value })}
-                                    placeholder="Ex: Propriétaires de maisons 35-60 ans"
-                                    required
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="form-section">
-                        <h3>📝 Type de contenu souhaité</h3>
-
-                        <div className="checkbox-grid">
-                            {CONTENT_TYPES.map(type => (
-                                <label key={type} className="checkbox-item">
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.typeContenu.includes(type)}
-                                        onChange={() => handleTypeContenuChange(type)}
-                                    />
-                                    <span className="checkbox-label">{type}</span>
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="form-section">
-                        <h3>⚙️ Paramètres avancés</h3>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="technicite">Niveau de technicité</label>
-                                <select
-                                    id="technicite"
-                                    value={formData.technicite}
-                                    onChange={(e) => setFormData({ ...formData, technicite: e.target.value as NewsTransformerInput['technicite'] })}
-                                >
-                                    <option value="grand-public">Grand public</option>
-                                    <option value="intermediaire">Intermédiaire</option>
-                                    <option value="expert">Expert</option>
-                                </select>
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="objectif">Objectif principal</label>
-                                <select
-                                    id="objectif"
-                                    value={formData.objectif}
-                                    onChange={(e) => setFormData({ ...formData, objectif: e.target.value })}
-                                >
-                                    <option value="">Choisir...</option>
-                                    <option value="Générer du trafic organique">Générer du trafic organique</option>
-                                    <option value="Obtenir des leads qualifiés">Obtenir des leads qualifiés</option>
-                                    <option value="Positionner comme expert">Positionner comme expert</option>
-                                    <option value="Vendre un produit/service">Vendre un produit/service</option>
-                                    <option value="Éduquer l'audience">Éduquer l'audience</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="contraintes">Contraintes spécifiques (optionnel)</label>
-                            <textarea
-                                id="contraintes"
-                                value={formData.contraintes}
-                                onChange={(e) => setFormData({ ...formData, contraintes: e.target.value })}
-                                placeholder="Budget, délai, ressources disponibles..."
-                                rows={3}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="articlesExistants">Articles existants à lier (optionnel)</label>
-                            <textarea
-                                id="articlesExistants"
-                                value={formData.articlesExistants}
-                                onChange={(e) => setFormData({ ...formData, articlesExistants: e.target.value })}
-                                placeholder="URLs de vos articles existants (un par ligne)"
-                                rows={3}
-                            />
-                        </div>
+            <div className="news-transformer-layout">
+                {/* Side Panel - Saved Analyses */}
+                <aside className="analyses-sidebar">
+                    <div className="sidebar-header">
+                        <History size={18} />
+                        <h3>Mes Analyses</h3>
                     </div>
 
                     <button
-                        type="submit"
-                        className="submit-btn"
-                        disabled={!formData.url || !formData.secteur || !formData.expertise || !formData.audience}
+                        className="new-analysis-btn"
+                        onClick={handleReset}
                     >
-                        <Sparkles size={20} />
-                        Générer les 5 angles SEO
+                        <Plus size={18} />
+                        Nouvelle Analyse
                     </button>
-                </form>
-            ) : newsTransformer.status === 'running' ? (
-                <div className="loading-state">
-                    <Loader2 className="spinner" size={48} />
-                    <h2>Analyse en cours...</h2>
-                    <p>Extraction des opportunités SEO de l'article source</p>
-                    <div className="loading-steps">
-                        <span>🔍 Analyse de la source</span>
-                        <span>📊 Évaluation du potentiel</span>
-                        <span>✨ Génération des angles</span>
-                    </div>
-                </div>
-            ) : newsTransformer.status === 'completed' && newsTransformer.result ? (
-                <div className="results-container">
-                    <div className="results-header">
-                        <div className="score-section">
-                            <h2>Analyse terminée</h2>
-                            {renderScoreBadge(newsTransformer.result.scoreRentabilite)}
-                        </div>
-                        <div className="results-actions">
-                            {currentProjectName && (
-                                <button
-                                    onClick={async () => {
-                                        await saveCurrentProject();
-                                        setSaveSuccess(true);
-                                        setTimeout(() => setSaveSuccess(false), 3000);
-                                    }}
-                                    className="action-btn save-btn"
-                                    disabled={isSaving}
+
+                    <div className="analyses-list">
+                        {newsTransformer.savedAnalyses.length === 0 ? (
+                            <div className="no-analyses">
+                                <p>Aucune analyse sauvegardée</p>
+                                <small>Générez et sauvegardez votre première analyse</small>
+                            </div>
+                        ) : (
+                            newsTransformer.savedAnalyses.map(analysis => (
+                                <div
+                                    key={analysis.id}
+                                    className={`analysis-card ${newsTransformer.currentAnalysisId === analysis.id ? 'active' : ''}`}
+                                    onClick={() => handleLoadAnalysis(analysis.id)}
                                 >
-                                    {isSaving ? <Loader2 size={18} className="spinner" /> : saveSuccess ? <CheckCircle2 size={18} /> : <Save size={18} />}
-                                    {isSaving ? 'Sauvegarde...' : saveSuccess ? 'Sauvegardé !' : 'Sauvegarder'}
-                                </button>
-                            )}
-                            <button onClick={() => copyToClipboard(generateMarkdownOutput())} className="action-btn">
-                                <Copy size={18} />
-                                Copier tout
-                            </button>
-                            <button onClick={downloadResults} className="action-btn">
-                                <Download size={18} />
-                                Télécharger MD
-                            </button>
-                            <button onClick={handleReset} className="action-btn secondary">
-                                <RotateCcw size={18} />
-                                Nouvelle analyse
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="justification-box">
-                        <p>{newsTransformer.result.justificationScore}</p>
-                    </div>
-
-                    {newsTransformer.result.scoreRentabilite === '🔴' && newsTransformer.result.nonRentable ? (
-                        <div className="non-rentable-section">
-                            <h3>❌ Pourquoi cet article n'est pas rentable :</h3>
-                            <ul>
-                                {newsTransformer.result.nonRentable.raisons.map((r, i) => (
-                                    <li key={i}>{r}</li>
-                                ))}
-                            </ul>
-
-                            <h3>💡 Types d'actualités à privilégier :</h3>
-                            <ul>
-                                {newsTransformer.result.nonRentable.typesAPrilegier.map((t, i) => (
-                                    <li key={i}>{t}</li>
-                                ))}
-                            </ul>
-
-                            <div className="recommendation-box">
-                                <strong>🎯 Recommandation alternative :</strong>
-                                <p>{newsTransformer.result.nonRentable.recommandationAlternative}</p>
-                            </div>
-                        </div>
-                    ) : (
-                        <>
-                            <div className="angles-grid">
-                                {newsTransformer.result.angles.map((angle, index) => renderAngleCard(angle, index))}
-                            </div>
-
-                            {newsTransformer.result.planAction && (
-                                <div className="action-plan">
-                                    <h3>🎯 Plan d'Action Priorisé</h3>
-                                    <div className="priority-cards">
-                                        <div className="priority-card gold">
-                                            <span className="priority-badge">🥇 Priorité 1</span>
-                                            <h4>Angle #{newsTransformer.result.planAction.priorite1.angle}</h4>
-                                            <p>{newsTransformer.result.planAction.priorite1.titre}</p>
-                                            <div className="priority-meta">
-                                                <span>ROI: {newsTransformer.result.planAction.priorite1.roi}</span>
-                                                <span>⏱️ {newsTransformer.result.planAction.priorite1.tempsProduction}</span>
-                                            </div>
-                                            <p className="priority-reason">{newsTransformer.result.planAction.priorite1.raison}</p>
-                                        </div>
-
-                                        <div className="priority-card silver">
-                                            <span className="priority-badge">🥈 Priorité 2</span>
-                                            <h4>Angle #{newsTransformer.result.planAction.priorite2.angle}</h4>
-                                            <p>{newsTransformer.result.planAction.priorite2.titre}</p>
-                                            <div className="priority-meta">
-                                                <span>ROI: {newsTransformer.result.planAction.priorite2.roi}</span>
-                                                <span>⏱️ {newsTransformer.result.planAction.priorite2.tempsProduction}</span>
-                                            </div>
-                                            <p className="priority-reason">{newsTransformer.result.planAction.priorite2.raison}</p>
-                                        </div>
-
-                                        <div className="priority-card bronze">
-                                            <span className="priority-badge">🥉 Priorité 3</span>
-                                            <h4>Angle #{newsTransformer.result.planAction.priorite3.angle}</h4>
-                                            <p>{newsTransformer.result.planAction.priorite3.titre}</p>
-                                            <div className="priority-meta">
-                                                <span>ROI: {newsTransformer.result.planAction.priorite3.roi}</span>
-                                                <span>⏱️ {newsTransformer.result.planAction.priorite3.tempsProduction}</span>
-                                            </div>
-                                            <p className="priority-reason">{newsTransformer.result.planAction.priorite3.raison}</p>
-                                        </div>
+                                    <div className="analysis-card-header">
+                                        <span className="analysis-score">
+                                            {analysis.result?.scoreRentabilite || '⏳'}
+                                        </span>
+                                        <span className="analysis-card-title">
+                                            {analysis.result?.angles?.[0]?.titre
+                                                ? analysis.result.angles[0].titre.slice(0, 40) + (analysis.result.angles[0].titre.length > 40 ? '...' : '')
+                                                : analysis.formData.secteur || 'Analyse'}
+                                        </span>
+                                        <button
+                                            className="delete-analysis-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                deleteNewsAnalysis(analysis.id);
+                                                if (currentProjectName) saveCurrentProject();
+                                            }}
+                                            title="Supprimer"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </div>
+                                    <div className="analysis-card-url">
+                                        {truncateUrl(analysis.sourceUrl)}
+                                    </div>
+                                    <div className="analysis-card-date">
+                                        {formatDate(analysis.createdAt)}
                                     </div>
                                 </div>
+                            ))
+                        )}
+                    </div>
+                </aside>
+
+                {/* Main Content */}
+                <main className="analyses-main-content">
+
+                    {newsTransformer.status === 'idle' || newsTransformer.status === 'error' ? (
+                        <form className="transformer-form" onSubmit={handleSubmit}>
+                            {newsTransformer.error && (
+                                <div className="error-message">
+                                    <XCircle size={20} />
+                                    <span>{newsTransformer.error}</span>
+                                </div>
                             )}
 
-                            {newsTransformer.result.maillageInterne && (
-                                <div className="maillage-section">
-                                    <h3>🔗 Stratégie de Maillage Interne</h3>
-                                    <div className="maillage-content">
-                                        <div className="maillage-links">
-                                            <h4>Articles à lier :</h4>
-                                            <ul>
-                                                {newsTransformer.result.maillageInterne.articlesALier.map((a, i) => (
-                                                    <li key={i}>{a}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                        <div className="maillage-architecture">
-                                            <h4>Architecture recommandée :</h4>
-                                            <p>{newsTransformer.result.maillageInterne.architecture}</p>
-                                        </div>
+                            <div className="info-bubble">
+                                <div className="info-bubble-icon">💡</div>
+                                <div className="info-bubble-content">
+                                    <h4>Comment utiliser cette fonctionnalité ?</h4>
+                                    <ol>
+                                        <li><strong>Collez l'URL</strong> d'un article d'actualité ou d'un contenu concurrent que vous souhaitez exploiter</li>
+                                        <li><strong>Décrivez votre expertise</strong> : votre secteur, votre spécialité et votre audience cible</li>
+                                        <li><strong>Cliquez sur "Générer"</strong> pour obtenir 5 angles SEO uniques</li>
+                                        <li><strong>Recevez</strong> un score de rentabilité (🟢🟡🔴), des angles détaillés et un plan d'action priorisé</li>
+                                    </ol>
+                                    <p className="info-tip">
+                                        <strong>Astuce :</strong> Plus vous êtes précis dans vos descriptions, plus les angles générés seront pertinents et exploitables !
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="form-section">
+                                <h3>📋 Informations sur l'article source</h3>
+
+                                <div className="form-group">
+                                    <label htmlFor="url">URL de l'article source *</label>
+                                    <input
+                                        type="url"
+                                        id="url"
+                                        value={formData.url}
+                                        onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                                        placeholder="https://exemple.com/article-actualite"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-section">
+                                <h3>🏢 Votre expertise</h3>
+
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label htmlFor="secteur">Secteur d'activité *</label>
+                                        <input
+                                            type="text"
+                                            id="secteur"
+                                            value={formData.secteur}
+                                            onChange={(e) => setFormData({ ...formData, secteur: e.target.value })}
+                                            placeholder="Ex: Plomberie d'urgence et détection de fuites"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label htmlFor="expertise">Expertise principale *</label>
+                                        <input
+                                            type="text"
+                                            id="expertise"
+                                            value={formData.expertise}
+                                            onChange={(e) => setFormData({ ...formData, expertise: e.target.value })}
+                                            placeholder="Ex: Réparation de chaudières à condensation"
+                                            required
+                                        />
                                     </div>
                                 </div>
-                            )}
 
-                            {newsTransformer.result.quickWin && (
-                                <div className="quick-win-section">
-                                    <h3>💡 Quick Win (sous 48h)</h3>
-                                    <p>{newsTransformer.result.quickWin}</p>
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label htmlFor="motCle">Mot-clé principal ciblé (optionnel)</label>
+                                        <input
+                                            type="text"
+                                            id="motCle"
+                                            value={formData.motCle}
+                                            onChange={(e) => setFormData({ ...formData, motCle: e.target.value })}
+                                            placeholder="Ex: fuite eau urgence"
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label htmlFor="audience">Audience cible *</label>
+                                        <input
+                                            type="text"
+                                            id="audience"
+                                            value={formData.audience}
+                                            onChange={(e) => setFormData({ ...formData, audience: e.target.value })}
+                                            placeholder="Ex: Propriétaires de maisons 35-60 ans"
+                                            required
+                                        />
+                                    </div>
                                 </div>
+                            </div>
+
+                            <div className="form-section">
+                                <h3>📝 Type de contenu souhaité</h3>
+
+                                <div className="checkbox-grid">
+                                    {CONTENT_TYPES.map(type => (
+                                        <label key={type} className="checkbox-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.typeContenu.includes(type)}
+                                                onChange={() => handleTypeContenuChange(type)}
+                                            />
+                                            <span className="checkbox-label">{type}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="form-section">
+                                <h3>⚙️ Paramètres avancés</h3>
+
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label htmlFor="technicite">Niveau de technicité</label>
+                                        <select
+                                            id="technicite"
+                                            value={formData.technicite}
+                                            onChange={(e) => setFormData({ ...formData, technicite: e.target.value as NewsTransformerInput['technicite'] })}
+                                        >
+                                            <option value="grand-public">Grand public</option>
+                                            <option value="intermediaire">Intermédiaire</option>
+                                            <option value="expert">Expert</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label htmlFor="objectif">Objectif principal</label>
+                                        <select
+                                            id="objectif"
+                                            value={formData.objectif}
+                                            onChange={(e) => setFormData({ ...formData, objectif: e.target.value })}
+                                        >
+                                            <option value="">Choisir...</option>
+                                            <option value="Générer du trafic organique">Générer du trafic organique</option>
+                                            <option value="Obtenir des leads qualifiés">Obtenir des leads qualifiés</option>
+                                            <option value="Positionner comme expert">Positionner comme expert</option>
+                                            <option value="Vendre un produit/service">Vendre un produit/service</option>
+                                            <option value="Éduquer l'audience">Éduquer l'audience</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="contraintes">Contraintes spécifiques (optionnel)</label>
+                                    <textarea
+                                        id="contraintes"
+                                        value={formData.contraintes}
+                                        onChange={(e) => setFormData({ ...formData, contraintes: e.target.value })}
+                                        placeholder="Budget, délai, ressources disponibles..."
+                                        rows={3}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="articlesExistants">Articles existants à lier (optionnel)</label>
+                                    <textarea
+                                        id="articlesExistants"
+                                        value={formData.articlesExistants}
+                                        onChange={(e) => setFormData({ ...formData, articlesExistants: e.target.value })}
+                                        placeholder="URLs de vos articles existants (un par ligne)"
+                                        rows={3}
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="submit-btn"
+                                disabled={!formData.url || !formData.secteur || !formData.expertise || !formData.audience}
+                            >
+                                <Sparkles size={20} />
+                                Générer les 5 angles SEO
+                            </button>
+                        </form>
+                    ) : newsTransformer.status === 'running' ? (
+                        <div className="loading-state">
+                            <Loader2 className="spinner" size={48} />
+                            <h2>Analyse en cours...</h2>
+                            <p>Extraction des opportunités SEO de l'article source</p>
+                            <div className="loading-steps">
+                                <span>🔍 Analyse de la source</span>
+                                <span>📊 Évaluation du potentiel</span>
+                                <span>✨ Génération des angles</span>
+                            </div>
+                        </div>
+                    ) : newsTransformer.status === 'completed' && newsTransformer.result ? (
+                        <div className="results-container">
+                            <div className="results-header">
+                                <div className="score-section">
+                                    <h2>Analyse terminée</h2>
+                                    {renderScoreBadge(newsTransformer.result.scoreRentabilite)}
+                                </div>
+                                <div className="results-actions">
+                                    <button
+                                        onClick={handleSaveAnalysis}
+                                        className="action-btn save-btn"
+                                        disabled={isSaving}
+                                    >
+                                        {isSaving ? <Loader2 size={18} className="spinner" /> : saveSuccess ? <CheckCircle2 size={18} /> : <Save size={18} />}
+                                        {isSaving ? 'Sauvegarde...' : saveSuccess ? 'Sauvegardé !' : 'Sauvegarder'}
+                                    </button>
+                                    <button onClick={() => copyToClipboard(generateMarkdownOutput())} className="action-btn">
+                                        <Copy size={18} />
+                                        Copier tout
+                                    </button>
+                                    <button onClick={downloadResults} className="action-btn">
+                                        <Download size={18} />
+                                        Télécharger MD
+                                    </button>
+                                    <button onClick={handleReset} className="action-btn secondary">
+                                        <RotateCcw size={18} />
+                                        Nouvelle analyse
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="justification-box">
+                                <p>{newsTransformer.result.justificationScore}</p>
+                            </div>
+
+                            {newsTransformer.result.scoreRentabilite === '🔴' && newsTransformer.result.nonRentable ? (
+                                <div className="non-rentable-section">
+                                    <h3>❌ Pourquoi cet article n'est pas rentable :</h3>
+                                    <ul>
+                                        {newsTransformer.result.nonRentable.raisons.map((r, i) => (
+                                            <li key={i}>{r}</li>
+                                        ))}
+                                    </ul>
+
+                                    <h3>💡 Types d'actualités à privilégier :</h3>
+                                    <ul>
+                                        {newsTransformer.result.nonRentable.typesAPrilegier.map((t, i) => (
+                                            <li key={i}>{t}</li>
+                                        ))}
+                                    </ul>
+
+                                    <div className="recommendation-box">
+                                        <strong>🎯 Recommandation alternative :</strong>
+                                        <p>{newsTransformer.result.nonRentable.recommandationAlternative}</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="angles-grid">
+                                        {newsTransformer.result.angles.map((angle, index) => renderAngleCard(angle, index))}
+                                    </div>
+
+                                    {newsTransformer.result.planAction && (
+                                        <div className="action-plan">
+                                            <h3>🎯 Plan d'Action Priorisé</h3>
+                                            <div className="priority-cards">
+                                                <div className="priority-card gold">
+                                                    <span className="priority-badge">🥇 Priorité 1</span>
+                                                    <h4>Angle #{newsTransformer.result.planAction.priorite1.angle}</h4>
+                                                    <p>{newsTransformer.result.planAction.priorite1.titre}</p>
+                                                    <div className="priority-meta">
+                                                        <span>ROI: {newsTransformer.result.planAction.priorite1.roi}</span>
+                                                        <span>⏱️ {newsTransformer.result.planAction.priorite1.tempsProduction}</span>
+                                                    </div>
+                                                    <p className="priority-reason">{newsTransformer.result.planAction.priorite1.raison}</p>
+                                                </div>
+
+                                                <div className="priority-card silver">
+                                                    <span className="priority-badge">🥈 Priorité 2</span>
+                                                    <h4>Angle #{newsTransformer.result.planAction.priorite2.angle}</h4>
+                                                    <p>{newsTransformer.result.planAction.priorite2.titre}</p>
+                                                    <div className="priority-meta">
+                                                        <span>ROI: {newsTransformer.result.planAction.priorite2.roi}</span>
+                                                        <span>⏱️ {newsTransformer.result.planAction.priorite2.tempsProduction}</span>
+                                                    </div>
+                                                    <p className="priority-reason">{newsTransformer.result.planAction.priorite2.raison}</p>
+                                                </div>
+
+                                                <div className="priority-card bronze">
+                                                    <span className="priority-badge">🥉 Priorité 3</span>
+                                                    <h4>Angle #{newsTransformer.result.planAction.priorite3.angle}</h4>
+                                                    <p>{newsTransformer.result.planAction.priorite3.titre}</p>
+                                                    <div className="priority-meta">
+                                                        <span>ROI: {newsTransformer.result.planAction.priorite3.roi}</span>
+                                                        <span>⏱️ {newsTransformer.result.planAction.priorite3.tempsProduction}</span>
+                                                    </div>
+                                                    <p className="priority-reason">{newsTransformer.result.planAction.priorite3.raison}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {newsTransformer.result.maillageInterne && (
+                                        <div className="maillage-section">
+                                            <h3>🔗 Stratégie de Maillage Interne</h3>
+                                            <div className="maillage-content">
+                                                <div className="maillage-links">
+                                                    <h4>Articles à lier :</h4>
+                                                    <ul>
+                                                        {newsTransformer.result.maillageInterne.articlesALier.map((a, i) => (
+                                                            <li key={i}>{a}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                                <div className="maillage-architecture">
+                                                    <h4>Architecture recommandée :</h4>
+                                                    <p>{newsTransformer.result.maillageInterne.architecture}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {newsTransformer.result.quickWin && (
+                                        <div className="quick-win-section">
+                                            <h3>💡 Quick Win (sous 48h)</h3>
+                                            <p>{newsTransformer.result.quickWin}</p>
+                                        </div>
+                                    )}
+                                </>
                             )}
-                        </>
-                    )}
-                </div>
-            ) : null}
+                        </div>
+                    ) : null}
+                </main>
+            </div>
         </div>
     );
 }

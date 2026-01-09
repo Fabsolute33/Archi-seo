@@ -168,6 +168,9 @@ export interface ContentTableRow {
     validated?: boolean;
     sgeOptimization?: SGEOptimization;
     imageSuggestions?: ImageSuggestion[];  // 2-4 images suggérées par article
+    // News SEO specific fields
+    promesseUnique?: string;               // Promesse unique de l'article (ex: "Comment éviter la prison...")
+    contenuObligatoire?: string[];         // Liste des contenus obligatoires à couvrir
 }
 
 export interface ContentDesign {
@@ -541,6 +544,8 @@ export interface AgentStore {
         formData: NewsTransformerInput | null;
         result: NewsTransformerResult | null;
         error: string | null;
+        savedAnalyses: NewsAnalysis[];
+        currentAnalysisId: string | null;
     };
 
     // Actions
@@ -560,6 +565,9 @@ export interface AgentStore {
     // News Transformer Actions
     runNewsTransformerAgent: (formData: NewsTransformerInput) => Promise<void>;
     resetNewsTransformer: () => void;
+    saveCurrentNewsAnalysis: () => void;
+    loadNewsAnalysis: (id: string) => void;
+    deleteNewsAnalysis: (id: string) => void;
 }
 
 // Project type for saved analyses
@@ -576,6 +584,15 @@ export interface QuestionnaireAnswers {
     constraints: string;
 }
 
+// Individual News Analysis (for history)
+export interface NewsAnalysis {
+    id: string;
+    createdAt: number;
+    sourceUrl: string;
+    formData: NewsTransformerInput;
+    result: NewsTransformerResult | null;
+}
+
 export interface SEOProject {
     id: string;
     name: string;
@@ -590,10 +607,36 @@ export interface SEOProject {
     snippetStrategy: SnippetStrategy | null;
     authorityStrategy: AuthorityStrategy | null;
     coordinatorSummary: CoordinatorSummary | null;
-    // News Transformer data
+    // News Transformer data - supports multiple analyses
     newsTransformerData?: {
-        formData: NewsTransformerInput | null;
-        result: NewsTransformerResult | null;
+        analyses: NewsAnalysis[];
+        currentAnalysisId: string | null;
     };
+    // RSS News Monitoring data - per project
+    rssData?: {
+        sources: RSSSource[];
+        processedArticleIds: string[];  // IDs of articles already analyzed (hidden from feed)
+    };
+}
+
+// RSS News Monitoring Types
+export interface RSSSource {
+    id: string;
+    name: string;
+    url: string;
+    sector?: string;  // Optional sector tag for filtering
+    lastFetched?: number;
+    isActive: boolean;
+}
+
+export interface RSSArticle {
+    id: string;          // Unique ID (hash of url + pubDate)
+    sourceId: string;    // Reference to RSSSource
+    sourceName: string;
+    title: string;
+    description: string;
+    url: string;
+    pubDate: Date;
+    imageUrl?: string;
 }
 

@@ -10,6 +10,7 @@ import { AboutModal } from './components/AboutModal';
 import { ContentAuditInput } from './components/ContentAuditInput';
 import { ContentAuditResults } from './components/ContentAuditResults';
 import { FloatingSaveButton } from './components/FloatingSaveButton';
+import { NewsTransformerSection } from './components/NewsTransformerSection';
 import './App.css';
 
 function App() {
@@ -39,6 +40,12 @@ function App() {
                         <BusinessInputForm />
                         <WorkflowProgress />
                     </>
+                )}
+
+                {currentView === 'news-transformer' && (
+                    <div className="news-transformer-container">
+                        <NewsTransformerSection />
+                    </div>
                 )}
 
                 {currentView === 'audit' && (

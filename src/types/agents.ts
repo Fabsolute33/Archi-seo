@@ -300,6 +300,64 @@ export interface SnippetStrategy {
     syntheseStrategie: SyntheseStrategie;
 }
 
+// News Transformer Types
+export interface NewsTransformerInput {
+    url: string;
+    secteur: string;
+    expertise: string;
+    motCle?: string;
+    typeContenu: string[];
+    audience: string;
+    technicite: 'grand-public' | 'intermediaire' | 'expert';
+    objectif?: string;
+    contraintes?: string;
+    articlesExistants?: string;
+}
+
+export interface SEOAngle {
+    numero: number;
+    titre: string;
+    typeIntention: 'Info' | 'Commercial' | 'Transac';
+    elementDifferenciateur: string;
+    motCleCible: string;
+    difficulteSEO: 'Facile' | 'Moyen' | 'Difficile';
+    promesseUnique: string;
+    contenuObligatoire: string[];
+    requetesLSI: string[];
+    featuredSnippet: {
+        formatRecommande: string;
+        questionPAA: string;
+    };
+    strategiePublication: {
+        timing: string;
+        longueurCible: string;
+        miseAJour: string;
+    };
+    potentielConversion: string;
+    visuels: string[];
+}
+
+export interface NewsTransformerResult {
+    scoreRentabilite: '🔴' | '🟡' | '🟢';
+    justificationScore: string;
+    angles: SEOAngle[];
+    planAction: {
+        priorite1: { angle: number; titre: string; raison: string; roi: string; tempsProduction: string; };
+        priorite2: { angle: number; titre: string; raison: string; roi: string; tempsProduction: string; };
+        priorite3: { angle: number; titre: string; raison: string; roi: string; tempsProduction: string; };
+    } | null;
+    maillageInterne: {
+        articlesALier: string[];
+        architecture: string;
+    } | null;
+    quickWin: string | null;
+    nonRentable: {
+        raisons: string[];
+        typesAPrilegier: string[];
+        recommandationAlternative: string;
+    } | null;
+}
+
 // SGE/AI Overviews Optimization Types (Module 4)
 export interface StructuredAnswer {
     question: string;
@@ -477,6 +535,14 @@ export interface AgentStore {
         targetKeyword?: string;
     };
 
+    // News Transformer State
+    newsTransformer: {
+        status: 'idle' | 'running' | 'completed' | 'error';
+        formData: NewsTransformerInput | null;
+        result: NewsTransformerResult | null;
+        error: string | null;
+    };
+
     // Actions
     setBusinessDescription: (desc: string) => void;
     setApiKey: (key: string) => void;
@@ -490,6 +556,10 @@ export interface AgentStore {
     resetContentAudit: () => void;
     addSuggestedArticle: (article: ContentTableRow) => void;
     toggleArticleValidation: (index: number) => void;
+
+    // News Transformer Actions
+    runNewsTransformerAgent: (formData: NewsTransformerInput) => Promise<void>;
+    resetNewsTransformer: () => void;
 }
 
 // Project type for saved analyses
@@ -520,5 +590,10 @@ export interface SEOProject {
     snippetStrategy: SnippetStrategy | null;
     authorityStrategy: AuthorityStrategy | null;
     coordinatorSummary: CoordinatorSummary | null;
+    // News Transformer data
+    newsTransformerData?: {
+        formData: NewsTransformerInput | null;
+        result: NewsTransformerResult | null;
+    };
 }
 

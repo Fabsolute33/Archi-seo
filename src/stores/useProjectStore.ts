@@ -70,6 +70,11 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
                 snippetStrategy: agentStore.snippetStrategy.data,
                 authorityStrategy: agentStore.authorityStrategy.data,
                 coordinatorSummary: agentStore.coordinatorSummary.data,
+                // News Transformer data
+                newsTransformerData: (agentStore.newsTransformer.formData || agentStore.newsTransformer.result) ? {
+                    formData: agentStore.newsTransformer.formData,
+                    result: agentStore.newsTransformer.result,
+                } : undefined,
             };
 
             await saveProject(userId, project);

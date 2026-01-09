@@ -9,7 +9,9 @@ import type {
     SnippetStrategy,
     AuthorityStrategy,
     CoordinatorSummary,
-    ContentTableRow
+    ContentTableRow,
+    NewsTransformerInput,
+    NewsTransformerResult
 } from '../types/agents';
 import type { ContentAuditResult } from '../types/auditTypes';
 import { initializeGemini } from '../services/GeminiService';
@@ -22,6 +24,7 @@ import { runAuthorityBuilder } from '../services/agents/AuthorityBuilderAgent';
 import { runCoordinator } from '../services/agents/CoordinatorAgent';
 import { runContentAuditor } from '../services/agents/ContentAuditorAgent';
 import { runSGEOptimizer, enrichArticlesWithSGE } from '../services/agents/SGEOptimizerAgent';
+import { runNewsTransformer } from '../services/agents/NewsTransformerAgent';
 import { scrapeUrl } from '../services/WebScraperService';
 
 const createInitialAgentState = <T>(): AgentState<T> => ({
@@ -52,6 +55,14 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
         result: null as ContentAuditResult | null,
         error: null as string | null,
         targetKeyword: undefined as string | undefined,
+    },
+
+    // News Transformer State
+    newsTransformer: {
+        status: 'idle' as const,
+        formData: null as NewsTransformerInput | null,
+        result: null as NewsTransformerResult | null,
+        error: null as string | null,
     },
 
     setBusinessDescription: (desc: string) => set({ businessDescription: desc }),
@@ -295,6 +306,13 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
             startedAt: project.createdAt,
             completedAt: project.updatedAt,
         },
+        // Restore News Transformer data
+        newsTransformer: project.newsTransformerData ? {
+            status: project.newsTransformerData.result ? 'completed' : 'idle',
+            formData: project.newsTransformerData.formData,
+            result: project.newsTransformerData.result,
+            error: null,
+        } : { status: 'idle', formData: null, result: null, error: null },
     }),
 
     // Content Audit Actions
@@ -388,4 +406,29 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
             });
         }
     },
+
+    // News Transformer Actions
+    runNewsTransformerAgent: async (formData: NewsTransformerInput) => {
+        const { apiKey } = get();
+
+        if (!apiKey) {
+            set({ newsTransformer: { status: 'error', formData, result: null, error: 'Clé API manquante' } });
+            return;
+        }
+
+        try {
+            set({ newsTransformer: { status: 'running', formData, result: null, error: null } });
+
+            const result = await runNewsTransformer(formData);
+
+            set({ newsTransformer: { status: 'completed', formData, result, error: null } });
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la transformation';
+            set({ newsTransformer: { status: 'error', formData, result: null, error: errorMessage } });
+        }
+    },
+
+    resetNewsTransformer: () => set({
+        newsTransformer: { status: 'idle', formData: null, result: null, error: null }
+    }),
 }));

@@ -1,0 +1,191 @@
+# PROMPT UTILISATEUR - TEMPLATE D'INPUT
+
+## Instructions pour l'utilisateur
+Remplissez les champs ci-dessous pour générer des angles d'exploitation SEO à partir d'un article d'actualité ou d'un contenu concurrent.
+
+---
+
+## 📋 FORMULAIRE DE TRANSFORMATION NEWS → SEO
+
+### 1. URL de l'article source *
+```
+[Coller l'URL complète ici]
+Exemple : https://www.lemonde.fr/economie/article/2025/01/09/nouvelle-reglementation-energie.html
+```
+
+### 2. Votre secteur d'activité *
+```
+[Décrivez votre secteur en quelques mots]
+Exemples :
+- "Plomberie d'urgence et détection de fuites"
+- "SaaS de gestion RH pour PME"
+- "E-commerce de produits bio et végans"
+- "Cabinet d'avocats droit immobilier"
+- "Formation professionnelle en marketing digital"
+```
+
+### 3. Votre expertise principale *
+```
+[Précisez votre domaine d'expertise spécifique]
+Exemples :
+- "Réparation de chaudières à condensation"
+- "Automatisation de la paie"
+- "Cosmétiques naturels certifiés bio"
+- "Litiges locataires-propriétaires"
+- "SEO technique et audits"
+```
+
+### 4. Mot-clé principal ciblé (optionnel)
+```
+[Le mot-clé sur lequel vous souhaitez vous positionner]
+Exemples :
+- "fuite eau urgence"
+- "logiciel paie PME"
+- "shampoing bio sans sulfate"
+- "avocat expulsion locataire"
+- "audit SEO technique"
+```
+
+### 5. Type de contenu souhaité (cochez un ou plusieurs) *
+```
+☐ Article de blog informatif (guide, tuto)
+☐ Page de service / conversion (vente)
+☐ Guide PDF téléchargeable (lead magnet)
+☐ Outil interactif (calculateur, quiz, simulateur)
+☐ Étude de cas / témoignage client
+☐ Comparatif de solutions
+```
+
+### 6. Audience cible *
+```
+[Décrivez votre audience en quelques mots]
+Exemples :
+- "Propriétaires de maisons individuelles 35-60 ans"
+- "DRH de PME 20-200 salariés"
+- "Femmes 25-45 ans sensibles à l'écologie"
+- "Propriétaires bailleurs confrontés à un litige"
+- "Responsables marketing en entreprise B2B"
+```
+
+### 7. Niveau de technicité attendu
+```
+☐ Grand public (vocabulaire simple)
+☐ Intermédiaire (quelques termes techniques)
+☐ Expert (jargon professionnel)
+```
+
+### 8. Objectif principal (optionnel)
+```
+☐ Générer du trafic organique
+☐ Obtenir des leads qualifiés
+☐ Positionner comme expert
+☐ Vendre un produit/service
+☐ Éduquer l'audience
+```
+
+### 9. Contraintes spécifiques (optionnel)
+```
+[Indiquez ici toute contrainte : budget, délai, ressources, réglementation...]
+Exemples :
+- "Budget limité : pas de vidéo ni infographie complexe"
+- "Délai court : besoin de publier sous 48h"
+- "Secteur régulé : attention aux allégations santé"
+```
+
+### 10. Articles existants à lier (optionnel)
+```
+[URLs de vos articles existants qui pourraient être liés]
+Cela aide à créer une stratégie de maillage interne cohérente.
+
+Exemple :
+- https://monsite.com/guide-isolation-thermique
+- https://monsite.com/aides-renovation-2025
+```
+
+---
+
+## 🚀 VALIDATION
+
+Une fois le formulaire complété, cliquez sur **"Générer les 5 angles SEO"**.
+
+⏱️ Temps de génération estimé : 15-30 secondes
+
+---
+
+## 💡 CONSEILS POUR MAXIMISER LES RÉSULTATS
+
+### ✅ BONNE pratique :
+- **Secteur :** "Plomberie d'urgence Paris et Île-de-France"
+- **Expertise :** "Détection de fuites sans destruction via caméra thermique"
+
+### ❌ MAUVAISE pratique :
+- **Secteur :** "Plomberie"
+- **Expertise :** "Réparations"
+
+**Pourquoi ?** Plus vous êtes précis, plus les angles générés seront pertinents et exploitables immédiatement.
+
+---
+
+## 📧 BESOIN D'AIDE ?
+
+Si vous ne savez pas comment remplir un champ :
+- Laissez-le vide si "optionnel"
+- Écrivez "Je ne sais pas" pour les champs obligatoires, l'IA vous guidera
+
+---
+
+## EXEMPLE DE FORMULAIRE COMPLÉTÉ
+
+### URL source
+```
+https://www.batiactu.com/edito/nouvelle-norme-rt-2025-logements-neufs-74589.php
+```
+
+### Secteur d'activité
+```
+Isolation thermique et rénovation énergétique pour particuliers
+```
+
+### Expertise principale
+```
+Isolation par l'extérieur (ITE) et traitement des ponts thermiques
+```
+
+### Mot-clé principal
+```
+isolation thermique norme RT 2025
+```
+
+### Type de contenu
+```
+☑ Article de blog informatif
+☑ Outil interactif (calculateur économies énergie)
+☐ Guide PDF téléchargeable
+```
+
+### Audience cible
+```
+Propriétaires de maisons individuelles construites avant 2000, 45-65 ans, préparant une rénovation
+```
+
+### Niveau de technicité
+```
+☑ Intermédiaire (quelques termes techniques)
+```
+
+### Objectif principal
+```
+☑ Obtenir des leads qualifiés (demandes de devis)
+```
+
+### Contraintes spécifiques
+```
+Budget vidéo limité. Besoin de visuels explicatifs (schémas techniques). Délai de publication souhaité : 2 semaines.
+```
+
+### Articles existants
+```
+https://monsite-isolation.fr/guide-complet-ite
+https://monsite-isolation.fr/aides-maprimerénov-2025
+https://monsite-isolation.fr/calcul-economies-isolation
+```

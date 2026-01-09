@@ -7,11 +7,12 @@ import {
     ChevronLeft,
     ChevronRight,
     Sparkles,
-    Info
+    Info,
+    Newspaper
 } from 'lucide-react';
 import './Sidebar.css';
 
-export type ViewType = 'strategy' | 'audit' | 'results' | 'projects' | 'settings';
+export type ViewType = 'strategy' | 'audit' | 'results' | 'projects' | 'settings' | 'news-transformer';
 
 interface SidebarProps {
     currentView: ViewType;
@@ -39,6 +40,12 @@ export function Sidebar({
             label: 'Nouvelle Stratégie',
             icon: <Sparkles size={20} />,
             action: () => onViewChange('strategy')
+        },
+        {
+            id: 'news-transformer',
+            label: 'News → SEO',
+            icon: <Newspaper size={20} />,
+            action: () => onViewChange('news-transformer')
         },
         {
             id: 'audit',

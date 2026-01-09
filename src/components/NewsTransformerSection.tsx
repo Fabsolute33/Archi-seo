@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Sparkles,
     Loader2,
@@ -35,7 +35,12 @@ const CONTENT_TYPES = [
     'Comparatif de solutions'
 ];
 
-export function NewsTransformerSection() {
+interface NewsTransformerSectionProps {
+    prefilledUrl?: string | null;
+    onUrlConsumed?: () => void;
+}
+
+export function NewsTransformerSection({ prefilledUrl, onUrlConsumed }: NewsTransformerSectionProps) {
     const {
         newsTransformer,
         runNewsTransformerAgent,
@@ -63,6 +68,17 @@ export function NewsTransformerSection() {
         contraintes: '',
         articlesExistants: ''
     });
+
+    // Handle prefilled URL from RSS Watch
+    useEffect(() => {
+        if (prefilledUrl) {
+            setFormData(prev => ({ ...prev, url: prefilledUrl }));
+            resetNewsTransformer();
+            if (onUrlConsumed) {
+                onUrlConsumed();
+            }
+        }
+    }, [prefilledUrl]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

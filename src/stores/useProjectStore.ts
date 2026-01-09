@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { SEOProject } from '../types/agents';
 import { useAgentStore } from './useAgentStore';
 import { useAuthStore } from './useAuthStore';
+import { useRSSStore } from './useRSSStore';
 import {
     saveProject,
     getProjects,
@@ -38,6 +39,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     saveCurrentProject: async () => {
         const { currentProjectName, currentProjectId } = get();
         const agentStore = useAgentStore.getState();
+        const rssStore = useRSSStore.getState();
         const userId = useAuthStore.getState().user?.uid;
 
         if (!userId) {
@@ -75,6 +77,8 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
                     analyses: agentStore.newsTransformer.savedAnalyses,
                     currentAnalysisId: agentStore.newsTransformer.currentAnalysisId,
                 } : undefined,
+                // RSS data - sources and processed articles per project
+                rssData: rssStore.getDataForSave(),
             };
 
             await saveProject(userId, project);
@@ -137,6 +141,8 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
             if (project) {
                 // Restore to agent store
                 useAgentStore.getState().restoreFromProject(project);
+                // Restore RSS data
+                useRSSStore.getState().restoreFromProject(project.rssData);
 
                 set({
                     currentProjectId: project.id,

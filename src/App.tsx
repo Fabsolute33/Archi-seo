@@ -11,6 +11,7 @@ import { ContentAuditInput } from './components/ContentAuditInput';
 import { ContentAuditResults } from './components/ContentAuditResults';
 import { FloatingSaveButton } from './components/FloatingSaveButton';
 import { NewsTransformerSection } from './components/NewsTransformerSection';
+import { RSSWatchSection } from './components/RSSWatchSection';
 import './App.css';
 
 function App() {
@@ -19,6 +20,12 @@ function App() {
     const [isAboutOpen, setIsAboutOpen] = useState(false);
     const [currentView, setCurrentView] = useState<ViewType>('strategy');
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const [prefilledUrl, setPrefilledUrl] = useState<string | null>(null);
+
+    const handleAnalyzeFromRSS = (url: string) => {
+        setPrefilledUrl(url);
+        setCurrentView('news-transformer');
+    };
 
     return (
         <div className={`app ${isSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}>
@@ -44,7 +51,13 @@ function App() {
 
                 {currentView === 'news-transformer' && (
                     <div className="news-transformer-container">
-                        <NewsTransformerSection />
+                        <NewsTransformerSection prefilledUrl={prefilledUrl} onUrlConsumed={() => setPrefilledUrl(null)} />
+                    </div>
+                )}
+
+                {currentView === 'rss-watch' && (
+                    <div className="rss-watch-container">
+                        <RSSWatchSection onAnalyzeArticle={handleAnalyzeFromRSS} />
                     </div>
                 )}
 

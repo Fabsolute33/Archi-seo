@@ -8,11 +8,12 @@ import {
     ChevronRight,
     Sparkles,
     Info,
-    Newspaper
+    Newspaper,
+    Rss
 } from 'lucide-react';
 import './Sidebar.css';
 
-export type ViewType = 'strategy' | 'audit' | 'results' | 'projects' | 'settings' | 'news-transformer';
+export type ViewType = 'strategy' | 'audit' | 'results' | 'projects' | 'settings' | 'news-transformer' | 'rss-watch';
 
 interface SidebarProps {
     currentView: ViewType;
@@ -46,6 +47,12 @@ export function Sidebar({
             label: 'News → SEO',
             icon: <Newspaper size={20} />,
             action: () => onViewChange('news-transformer')
+        },
+        {
+            id: 'rss-watch',
+            label: 'Veille RSS',
+            icon: <Rss size={20} />,
+            action: () => onViewChange('rss-watch')
         },
         {
             id: 'audit',

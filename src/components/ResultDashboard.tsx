@@ -19,9 +19,244 @@ import {
 } from 'lucide-react';
 import './ResultDashboard.css';
 
+// Fonction pour générer les instructions détaillées de l'Appât SXO
+function generateSXOInstructions(appatSXO: string): string {
+    const type = appatSXO?.toLowerCase() || '';
+
+    // Détection du type d'appât et génération des instructions appropriées
+    if (type.includes('calculateur') || type.includes('calculette') || type.includes('simulateur')) {
+        return `
+📊 FORMAT REQUIS : CALCULATEUR / SIMULATEUR INTERACTIF
+────────────────────────────────────────────────────────
+▸ Structure à créer :
+   • Formulaire avec 3-5 champs de saisie (inputs numériques ou sélecteurs)
+   • Bouton "Calculer" ou "Simuler"
+   • Zone de résultat affichant le calcul en temps réel
+   • Légende explicative des résultats
+
+▸ Éléments techniques à inclure :
+   • <form> avec inputs type="number" ou <select>
+   • Fonction JavaScript de calcul
+   • Affichage dynamique des résultats
+   • Possibilité de téléchargement PDF du résultat
+
+▸ Exemple de structure :
+   ┌─────────────────────────────────────┐
+   │  Entrez vos données :              │
+   │  [Input 1: ___] [Input 2: ___]     │
+   │  [Input 3: ___] [Sélecteur ▼]      │
+   │                                     │
+   │  [ 🧮 CALCULER ]                   │
+   │                                     │
+   │  ═══ RÉSULTAT ═══                  │
+   │  💰 Estimation : X€ - Y€           │
+   │  📊 Détail du calcul : ...         │
+   └─────────────────────────────────────┘`;
+    }
+
+    if (type.includes('checklist') || type.includes('liste')) {
+        return `
+☑️ FORMAT REQUIS : CHECKLIST INTERACTIVE
+────────────────────────────────────────
+▸ Structure à créer :
+   • Liste de 8-15 points à cocher
+   • Cases à cocher cliquables
+   • Barre de progression (ex: "5/12 complétés")
+   • Bouton "Télécharger la checklist" en PDF
+
+▸ Éléments à inclure :
+   • Checkbox HTML interactives
+   • Catégorisation par sections si > 10 items
+   • Icônes visuelles par étape
+   • Option d'impression/téléchargement
+
+▸ Exemple de structure :
+   ┌─────────────────────────────────────┐
+   │  📋 CHECKLIST COMPLÈTE             │
+   │  Progression : ▓▓▓▓░░░░ 50%        │
+   │                                     │
+   │  ☐ Étape 1 : Description           │
+   │  ☑ Étape 2 : Description           │
+   │  ☐ Étape 3 : Description           │
+   │  ...                                │
+   │                                     │
+   │  [ 📥 Télécharger PDF ]            │
+   └─────────────────────────────────────┘`;
+    }
+
+    if (type.includes('template') || type.includes('modèle')) {
+        return `
+📄 FORMAT REQUIS : TEMPLATE / MODÈLE TÉLÉCHARGEABLE
+───────────────────────────────────────────────────
+▸ Structure à créer :
+   • Aperçu visuel du template
+   • Description des sections du modèle
+   • Bouton de téléchargement (Word, PDF, Excel)
+   • Instructions d'utilisation
+
+▸ Éléments à inclure :
+   • Preview image du document
+   • Format disponible : .docx, .pdf, .xlsx
+   • Call-to-action visible
+   • Guide de personnalisation
+
+▸ Exemple de structure :
+   ┌─────────────────────────────────────┐
+   │  📄 TEMPLATE GRATUIT               │
+   │  ┌─────────────────────┐           │
+   │  │   [Aperçu visuel]   │           │
+   │  │   du template       │           │
+   │  └─────────────────────┘           │
+   │                                     │
+   │  ✓ Format Word éditable            │
+   │  ✓ Sections pré-remplies           │
+   │  ✓ Instructions incluses           │
+   │                                     │
+   │  [ 📥 TÉLÉCHARGER GRATUITEMENT ]   │
+   └─────────────────────────────────────┘`;
+    }
+
+    if (type.includes('tableau') || type.includes('comparatif') || type.includes('comparateur')) {
+        return `
+📊 FORMAT REQUIS : TABLEAU COMPARATIF
+─────────────────────────────────────
+▸ Structure à créer :
+   • Tableau HTML responsive avec min. 3-5 colonnes
+   • En-têtes clairs avec icônes
+   • Cellules avec ✓/✗ ou valeurs comparatives
+   • Ligne de "Recommandation" en fin de tableau
+
+▸ Éléments à inclure :
+   • <table> avec classes CSS pour styling
+   • Colonne "Critères" à gauche
+   • Colonnes pour chaque option comparée
+   • Mise en valeur du "meilleur choix"
+   • Note ou verdict final
+
+▸ Exemple de structure :
+   ┌────────────┬─────────┬─────────┬─────────┐
+   │ Critère    │ Option A│ Option B│ Option C│
+   ├────────────┼─────────┼─────────┼─────────┤
+   │ Prix       │ €€€     │ €€      │ €       │
+   │ Qualité    │ ★★★★★   │ ★★★★    │ ★★★     │
+   │ Simplicité │ ✓       │ ✓       │ ✗       │
+   ├────────────┴─────────┴─────────┴─────────┤
+   │ 🏆 RECOMMANDÉ : Option B (meilleur ratio)│
+   └──────────────────────────────────────────┘`;
+    }
+
+    if (type.includes('quiz') || type.includes('test')) {
+        return `
+❓ FORMAT REQUIS : QUIZ / TEST INTERACTIF
+─────────────────────────────────────────
+▸ Structure à créer :
+   • 5-10 questions à choix multiples
+   • Système de scoring
+   • Résultat personnalisé selon les réponses
+   • Recommandations basées sur le profil
+
+▸ Éléments à inclure :
+   • Questions avec 3-4 options chacune
+   • Barre de progression du quiz
+   • Logique de calcul du score
+   • Page de résultats avec profil
+
+▸ Exemple de structure :
+   ┌─────────────────────────────────────┐
+   │  ❓ QUESTION 3/10                   │
+   │  Quel est votre principal objectif ?│
+   │                                     │
+   │  ○ Réponse A                        │
+   │  ○ Réponse B                        │
+   │  ○ Réponse C                        │
+   │  ○ Réponse D                        │
+   │                                     │
+   │  [ ◀ Précédent ] [ Suivant ▶ ]     │
+   │  ▓▓▓░░░░░░░ 30%                    │
+   └─────────────────────────────────────┘`;
+    }
+
+    if (type.includes('infographie')) {
+        return `
+🎨 FORMAT REQUIS : INFOGRAPHIE VISUELLE
+───────────────────────────────────────
+▸ Structure à créer :
+   • Image verticale ou horizontale (1200x2000px ou 1600x900px)
+   • 5-8 sections d'information visuelles
+   • Icônes et illustrations
+   • Chiffres clés mis en valeur
+
+▸ Éléments à inclure :
+   • Titre accrocheur en haut
+   • Flow visuel logique (haut → bas ou gauche → droite)
+   • Données statistiques illustrées
+   • Call-to-action en fin d'infographie
+   • Logo/branding discret
+
+▸ À générer avec IA ou designer :
+   • Palette de couleurs cohérente avec la marque
+   • Typographie lisible (min 14pt pour le corps)
+   • Espacement aéré entre les sections
+   • Export en PNG haute qualité pour web`;
+    }
+
+    if (type.includes('guide') || type.includes('étapes') || type.includes('tutoriel')) {
+        return `
+📖 FORMAT REQUIS : GUIDE ÉTAPE PAR ÉTAPE
+────────────────────────────────────────
+▸ Structure à créer :
+   • Numérotation claire des étapes (1, 2, 3...)
+   • Sous-sections détaillées par étape
+   • Visuels/captures d'écran pour chaque étape
+   • Tips et mises en garde
+
+▸ Éléments à inclure :
+   • Encadrés "💡 Astuce" et "⚠️ Attention"
+   • Durée estimée par étape
+   • Matériel/prérequis au début
+   • Résumé/récapitulatif en fin de guide
+
+▸ Exemple de structure :
+   ┌─────────────────────────────────────┐
+   │  📖 GUIDE EN X ÉTAPES              │
+   │  ⏱️ Durée totale : ~XX minutes     │
+   │                                     │
+   │  ÉTAPE 1 ─────────────────────     │
+   │  [Description + image]              │
+   │  💡 Astuce : ...                   │
+   │                                     │
+   │  ÉTAPE 2 ─────────────────────     │
+   │  [Description + image]              │
+   │  ...                                │
+   └─────────────────────────────────────┘`;
+    }
+
+    // Cas par défaut
+    return `
+🎯 FORMAT À DÉFINIR SELON LE TYPE : "${appatSXO}"
+─────────────────────────────────────────────────
+▸ Objectif : Créer un élément interactif qui :
+   • Apporte une valeur ajoutée concrète au lecteur
+   • Augmente le temps passé sur la page (+30s minimum)
+   • Encourage le partage et les backlinks
+   • Différencie l'article de la concurrence
+
+▸ Options de format possible :
+   • Tableau comparatif HTML
+   • Calculateur JavaScript
+   • Checklist interactive
+   • Template téléchargeable
+   • Quiz/Test de personnalité
+   • Infographie à partager
+
+▸ Conseil : Choisir le format le plus adapté à l'intent
+   de recherche et au contenu de l'article.`;
+}
+
 // Fonction pour formater l'article en prompt pour générateur
 function formatArticleForGenerator(row: ContentTableRow): string {
     const lsiKeywords = row.carburant?.lsi?.join(', ') || '';
+    const sxoInstructions = generateSXOInstructions(row.appatSXO);
 
     // Section SGE si disponible
     const sgeSection = row.sgeOptimization ? `
@@ -59,6 +294,16 @@ ${row.contenuObligatoire?.map((c, i) => `${i + 1}. ${c}`).join('\n') || 'Non dé
 ` : '';
 
     return `📝 INSTRUCTIONS DE RÉDACTION D'ARTICLE SEO
+
+═══════════════════════════════════════════════════════════════
+
+⚠️ DIRECTIVES POUR L'IA RÉDACTRICE
+───────────────────────────────────
+• RESPECTE OBLIGATOIREMENT tous les éléments listés ci-dessous
+• INTÈGRE le carburant sémantique naturellement dans le texte
+• CRÉE l'Appât SXO selon le format et la structure spécifiés
+• STRUCTURE l'article pour viser la Position 0 (snippet)
+• VÉRIFIE la checklist finale avant de soumettre ta rédaction
 
 ═══════════════════════════════════════════════════════════════
 
@@ -115,9 +360,10 @@ Type de schema : ${row.schema}
 
 🎁 APPÂT SXO À INTÉGRER
 ───────────────────────
-Type : ${row.appatSXO}
+Type identifié : ${row.appatSXO}
 Placement suggéré : Après le H2 principal ou dans une section dédiée
 Objectif : Augmenter le temps passé sur la page et l'engagement
+${sxoInstructions}
 
 ═══════════════════════════════════════════════════════════════
 ${newsSeoSection}${sgeSection}

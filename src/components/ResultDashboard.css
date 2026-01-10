@@ -1105,8 +1105,43 @@
 }
 
 .actions-cell {
-    min-width: 120px;
+    min-width: 150px;
     text-align: center;
+}
+
+.actions-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+}
+
+/* Delete Article Button */
+.delete-article-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xs);
+    width: 28px;
+    height: 28px;
+    font-family: var(--font-sans);
+    background: rgba(244, 63, 94, 0.1);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    border-radius: var(--radius-md);
+    color: var(--error-400);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.delete-article-btn:hover {
+    background: rgba(244, 63, 94, 0.2);
+    border-color: var(--error-400);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.2);
+}
+
+.delete-article-btn:active {
+    transform: translateY(0);
 }
 
 /* SGE Score Column */

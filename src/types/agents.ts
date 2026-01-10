@@ -561,6 +561,7 @@ export interface AgentStore {
     resetContentAudit: () => void;
     addSuggestedArticle: (article: ContentTableRow) => void;
     toggleArticleValidation: (index: number) => void;
+    deleteArticle: (index: number) => void;
 
     // News Transformer Actions
     runNewsTransformerAgent: (formData: NewsTransformerInput) => Promise<void>;

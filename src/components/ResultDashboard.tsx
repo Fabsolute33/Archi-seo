@@ -15,7 +15,8 @@ import {
     Copy,
     Check,
     RefreshCcw,
-    ClipboardCopy
+    ClipboardCopy,
+    Trash2
 } from 'lucide-react';
 import './ResultDashboard.css';
 
@@ -464,7 +465,8 @@ export function ResultDashboard() {
         authorityStrategy,
         coordinatorSummary,
         resetAll,
-        toggleArticleValidation
+        toggleArticleValidation,
+        deleteArticle
     } = useAgentStore();
 
     const isComplete = coordinatorSummary.status === 'completed';
@@ -743,6 +745,17 @@ export function ResultDashboard() {
                                             </td>
                                             <td className="actions-cell">
                                                 <CopyForGeneratorButton row={row} />
+                                                <button
+                                                    className="delete-article-btn"
+                                                    onClick={() => {
+                                                        if (window.confirm(`Supprimer l'article "${row.titreH1}" ?`)) {
+                                                            deleteArticle(idx);
+                                                        }
+                                                    }}
+                                                    title="Supprimer cet article"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}

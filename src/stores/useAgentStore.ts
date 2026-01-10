@@ -414,6 +414,26 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
         }
     },
 
+    // Delete an article from the content table
+    deleteArticle: (index: number) => {
+        const state = get();
+        const currentContent = state.contentDesign.data;
+
+        if (currentContent && currentContent.tableauContenu[index] !== undefined) {
+            const updatedTableau = currentContent.tableauContenu.filter((_, i) => i !== index);
+
+            set({
+                contentDesign: {
+                    ...state.contentDesign,
+                    data: {
+                        ...currentContent,
+                        tableauContenu: updatedTableau
+                    }
+                }
+            });
+        }
+    },
+
     // News Transformer Actions
     runNewsTransformerAgent: async (formData: NewsTransformerInput) => {
         const { apiKey, newsTransformer } = get();

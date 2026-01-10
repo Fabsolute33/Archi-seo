@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
     Rss,
     RefreshCw,
@@ -9,11 +9,20 @@ import {
     Plus,
     Trash2,
     Loader2,
-    AlertCircle
+    AlertCircle,
+    Link2,
+    FolderOpen,
+    Flame,
+    Save,
+    Check
 } from 'lucide-react';
 import { useRSSStore } from '../stores/useRSSStore';
+import { useProjectStore } from '../stores/useProjectStore';
+import { useAgentStore } from '../stores/useAgentStore';
 import { SUGGESTED_RSS_SOURCES, formatRelativeTime } from '../services/NewsMonitorService';
 import type { RSSArticle } from '../types/agents';
+import { RSSGeneratorPanel } from './RSSGeneratorPanel';
+import { calculateRelevance, type RelevanceResult } from '../utils/relevanceScorer';
 import './RSSWatchSection.css';
 
 // Sector tabs for quick source selection
@@ -21,6 +30,11 @@ const SECTOR_TABS = ['Tous', 'Tech / Digital', 'Marketing / SEO', 'Business / É
 
 interface RSSWatchSectionProps {
     onAnalyzeArticle?: (url: string) => void;
+}
+
+// Extended article type with relevance
+interface ArticleWithRelevance extends RSSArticle {
+    relevance: RelevanceResult;
 }
 
 export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
@@ -36,17 +50,83 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
         markArticleAsProcessed
     } = useRSSStore();
 
+    // Project context for relevance scoring and save
+    const { currentProjectName, saveCurrentProject, isLoading: isSaving } = useProjectStore();
+    const { businessDescription } = useAgentStore();
+
     const [activeSector, setActiveSector] = useState('Tous');
     const [showSettings, setShowSettings] = useState(false);
+    const [showGenerator, setShowGenerator] = useState(false);
     const [customUrl, setCustomUrl] = useState('');
     const [customName, setCustomName] = useState('');
+    const [saveSuccess, setSaveSuccess] = useState(false);
+
+    // Handle save with feedback
+    const handleSave = async () => {
+        await saveCurrentProject();
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 2000);
+    };
 
     // Auto-fetch when sources change
     useEffect(() => {
-        if (sources.length > 0 && articles.length === 0 && !isLoading) {
+        if (sources.length > 0 && articles.length === 0 && !isLoading && currentProjectName) {
             fetchArticles();
         }
-    }, [sources.length]);
+    }, [sources.length, currentProjectName]);
+
+    // Filter articles by sector if not "Tous"
+    const filteredArticles = activeSector === 'Tous'
+        ? articles
+        : articles.filter(a => {
+            const source = sources.find(s => s.id === a.sourceId);
+            return source?.sector === activeSector;
+        });
+
+    // Calculate relevance for each article and sort by relevance
+    // Must be called before any early returns to respect Rules of Hooks
+    const articlesWithRelevance: ArticleWithRelevance[] = useMemo(() => {
+        if (!currentProjectName) return [];
+
+        const withRelevance = filteredArticles.map(article => ({
+            ...article,
+            relevance: calculateRelevance(
+                article.title,
+                article.description || '',
+                currentProjectName,
+                businessDescription
+            )
+        }));
+        // Sort: high relevance first, then by date
+        return withRelevance.sort((a, b) => {
+            if (a.relevance.level === 'high' && b.relevance.level !== 'high') return -1;
+            if (b.relevance.level === 'high' && a.relevance.level !== 'high') return 1;
+            return new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
+        });
+    }, [filteredArticles, currentProjectName, businessDescription]);
+
+    const getSectorSourceCount = (sector: string) => {
+        if (sector === 'Tous') return sources.length;
+        return sources.filter(s => s.sector === sector).length;
+    };
+
+    // Count relevant articles
+    const relevantCount = articlesWithRelevance.filter(a => a.relevance.level === 'high').length;
+
+    // Check if project is loaded - if not, show message
+    // This is placed AFTER all hooks to respect Rules of Hooks
+    if (!currentProjectName) {
+        return (
+            <div className="rss-watch-section">
+                <div className="rss-no-project">
+                    <FolderOpen size={56} />
+                    <h3>Projet requis</h3>
+                    <p>Veuillez charger ou créer un projet pour accéder à la veille RSS.</p>
+                    <p className="hint">La veille sera personnalisée selon votre projet.</p>
+                </div>
+            </div>
+        );
+    }
 
     const handleAddSectorSources = (sector: string) => {
         const sectorData = SUGGESTED_RSS_SOURCES.find(s => s.sector === sector);
@@ -81,19 +161,6 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
         }
     };
 
-    // Filter articles by sector if not "Tous"
-    const filteredArticles = activeSector === 'Tous'
-        ? articles
-        : articles.filter(a => {
-            const source = sources.find(s => s.id === a.sourceId);
-            return source?.sector === activeSector;
-        });
-
-    const getSectorSourceCount = (sector: string) => {
-        if (sector === 'Tous') return sources.length;
-        return sources.filter(s => s.sector === sector).length;
-    };
-
     return (
         <div className="rss-watch-section">
             <div className="rss-watch-header">
@@ -113,6 +180,13 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                         <span>Gérer les sources</span>
                     </button>
                     <button
+                        className={`generator-btn ${showGenerator ? 'active' : ''}`}
+                        onClick={() => setShowGenerator(!showGenerator)}
+                    >
+                        <Link2 size={18} />
+                        <span>Créer un flux</span>
+                    </button>
+                    <button
                         className="refresh-btn"
                         onClick={fetchArticles}
                         disabled={isLoading || sources.length === 0}
@@ -120,8 +194,28 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                         <RefreshCw size={18} className={isLoading ? 'spinning' : ''} />
                         <span>Rafraîchir</span>
                     </button>
+                    <button
+                        className={`save-btn ${saveSuccess ? 'success' : ''}`}
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        title="Sauvegarder les modifications RSS"
+                    >
+                        {isSaving ? (
+                            <Loader2 size={18} className="spinning" />
+                        ) : saveSuccess ? (
+                            <Check size={18} />
+                        ) : (
+                            <Save size={18} />
+                        )}
+                        <span>{saveSuccess ? 'Sauvegardé !' : 'Sauvegarder'}</span>
+                    </button>
                 </div>
             </div>
+
+            {/* RSS Generator Panel */}
+            {showGenerator && (
+                <RSSGeneratorPanel onClose={() => setShowGenerator(false)} />
+            )}
 
             {/* Settings Panel (hidden by default) */}
             {showSettings && (
@@ -225,14 +319,29 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                     </div>
                 ) : (
                     <>
-                        {lastFetched && (
-                            <p className="last-updated">
-                                Dernière mise à jour : {formatRelativeTime(new Date(lastFetched))}
-                            </p>
-                        )}
+                        <div className="feed-meta">
+                            {lastFetched && (
+                                <p className="last-updated">
+                                    Dernière mise à jour : {formatRelativeTime(new Date(lastFetched))}
+                                </p>
+                            )}
+                            {relevantCount > 0 && (
+                                <p className="relevant-count">
+                                    <Flame size={14} /> {relevantCount} article{relevantCount > 1 ? 's' : ''} pertinent{relevantCount > 1 ? 's' : ''} pour votre projet
+                                </p>
+                            )}
+                        </div>
                         <div className="articles-grid">
-                            {filteredArticles.map(article => (
-                                <article key={article.id} className="article-card">
+                            {articlesWithRelevance.map(article => (
+                                <article
+                                    key={article.id}
+                                    className={`article-card ${article.relevance.level === 'high' ? 'article-relevant-high' : ''} ${article.relevance.level === 'medium' ? 'article-relevant-medium' : ''}`}
+                                >
+                                    {article.relevance.level === 'high' && (
+                                        <div className="relevance-badge">
+                                            <Flame size={12} /> Pertinent
+                                        </div>
+                                    )}
                                     <div className="article-meta">
                                         <span className="source-badge">{article.sourceName}</span>
                                         <span className="article-date">{formatRelativeTime(article.pubDate)}</span>
@@ -240,6 +349,13 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                                     <h3 className="article-title">{article.title}</h3>
                                     {article.description && (
                                         <p className="article-excerpt">{article.description}</p>
+                                    )}
+                                    {article.relevance.matchedKeywords.length > 0 && (
+                                        <div className="matched-keywords">
+                                            {article.relevance.matchedKeywords.slice(0, 3).map(kw => (
+                                                <span key={kw} className="keyword-tag">{kw}</span>
+                                            ))}
+                                        </div>
                                     )}
                                     <div className="article-actions">
                                         <a

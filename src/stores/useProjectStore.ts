@@ -11,12 +11,24 @@ import {
     generateProjectId
 } from '../services/ProjectService';
 
+// Auto-save configuration
+const AUTO_SAVE_DELAY = 30000; // 30 seconds
+let autoSaveTimeout: ReturnType<typeof setTimeout> | null = null;
+
+type AutoSaveStatus = 'idle' | 'pending' | 'saving' | 'saved' | 'error';
+
 interface ProjectStore {
     currentProjectId: string | null;
     currentProjectName: string;
     projects: SEOProject[];
     isLoading: boolean;
     error: string | null;
+
+    // Auto-save state
+    autoSaveEnabled: boolean;
+    autoSaveStatus: AutoSaveStatus;
+    lastAutoSave: number | null;
+    hasUnsavedChanges: boolean;
 
     setProjectName: (name: string) => void;
     saveCurrentProject: () => Promise<void>;
@@ -25,6 +37,12 @@ interface ProjectStore {
     deleteProject: (id: string) => Promise<void>;
     resetProject: () => void;
     createNewProject: () => void;
+
+    // Auto-save actions
+    setAutoSaveEnabled: (enabled: boolean) => void;
+    triggerAutoSave: () => void;
+    markAsChanged: () => void;
+    cancelPendingAutoSave: () => void;
 }
 
 export const useProjectStore = create<ProjectStore>((set, get) => ({
@@ -33,6 +51,12 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     projects: [],
     isLoading: false,
     error: null,
+
+    // Auto-save initial state
+    autoSaveEnabled: true,
+    autoSaveStatus: 'idle',
+    lastAutoSave: null,
+    hasUnsavedChanges: false,
 
     setProjectName: (name: string) => set({ currentProjectName: name }),
 
@@ -208,9 +232,92 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     }),
 
     createNewProject: () => {
+        // Cancel any pending auto-save
+        if (autoSaveTimeout) {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = null;
+        }
         // Reset agent store data first
         useAgentStore.getState().resetAll();
         // Reset project identifiers to create a fresh project
-        set({ currentProjectId: null, currentProjectName: '', error: null });
+        set({
+            currentProjectId: null,
+            currentProjectName: '',
+            error: null,
+            autoSaveStatus: 'idle',
+            hasUnsavedChanges: false,
+            lastAutoSave: null
+        });
+    },
+
+    // Auto-save actions
+    setAutoSaveEnabled: (enabled: boolean) => {
+        set({ autoSaveEnabled: enabled });
+        if (!enabled && autoSaveTimeout) {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = null;
+            set({ autoSaveStatus: 'idle' });
+        }
+    },
+
+    triggerAutoSave: () => {
+        const { autoSaveEnabled, currentProjectId, isLoading } = get();
+
+        // Only auto-save if enabled, a project is loaded, and not already saving
+        if (!autoSaveEnabled || !currentProjectId || isLoading) {
+            return;
+        }
+
+        // Clear any existing timeout
+        if (autoSaveTimeout) {
+            clearTimeout(autoSaveTimeout);
+        }
+
+        set({ autoSaveStatus: 'pending', hasUnsavedChanges: true });
+
+        // Set new timeout for auto-save
+        autoSaveTimeout = setTimeout(async () => {
+            const state = get();
+            if (!state.autoSaveEnabled || !state.currentProjectId) {
+                return;
+            }
+
+            try {
+                set({ autoSaveStatus: 'saving' });
+                await get().saveCurrentProject();
+                set({
+                    autoSaveStatus: 'saved',
+                    lastAutoSave: Date.now(),
+                    hasUnsavedChanges: false
+                });
+
+                // Reset status after 3 seconds
+                setTimeout(() => {
+                    if (get().autoSaveStatus === 'saved') {
+                        set({ autoSaveStatus: 'idle' });
+                    }
+                }, 3000);
+            } catch (error) {
+                console.error('Auto-save failed:', error);
+                set({ autoSaveStatus: 'error' });
+            }
+            autoSaveTimeout = null;
+        }, AUTO_SAVE_DELAY);
+    },
+
+    markAsChanged: () => {
+        const { currentProjectId } = get();
+        if (currentProjectId) {
+            set({ hasUnsavedChanges: true });
+            get().triggerAutoSave();
+        }
+    },
+
+    cancelPendingAutoSave: () => {
+        if (autoSaveTimeout) {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = null;
+        }
+        set({ autoSaveStatus: 'idle' });
     }
 }));

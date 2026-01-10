@@ -14,19 +14,21 @@ import {
     FolderOpen,
     Flame,
     Save,
-    Check
+    Check,
+    Search,
+    Globe
 } from 'lucide-react';
 import { useRSSStore } from '../stores/useRSSStore';
 import { useProjectStore } from '../stores/useProjectStore';
 import { useAgentStore } from '../stores/useAgentStore';
-import { SUGGESTED_RSS_SOURCES, formatRelativeTime } from '../services/NewsMonitorService';
+import { formatRelativeTime } from '../services/NewsMonitorService';
 import type { RSSArticle } from '../types/agents';
 import { RSSGeneratorPanel } from './RSSGeneratorPanel';
 import { calculateRelevance, type RelevanceResult } from '../utils/relevanceScorer';
 import './RSSWatchSection.css';
 
-// Sector tabs for quick source selection
-const SECTOR_TABS = ['Tous', 'Tech / Digital', 'Marketing / SEO', 'Business / Économie', 'E-commerce'];
+// Pagination settings
+const ARTICLES_PER_PAGE = 20;
 
 interface RSSWatchSectionProps {
     onAnalyzeArticle?: (url: string) => void;
@@ -54,18 +56,42 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
     const { currentProjectName, saveCurrentProject, isLoading: isSaving } = useProjectStore();
     const { businessDescription } = useAgentStore();
 
-    const [activeSector, setActiveSector] = useState('Tous');
+    const [activeSourceId, setActiveSourceId] = useState<string | null>(null); // null = all sources
+    const [currentPage, setCurrentPage] = useState(1);
     const [showSettings, setShowSettings] = useState(false);
     const [showGenerator, setShowGenerator] = useState(false);
+    const [showKeywordSearch, setShowKeywordSearch] = useState(false);
     const [customUrl, setCustomUrl] = useState('');
     const [customName, setCustomName] = useState('');
     const [saveSuccess, setSaveSuccess] = useState(false);
+    const [searchKeywords, setSearchKeywords] = useState('');
 
     // Handle save with feedback
     const handleSave = async () => {
         await saveCurrentProject();
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 2000);
+    };
+
+    // Generate Google News RSS URL from keywords
+    const handleAddGoogleNewsFeed = () => {
+        if (!searchKeywords.trim()) return;
+
+        // Build Google News RSS URL
+        const encodedKeywords = encodeURIComponent(searchKeywords.trim());
+        const googleNewsUrl = `https://news.google.com/rss/search?q=${encodedKeywords}&hl=fr&gl=FR&ceid=FR:fr`;
+
+        // Add as source
+        addSource({
+            name: `Google News: ${searchKeywords}`,
+            url: googleNewsUrl,
+            sector: 'Google News'
+        });
+
+        // Clear and fetch
+        setSearchKeywords('');
+        setShowKeywordSearch(false);
+        setTimeout(() => fetchArticles(), 100);
     };
 
     // Auto-fetch when sources change
@@ -75,13 +101,15 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
         }
     }, [sources.length, currentProjectName]);
 
-    // Filter articles by sector if not "Tous"
-    const filteredArticles = activeSector === 'Tous'
+    // Reset page when changing source
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeSourceId]);
+
+    // Filter articles by source if one is selected
+    const filteredArticles = activeSourceId === null
         ? articles
-        : articles.filter(a => {
-            const source = sources.find(s => s.id === a.sourceId);
-            return source?.sector === activeSector;
-        });
+        : articles.filter(a => a.sourceId === activeSourceId);
 
     // Calculate relevance for each article and sort by relevance
     // Must be called before any early returns to respect Rules of Hooks
@@ -105,13 +133,21 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
         });
     }, [filteredArticles, currentProjectName, businessDescription]);
 
-    const getSectorSourceCount = (sector: string) => {
-        if (sector === 'Tous') return sources.length;
-        return sources.filter(s => s.sector === sector).length;
+    // Get article count per source
+    const getSourceArticleCount = (sourceId: string | null) => {
+        if (sourceId === null) return articles.length;
+        return articles.filter(a => a.sourceId === sourceId).length;
     };
 
     // Count relevant articles
     const relevantCount = articlesWithRelevance.filter(a => a.relevance.level === 'high').length;
+
+    // Pagination calculations
+    const totalArticles = articlesWithRelevance.length;
+    const totalPages = Math.ceil(totalArticles / ARTICLES_PER_PAGE);
+    const startIndex = (currentPage - 1) * ARTICLES_PER_PAGE;
+    const endIndex = startIndex + ARTICLES_PER_PAGE;
+    const paginatedArticles = articlesWithRelevance.slice(startIndex, endIndex);
 
     // Check if project is loaded - if not, show message
     // This is placed AFTER all hooks to respect Rules of Hooks
@@ -127,20 +163,6 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
             </div>
         );
     }
-
-    const handleAddSectorSources = (sector: string) => {
-        const sectorData = SUGGESTED_RSS_SOURCES.find(s => s.sector === sector);
-        if (sectorData) {
-            sectorData.sources.forEach(source => {
-                const exists = sources.some(s => s.url === source.url);
-                if (!exists) {
-                    addSource({ name: source.name, url: source.url, sector });
-                }
-            });
-            // Auto-fetch after adding
-            setTimeout(() => fetchArticles(), 100);
-        }
-    };
 
     const handleAddCustomSource = () => {
         if (customUrl && customName) {
@@ -172,6 +194,13 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                     </div>
                 </div>
                 <div className="header-actions">
+                    <button
+                        className={`keyword-search-btn ${showKeywordSearch ? 'active' : ''}`}
+                        onClick={() => setShowKeywordSearch(!showKeywordSearch)}
+                    >
+                        <Search size={18} />
+                        <span>Recherche Google</span>
+                    </button>
                     <button
                         className={`settings-btn ${showSettings ? 'active' : ''}`}
                         onClick={() => setShowSettings(!showSettings)}
@@ -211,6 +240,45 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                     </button>
                 </div>
             </div>
+
+            {/* Google News Keyword Search Panel */}
+            {showKeywordSearch && (
+                <div className="keyword-search-panel">
+                    <div className="keyword-search-header">
+                        <div className="keyword-search-title">
+                            <Globe size={20} />
+                            <h3>Recherche Google News</h3>
+                        </div>
+                        <button className="close-btn" onClick={() => setShowKeywordSearch(false)}>
+                            <X size={16} />
+                        </button>
+                    </div>
+                    <p className="keyword-search-desc">
+                        Entrez des mots-clés pour créer un flux RSS automatique depuis Google News France.
+                    </p>
+                    <div className="keyword-input-group">
+                        <input
+                            type="text"
+                            placeholder="Ex: incendie entreprise France, sécurité au travail..."
+                            value={searchKeywords}
+                            onChange={(e) => setSearchKeywords(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleAddGoogleNewsFeed()}
+                        />
+                        <button
+                            onClick={handleAddGoogleNewsFeed}
+                            disabled={!searchKeywords.trim()}
+                        >
+                            <Plus size={16} /> Ajouter le flux
+                        </button>
+                    </div>
+                    <div className="keyword-examples">
+                        <span>Exemples :</span>
+                        <button onClick={() => setSearchKeywords('incendie entreprise France')}>incendie entreprise</button>
+                        <button onClick={() => setSearchKeywords('sécurité travail')}>sécurité travail</button>
+                        <button onClick={() => setSearchKeywords('formation professionnelle')}>formation pro</button>
+                    </div>
+                </div>
+            )}
 
             {/* RSS Generator Panel */}
             {showGenerator && (
@@ -263,27 +331,26 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                 </div>
             )}
 
-            {/* Sector Tabs */}
-            <div className="sector-tabs">
-                {SECTOR_TABS.map(sector => {
-                    const count = getSectorSourceCount(sector);
-                    const isActive = activeSector === sector;
-                    const hasSources = count > 0 || sector === 'Tous';
-
+            {/* Source Tabs */}
+            <div className="source-tabs">
+                <button
+                    className={`source-tab ${activeSourceId === null ? 'active' : ''}`}
+                    onClick={() => setActiveSourceId(null)}
+                >
+                    Toutes
+                    <span className="tab-count">{articles.length}</span>
+                </button>
+                {sources.map(source => {
+                    const count = getSourceArticleCount(source.id);
                     return (
                         <button
-                            key={sector}
-                            className={`sector-tab ${isActive ? 'active' : ''} ${!hasSources && sector !== 'Tous' ? 'empty' : ''}`}
-                            onClick={() => {
-                                setActiveSector(sector);
-                                if (sector !== 'Tous' && count === 0) {
-                                    handleAddSectorSources(sector);
-                                }
-                            }}
+                            key={source.id}
+                            className={`source-tab ${activeSourceId === source.id ? 'active' : ''}`}
+                            onClick={() => setActiveSourceId(source.id)}
+                            title={source.name}
                         >
-                            {sector === 'Tous' ? sector : sector.split(' / ')[0]}
-                            {count > 0 && <span className="tab-count">{count}</span>}
-                            {sector !== 'Tous' && count === 0 && <Plus size={12} />}
+                            {source.name.length > 25 ? source.name.substring(0, 25) + '...' : source.name}
+                            <span className="tab-count">{count}</span>
                         </button>
                     );
                 })}
@@ -295,7 +362,7 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                     <div className="empty-state">
                         <Rss size={48} />
                         <h3>Commencez votre veille</h3>
-                        <p>Cliquez sur un onglet secteur ci-dessus pour ajouter des sources automatiquement</p>
+                        <p>Utilisez "Recherche Google" ou "Créer un flux" pour ajouter des sources</p>
                     </div>
                 ) : isLoading ? (
                     <div className="loading-state">
@@ -325,14 +392,17 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                                     Dernière mise à jour : {formatRelativeTime(new Date(lastFetched))}
                                 </p>
                             )}
-                            {relevantCount > 0 && (
-                                <p className="relevant-count">
-                                    <Flame size={14} /> {relevantCount} article{relevantCount > 1 ? 's' : ''} pertinent{relevantCount > 1 ? 's' : ''} pour votre projet
-                                </p>
-                            )}
+                            <p className="articles-info">
+                                Affichage {startIndex + 1}-{Math.min(endIndex, totalArticles)} sur {totalArticles} articles
+                                {relevantCount > 0 && (
+                                    <span className="relevant-count-inline">
+                                        <Flame size={12} /> {relevantCount} pertinent{relevantCount > 1 ? 's' : ''}
+                                    </span>
+                                )}
+                            </p>
                         </div>
                         <div className="articles-grid">
-                            {articlesWithRelevance.map(article => (
+                            {paginatedArticles.map(article => (
                                 <article
                                     key={article.id}
                                     className={`article-card ${article.relevance.level === 'high' ? 'article-relevant-high' : ''} ${article.relevance.level === 'medium' ? 'article-relevant-medium' : ''}`}
@@ -376,6 +446,49 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                                 </article>
                             ))}
                         </div>
+
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="pagination">
+                                <button
+                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                    disabled={currentPage === 1}
+                                    className="pagination-btn"
+                                >
+                                    ← Précédent
+                                </button>
+                                <div className="pagination-pages">
+                                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                        let pageNum;
+                                        if (totalPages <= 5) {
+                                            pageNum = i + 1;
+                                        } else if (currentPage <= 3) {
+                                            pageNum = i + 1;
+                                        } else if (currentPage >= totalPages - 2) {
+                                            pageNum = totalPages - 4 + i;
+                                        } else {
+                                            pageNum = currentPage - 2 + i;
+                                        }
+                                        return (
+                                            <button
+                                                key={pageNum}
+                                                onClick={() => setCurrentPage(pageNum)}
+                                                className={`pagination-page ${currentPage === pageNum ? 'active' : ''}`}
+                                            >
+                                                {pageNum}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                <button
+                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="pagination-btn"
+                                >
+                                    Suivant →
+                                </button>
+                            </div>
+                        )}
                     </>
                 )}
             </div>

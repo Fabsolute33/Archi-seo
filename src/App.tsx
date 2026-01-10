@@ -12,9 +12,13 @@ import { ContentAuditResults } from './components/ContentAuditResults';
 import { FloatingSaveButton } from './components/FloatingSaveButton';
 import { NewsTransformerSection } from './components/NewsTransformerSection';
 import { RSSWatchSection } from './components/RSSWatchSection';
+import { AutoSaveIndicator } from './components/AutoSaveIndicator';
+import { useAutoSave } from './hooks/useAutoSave';
 import './App.css';
 
 function App() {
+    // Initialize auto-save hook
+    useAutoSave();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isAboutOpen, setIsAboutOpen] = useState(false);
@@ -40,6 +44,7 @@ function App() {
             />
 
             <Header />
+            <AutoSaveIndicator />
 
             <main className={`main-content ${currentView === 'results' ? 'full-width-view' : ''}`}>
                 {currentView === 'strategy' && (

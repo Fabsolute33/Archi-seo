@@ -2,11 +2,15 @@ import type { RSSSource, RSSArticle } from '../types/agents';
 
 /**
  * Service for fetching and parsing RSS feeds.
- * Uses a CORS proxy for browser-based fetching.
+ * Uses multiple CORS proxies with fallback for browser-based fetching.
  */
 
-// CORS proxy for browser-based RSS fetching
-const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+// Multiple CORS proxies for resilient fetching (fallback system)
+const CORS_PROXIES = [
+    { prefix: 'https://corsproxy.io/?', encode: true },
+    { prefix: 'https://api.allorigins.win/raw?url=', encode: true },
+    { prefix: 'https://cors-anywhere.herokuapp.com/', encode: false },
+];
 
 /**
  * Generate a unique ID for an article based on URL and title
@@ -99,22 +103,53 @@ function cleanHtml(html: string): string {
 }
 
 /**
- * Fetch articles from a single RSS source
+ * Fetch articles from a single RSS source with fallback proxies
  */
 export async function fetchRSSSource(source: RSSSource): Promise<RSSArticle[]> {
     if (!source.isActive) return [];
 
-    try {
-        const response = await fetch(`${CORS_PROXY}${encodeURIComponent(source.url)}`);
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+    let lastError: Error | null = null;
+
+    // Try each CORS proxy in order until one succeeds
+    for (const proxy of CORS_PROXIES) {
+        try {
+            const proxyUrl = proxy.encode
+                ? `${proxy.prefix}${encodeURIComponent(source.url)}`
+                : `${proxy.prefix}${source.url}`;
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+            const response = await fetch(proxyUrl, {
+                signal: controller.signal,
+                headers: {
+                    'Accept': 'application/rss+xml, application/xml, text/xml, */*'
+                }
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const xmlText = await response.text();
+
+            // Validate that we got XML content
+            if (!xmlText.includes('<') || xmlText.includes('<!DOCTYPE html')) {
+                throw new Error('Invalid RSS response');
+            }
+
+            return parseRSSFeed(xmlText, source);
+        } catch (error) {
+            lastError = error as Error;
+            console.warn(`Proxy ${proxy.prefix} failed for ${source.name}:`, error);
+            // Continue to next proxy
         }
-        const xmlText = await response.text();
-        return parseRSSFeed(xmlText, source);
-    } catch (error) {
-        console.error(`Error fetching RSS from ${source.name}:`, error);
-        return [];
     }
+
+    console.error(`All proxies failed for ${source.name}:`, lastError);
+    return [];
 }
 
 /**

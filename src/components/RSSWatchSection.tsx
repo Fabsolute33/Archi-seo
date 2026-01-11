@@ -27,8 +27,8 @@ import { RSSGeneratorPanel } from './RSSGeneratorPanel';
 import { calculateRelevance, type RelevanceResult } from '../utils/relevanceScorer';
 import './RSSWatchSection.css';
 
-// Pagination settings
-const ARTICLES_PER_PAGE = 20;
+// Load more settings
+const ARTICLES_INCREMENT = 10;
 
 interface RSSWatchSectionProps {
     onAnalyzeArticle?: (url: string) => void;
@@ -57,7 +57,7 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
     const { businessDescription } = useAgentStore();
 
     const [activeSourceId, setActiveSourceId] = useState<string | null>(null); // null = all sources
-    const [currentPage, setCurrentPage] = useState(1);
+    const [visibleCount, setVisibleCount] = useState(ARTICLES_INCREMENT);
     const [showSettings, setShowSettings] = useState(false);
     const [showGenerator, setShowGenerator] = useState(false);
     const [showKeywordSearch, setShowKeywordSearch] = useState(false);
@@ -101,9 +101,9 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
         }
     }, [sources.length, currentProjectName]);
 
-    // Reset page when changing source
+    // Reset visible count when changing source
     useEffect(() => {
-        setCurrentPage(1);
+        setVisibleCount(ARTICLES_INCREMENT);
     }, [activeSourceId]);
 
     // Filter articles by source if one is selected
@@ -125,12 +125,10 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                 businessDescription
             )
         }));
-        // Sort: high relevance first, then by date
-        return withRelevance.sort((a, b) => {
-            if (a.relevance.level === 'high' && b.relevance.level !== 'high') return -1;
-            if (b.relevance.level === 'high' && a.relevance.level !== 'high') return 1;
-            return new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
-        });
+        // Sort by date (newest first)
+        return withRelevance.sort((a, b) =>
+            new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+        );
     }, [filteredArticles, currentProjectName, businessDescription]);
 
     // Get article count per source
@@ -142,12 +140,14 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
     // Count relevant articles
     const relevantCount = articlesWithRelevance.filter(a => a.relevance.level === 'high').length;
 
-    // Pagination calculations
+    // Load more calculations
     const totalArticles = articlesWithRelevance.length;
-    const totalPages = Math.ceil(totalArticles / ARTICLES_PER_PAGE);
-    const startIndex = (currentPage - 1) * ARTICLES_PER_PAGE;
-    const endIndex = startIndex + ARTICLES_PER_PAGE;
-    const paginatedArticles = articlesWithRelevance.slice(startIndex, endIndex);
+    const displayedArticles = articlesWithRelevance.slice(0, visibleCount);
+    const hasMoreArticles = visibleCount < totalArticles;
+
+    const handleLoadMore = () => {
+        setVisibleCount(prev => prev + ARTICLES_INCREMENT);
+    };
 
     // Check if project is loaded - if not, show message
     // This is placed AFTER all hooks to respect Rules of Hooks
@@ -393,7 +393,7 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                                 </p>
                             )}
                             <p className="articles-info">
-                                Affichage {startIndex + 1}-{Math.min(endIndex, totalArticles)} sur {totalArticles} articles
+                                Affichage {Math.min(visibleCount, totalArticles)} sur {totalArticles} articles
                                 {relevantCount > 0 && (
                                     <span className="relevant-count-inline">
                                         <Flame size={12} /> {relevantCount} pertinent{relevantCount > 1 ? 's' : ''}
@@ -402,7 +402,7 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                             </p>
                         </div>
                         <div className="articles-grid">
-                            {paginatedArticles.map(article => (
+                            {displayedArticles.map(article => (
                                 <article
                                     key={article.id}
                                     className={`article-card ${article.relevance.level === 'high' ? 'article-relevant-high' : ''} ${article.relevance.level === 'medium' ? 'article-relevant-medium' : ''}`}
@@ -446,46 +446,15 @@ export function RSSWatchSection({ onAnalyzeArticle }: RSSWatchSectionProps) {
                                 </article>
                             ))}
                         </div>
-
-                        {/* Pagination */}
-                        {totalPages > 1 && (
-                            <div className="pagination">
+                        {/* Load More Button */}
+                        {hasMoreArticles && (
+                            <div className="load-more-container">
                                 <button
-                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                    disabled={currentPage === 1}
-                                    className="pagination-btn"
+                                    onClick={handleLoadMore}
+                                    className="load-more-btn"
                                 >
-                                    ← Précédent
-                                </button>
-                                <div className="pagination-pages">
-                                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                        let pageNum;
-                                        if (totalPages <= 5) {
-                                            pageNum = i + 1;
-                                        } else if (currentPage <= 3) {
-                                            pageNum = i + 1;
-                                        } else if (currentPage >= totalPages - 2) {
-                                            pageNum = totalPages - 4 + i;
-                                        } else {
-                                            pageNum = currentPage - 2 + i;
-                                        }
-                                        return (
-                                            <button
-                                                key={pageNum}
-                                                onClick={() => setCurrentPage(pageNum)}
-                                                className={`pagination-page ${currentPage === pageNum ? 'active' : ''}`}
-                                            >
-                                                {pageNum}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                                <button
-                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                    disabled={currentPage === totalPages}
-                                    className="pagination-btn"
-                                >
-                                    Suivant →
+                                    <Plus size={16} />
+                                    Charger plus ({totalArticles - visibleCount} restants)
                                 </button>
                             </div>
                         )}

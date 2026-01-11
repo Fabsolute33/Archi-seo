@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { RSSSource, RSSArticle } from '../types/agents';
-import { fetchAllRSSSources, filterUnprocessedArticles } from '../services/NewsMonitorService';
+import { fetchAllRSSSources } from '../services/NewsMonitorService';
 
 interface RSSStore {
     // State
@@ -57,7 +57,7 @@ export const useRSSStore = create<RSSStore>((set, get) => ({
     },
 
     fetchArticles: async () => {
-        const { sources, processedArticleIds } = get();
+        const { sources } = get();
 
         if (sources.length === 0) {
             set({ articles: [], error: null });
@@ -68,10 +68,11 @@ export const useRSSStore = create<RSSStore>((set, get) => ({
 
         try {
             const allArticles = await fetchAllRSSSources(sources);
-            const unprocessed = filterUnprocessedArticles(allArticles, processedArticleIds);
 
+            // Store ALL articles - don't filter by processed IDs
+            // This ensures refresh always shows current feed content
             set({
-                articles: unprocessed,
+                articles: allArticles,
                 isLoading: false,
                 lastFetched: Date.now()
             });

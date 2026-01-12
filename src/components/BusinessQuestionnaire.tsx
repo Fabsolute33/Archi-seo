@@ -1,18 +1,25 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Check, Building2, MapPin, TrendingUp, Target, Euro, Users, Globe, Zap, MessageSquare, FolderOpen } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Building2, MapPin, TrendingUp, Target, Euro, Users, Globe, Zap, MessageSquare, FolderOpen, Award } from 'lucide-react';
 import './BusinessQuestionnaire.css';
 
 export interface QuestionnaireAnswers {
     projectName: string;
     siteType: string;
+    sectorCategory: string;
     sector: string;
+    subSector: string;
     location: string;
+    targetCity: string;
     domainAuthority: string;
     budget: string;
     teamSize: string;
     mainGoal: string;
     targetKeyword: string;
     constraints: string;
+    industryTerms: string[];
+    clientTerms: string;
+    certifications: string[];
+    competitors: string[];
 }
 
 interface Question {
@@ -20,11 +27,46 @@ interface Question {
     icon: React.ReactNode;
     title: string;
     subtitle: string;
-    type: 'select' | 'text' | 'textarea';
+    type: 'select' | 'text' | 'textarea' | 'tags' | 'multi-text';
     options?: { value: string; label: string; emoji?: string }[];
     placeholder?: string;
     required: boolean;
+    condition?: (answers: QuestionnaireAnswers) => boolean;
 }
+
+// Liste complète des catégories sectorielles
+const SECTOR_CATEGORIES = [
+    { value: 'btp', label: 'BTP / Construction', emoji: '🏗️' },
+    { value: 'plomberie', label: 'Plomberie / Chauffage', emoji: '🔧' },
+    { value: 'electricite', label: 'Électricité / Domotique', emoji: '⚡' },
+    { value: 'immobilier', label: 'Immobilier / Agence', emoji: '🏠' },
+    { value: 'architecture', label: 'Architecture / Design', emoji: '📐' },
+    { value: 'sante', label: 'Santé / Médical', emoji: '🏥' },
+    { value: 'bien-etre', label: 'Bien-être / Spa / Coaching', emoji: '🧘' },
+    { value: 'juridique', label: 'Juridique / Avocats', emoji: '⚖️' },
+    { value: 'comptabilite', label: 'Comptabilité / Finance', emoji: '📊' },
+    { value: 'assurance', label: 'Assurance / Mutuelle', emoji: '🛡️' },
+    { value: 'tech-saas', label: 'Tech / SaaS / Logiciel', emoji: '💻' },
+    { value: 'agence-web', label: 'Agence Web / Marketing', emoji: '🌐' },
+    { value: 'ecommerce-mode', label: 'E-commerce Mode', emoji: '👗' },
+    { value: 'ecommerce-deco', label: 'E-commerce Déco / Maison', emoji: '🛋️' },
+    { value: 'ecommerce-food', label: 'E-commerce Alimentaire', emoji: '🍽️' },
+    { value: 'ecommerce-bio', label: 'E-commerce Bio / Naturel', emoji: '🌿' },
+    { value: 'restaurant', label: 'Restaurant / Traiteur', emoji: '🍴' },
+    { value: 'hotel', label: 'Hôtellerie / Tourisme', emoji: '🏨' },
+    { value: 'auto', label: 'Automobile / Garage', emoji: '🚗' },
+    { value: 'formation', label: 'Formation / E-learning', emoji: '🎓' },
+    { value: 'rh', label: 'RH / Recrutement', emoji: '👔' },
+    { value: 'industrie', label: 'Industrie / B2B', emoji: '🏭' },
+    { value: 'artisan', label: 'Artisanat / Métiers d\'art', emoji: '🎨' },
+    { value: 'securite', label: 'Sécurité / Surveillance', emoji: '🔒' },
+    { value: 'transport', label: 'Transport / Logistique', emoji: '🚚' },
+    { value: 'energie', label: 'Énergie / Environnement', emoji: '♻️' },
+    { value: 'sport', label: 'Sport / Fitness', emoji: '💪' },
+    { value: 'beaute', label: 'Beauté / Cosmétique', emoji: '💄' },
+    { value: 'event', label: 'Événementiel / Mariage', emoji: '🎉' },
+    { value: 'autre', label: 'Autre secteur', emoji: '📁' },
+];
 
 const QUESTIONS: Question[] = [
     {
@@ -52,22 +94,83 @@ const QUESTIONS: Question[] = [
         required: true,
     },
     {
+        id: 'sectorCategory',
+        icon: <Building2 size={24} />,
+        title: 'Quelle est votre catégorie de secteur ?',
+        subtitle: 'Choisissez la catégorie qui correspond le mieux à votre activité',
+        type: 'select',
+        options: SECTOR_CATEGORIES,
+        required: true,
+    },
+    {
         id: 'sector',
         icon: <Building2 size={24} />,
-        title: 'Quel est votre secteur d\'activité ?',
-        subtitle: 'Soyez précis : "Plomberie urgence" plutôt que "BTP"',
+        title: 'Décrivez précisément votre activité',
+        subtitle: 'Soyez spécifique : "Plomberie d\'urgence" plutôt que juste "Plomberie"',
         type: 'text',
-        placeholder: 'Ex: E-commerce thé bio, SaaS RH, Plomberie...',
+        placeholder: 'Ex: Plomberie d\'urgence 24/7, Cabinet avocat droit du travail, E-commerce thé bio premium...',
         required: true,
+    },
+    {
+        id: 'subSector',
+        icon: <Target size={24} />,
+        title: 'Quelle est votre spécialité ?',
+        subtitle: 'Votre niche ou expertise particulière',
+        type: 'text',
+        placeholder: 'Ex: Débouchage canalisations, Contentieux prud\'homal, Thés japonais rares...',
+        required: false,
     },
     {
         id: 'location',
         icon: <MapPin size={24} />,
         title: 'Quelle est votre zone géographique cible ?',
         subtitle: 'Local, national ou international ?',
-        type: 'text',
-        placeholder: 'Ex: Lyon, France entière, Europe...',
+        type: 'select',
+        options: [
+            { value: 'local', label: 'Local (ville/département)', emoji: '📍' },
+            { value: 'regional', label: 'Régional', emoji: '🗺️' },
+            { value: 'national', label: 'National (France)', emoji: '🇫🇷' },
+            { value: 'europe', label: 'Europe', emoji: '🇪🇺' },
+            { value: 'international', label: 'International', emoji: '🌍' },
+        ],
         required: true,
+    },
+    {
+        id: 'targetCity',
+        icon: <MapPin size={24} />,
+        title: 'Quelle ville/zone principale ciblez-vous ?',
+        subtitle: 'Important pour le SEO local',
+        type: 'text',
+        placeholder: 'Ex: Paris 16ème, Lyon et périphérie, Côte d\'Azur...',
+        required: false,
+        condition: (answers) => answers.location === 'local' || answers.location === 'regional',
+    },
+    {
+        id: 'industryTerms',
+        icon: <Zap size={24} />,
+        title: 'Quels sont les termes techniques de votre métier ?',
+        subtitle: 'Le jargon professionnel que vous utilisez (3-5 termes minimum)',
+        type: 'text',
+        placeholder: 'Ex: débouchage, curage, colonne montante, siphon... (séparez par des virgules)',
+        required: true,
+    },
+    {
+        id: 'clientTerms',
+        icon: <MessageSquare size={24} />,
+        title: 'Comment vos clients décrivent leur problème ?',
+        subtitle: 'Les mots exacts qu\'ils utilisent pour vous chercher',
+        type: 'textarea',
+        placeholder: 'Ex: "j\'ai une fuite d\'eau", "mes toilettes sont bouchées", "besoin d\'un plombier en urgence"...',
+        required: true,
+    },
+    {
+        id: 'certifications',
+        icon: <Award size={24} />,
+        title: 'Quelles normes/certifications dans votre secteur ?',
+        subtitle: 'Labels, qualifications, normes obligatoires',
+        type: 'text',
+        placeholder: 'Ex: RGE, Qualibat, NF, ISO 9001, CNIL... (séparez par des virgules)',
+        required: false,
     },
     {
         id: 'domainAuthority',
@@ -138,12 +241,21 @@ const QUESTIONS: Question[] = [
         required: false,
     },
     {
+        id: 'competitors',
+        icon: <Users size={24} />,
+        title: 'Quels sont vos principaux concurrents ?',
+        subtitle: 'URLs ou noms des 3 concurrents principaux (un par ligne)',
+        type: 'textarea',
+        placeholder: 'Ex:\nconcurrent1.fr\nconcurrent2.com\nconcurrent3.fr',
+        required: false,
+    },
+    {
         id: 'constraints',
         icon: <MessageSquare size={24} />,
         title: 'Contraintes ou informations complémentaires ?',
-        subtitle: 'Concurrents à battre, limites techniques, délais...',
+        subtitle: 'Limites techniques, délais, informations importantes...',
         type: 'textarea',
-        placeholder: 'Ex: Concurrent principal: exemple.com, Délai: résultats sous 3 mois, Budget limité sur le netlinking...',
+        placeholder: 'Ex: Délai: résultats sous 3 mois, Budget limité sur le netlinking...',
         required: false,
     },
 ];
@@ -158,19 +270,37 @@ export function BusinessQuestionnaire({ onComplete, disabled = false }: Props) {
     const [answers, setAnswers] = useState<QuestionnaireAnswers>({
         projectName: '',
         siteType: '',
+        sectorCategory: '',
         sector: '',
+        subSector: '',
         location: '',
+        targetCity: '',
         domainAuthority: '',
         budget: '',
         teamSize: '',
         mainGoal: '',
         targetKeyword: '',
         constraints: '',
+        industryTerms: [],
+        clientTerms: '',
+        certifications: [],
+        competitors: [],
     });
     const [showSummary, setShowSummary] = useState(false);
 
-    const currentQuestion = QUESTIONS[currentStep];
-    const progress = ((currentStep + 1) / QUESTIONS.length) * 100;
+    // Get filtered questions based on conditions
+    const getFilteredQuestions = () => {
+        return QUESTIONS.filter(q => {
+            if (q.condition) {
+                return q.condition(answers);
+            }
+            return true;
+        });
+    };
+
+    const filteredQuestions = getFilteredQuestions();
+    const currentQuestion = filteredQuestions[currentStep];
+    const progress = ((currentStep + 1) / filteredQuestions.length) * 100;
 
     const handleAnswer = (value: string) => {
         setAnswers(prev => ({ ...prev, [currentQuestion.id]: value }));
@@ -178,11 +308,15 @@ export function BusinessQuestionnaire({ onComplete, disabled = false }: Props) {
 
     const canProceed = () => {
         if (!currentQuestion.required) return true;
-        return answers[currentQuestion.id].trim() !== '';
+        const value = answers[currentQuestion.id];
+        if (Array.isArray(value)) {
+            return value.length > 0;
+        }
+        return typeof value === 'string' && value.trim() !== '';
     };
 
     const handleNext = () => {
-        if (currentStep < QUESTIONS.length - 1) {
+        if (currentStep < filteredQuestions.length - 1) {
             setCurrentStep(prev => prev + 1);
         } else {
             setShowSummary(true);
@@ -201,8 +335,14 @@ export function BusinessQuestionnaire({ onComplete, disabled = false }: Props) {
         onComplete(answers);
     };
 
-    const formatAnswerForDisplay = (questionId: keyof QuestionnaireAnswers, value: string) => {
+    const formatAnswerForDisplay = (questionId: keyof QuestionnaireAnswers, value: string | string[]) => {
         const question = QUESTIONS.find(q => q.id === questionId);
+
+        // Handle array values
+        if (Array.isArray(value)) {
+            return value.length > 0 ? value.join(', ') : '—';
+        }
+
         if (question?.type === 'select' && question.options) {
             const option = question.options.find(o => o.value === value);
             return option ? `${option.emoji || ''} ${option.label}` : value;
@@ -349,7 +489,7 @@ export function BusinessQuestionnaire({ onComplete, disabled = false }: Props) {
 
             {/* Step Indicators */}
             <div className="step-indicators">
-                {QUESTIONS.map((_, index) => (
+                {filteredQuestions.map((_, index) => (
                     <button
                         key={index}
                         type="button"
@@ -404,10 +544,19 @@ export function formatAnswersForAgent(answers: QuestionnaireAnswers): string {
         position1: 'Position 1 sur mot-clé cible',
     };
 
+    const locationLabels: Record<string, string> = {
+        local: 'Local (ville/département)',
+        regional: 'Régional',
+        national: 'National (France)',
+        europe: 'Europe',
+        international: 'International',
+    };
+
     let description = `**CONTEXTE BUSINESS**
 - Type de site: ${siteTypeLabels[answers.siteType] || answers.siteType}
-- Secteur: ${answers.sector}
-- Zone géographique: ${answers.location}
+- Catégorie secteur: ${answers.sectorCategory}
+- Secteur: ${answers.sector}${answers.subSector ? ` - Spécialité: ${answers.subSector}` : ''}
+- Zone géographique: ${locationLabels[answers.location] || answers.location}${answers.targetCity ? ` - Ville cible: ${answers.targetCity}` : ''}
 - Autorité du domaine: ${daLabels[answers.domainAuthority] || answers.domainAuthority}
 - Budget SEO: ${budgetLabels[answers.budget] || answers.budget}
 - Taille équipe: ${teamLabels[answers.teamSize] || answers.teamSize}
@@ -415,6 +564,26 @@ export function formatAnswersForAgent(answers: QuestionnaireAnswers): string {
 
     if (answers.targetKeyword) {
         description += `\n- Mot-clé cible: ${answers.targetKeyword}`;
+    }
+
+    // Vocabulaire sectoriel
+    const industryTermsStr = Array.isArray(answers.industryTerms)
+        ? answers.industryTerms.join(', ')
+        : answers.industryTerms;
+    const certificationsStr = Array.isArray(answers.certifications)
+        ? answers.certifications.join(', ')
+        : answers.certifications;
+    const competitorsStr = Array.isArray(answers.competitors)
+        ? answers.competitors.join(', ')
+        : answers.competitors;
+
+    description += `\n\n**VOCABULAIRE SECTORIEL (fourni par le client)**
+- Termes métier (jargon): ${industryTermsStr || 'Non renseigné'}
+- Langage client: ${answers.clientTerms || 'Non renseigné'}
+- Normes/Certifications: ${certificationsStr || 'Non renseigné'}`;
+
+    if (competitorsStr) {
+        description += `\n\n**CONCURRENTS IDENTIFIÉS**\n${competitorsStr}`;
     }
 
     if (answers.constraints) {

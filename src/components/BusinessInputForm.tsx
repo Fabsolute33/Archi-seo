@@ -19,6 +19,10 @@ export function BusinessInputForm() {
     const handleQuestionnaireComplete = async (answers: QuestionnaireAnswers) => {
         if (!apiKey) return;
 
+        // IMPORTANT: Prepare a fresh project context to avoid overwriting existing projects
+        // This resets currentProjectId to null so a new ID will be generated on save
+        useProjectStore.getState().prepareNewProjectContext();
+
         // Set project name before running analysis
         setProjectName(answers.projectName);
 

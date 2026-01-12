@@ -4,7 +4,9 @@
 export interface ContexteBusiness {
     typeSite: 'WordPress' | 'Shopify' | 'Custom' | 'Neuf';
     secteur: string;
+    sousSecteur?: string;       // Sous-secteur ou spécialité
     positionnement: string;
+    zoneGeographique?: string;  // Zone cible locale/nationale/internationale
     autoritéEstimée: 'DA < 10' | 'DA 10-40' | 'DA > 40';
     budgetInféré: string;
 }
@@ -58,9 +60,16 @@ export interface LevierDifferentiation {
     preuves: string[];
 }
 
+export interface VocabulaireSectoriel {
+    termesMetier: string[];      // Jargon professionnel
+    termesClients: string[];     // Termes utilisés par les clients
+    entitesGoogle: string[];     // Marques, normes, certifications
+}
+
 // Agent 1 - Strategic Analyzer Output
 export interface StrategicAnalysis {
     contexteBusiness?: ContexteBusiness;
+    vocabulaireSectoriel?: VocabulaireSectoriel;  // NEW: Vocabulaire spécifique au secteur
     diagnosticFlash?: DiagnosticFlash;
     avatar: AvatarClient;
     douleursTop5: DouleurPrimaire[];
@@ -575,14 +584,21 @@ export interface AgentStore {
 export interface QuestionnaireAnswers {
     projectName: string;
     siteType: string;
-    sector: string;
-    location: string;
+    sectorCategory: string;     // Catégorie principale (BTP, Santé, Tech, etc.)
+    sector: string;             // Description libre du secteur
+    subSector: string;          // Spécialité précise
+    location: string;           // Zone géographique
+    targetCity: string;         // Ville principale (si local)
     domainAuthority: string;
     budget: string;
     teamSize: string;
     mainGoal: string;
     targetKeyword: string;
     constraints: string;
+    industryTerms: string[];    // Termes métier (jargon professionnel)
+    clientTerms: string;        // Comment les clients décrivent leur problème
+    certifications: string[];   // Normes/certifications du secteur
+    competitors: string[];      // URLs des concurrents principaux
 }
 
 // Individual News Analysis (for history)

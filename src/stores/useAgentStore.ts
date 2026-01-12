@@ -28,6 +28,7 @@ import { runContentAuditor } from '../services/agents/ContentAuditorAgent';
 import { runSGEOptimizer, enrichArticlesWithSGE } from '../services/agents/SGEOptimizerAgent';
 import { runNewsTransformer } from '../services/agents/NewsTransformerAgent';
 import { scrapeUrl } from '../services/WebScraperService';
+import { enrichSectorVocabulary } from '../services/KnowledgeGraphService';
 
 const createInitialAgentState = <T>(): AgentState<T> => ({
     status: 'idle',
@@ -80,7 +81,7 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
     setQuestionnaireAnswers: (answers) => set({ questionnaireAnswers: answers }),
 
     runAllAgents: async () => {
-        const { businessDescription, apiKey } = get();
+        const { businessDescription, apiKey, questionnaireAnswers } = get();
 
         if (!businessDescription || !apiKey) {
             console.error('Missing business description or API key');
@@ -88,9 +89,70 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
         }
 
         try {
+            // Pre-step: Enrich vocabulary with Knowledge Graph if questionnaire data available
+            let kgVocabulary = null;
+            if (questionnaireAnswers?.sectorCategory || questionnaireAnswers?.sector) {
+                try {
+                    console.log('🔍 Enriching vocabulary with Knowledge Graph...');
+                    kgVocabulary = await enrichSectorVocabulary(
+                        questionnaireAnswers.sector || questionnaireAnswers.sectorCategory,
+                        questionnaireAnswers.subSector,
+                        questionnaireAnswers.industryTerms
+                    );
+                    console.log('✅ Knowledge Graph enrichment complete:', kgVocabulary);
+                } catch (kgError) {
+                    console.warn('Knowledge Graph enrichment failed, continuing without:', kgError);
+                }
+            }
+
             // Agent 1: Strategic Analyzer
             set({ strategicAnalysis: { ...createInitialAgentState(), status: 'running', startedAt: Date.now() } });
             const strategicResult = await runStrategicAnalyzer(businessDescription);
+
+            // Merge Knowledge Graph vocabulary with AI-generated vocabulary
+            if (kgVocabulary && strategicResult) {
+                const existingVocab = strategicResult.vocabulaireSectoriel || { termesMetier: [], termesClients: [], entitesGoogle: [] };
+                strategicResult.vocabulaireSectoriel = {
+                    termesMetier: [...new Set([...kgVocabulary.termesMetier, ...existingVocab.termesMetier])],
+                    termesClients: [...new Set([...kgVocabulary.termesClients, ...existingVocab.termesClients])],
+                    entitesGoogle: [...new Set([...kgVocabulary.entitesGoogle, ...existingVocab.entitesGoogle])],
+                };
+            }
+
+            // Enrich with questionnaire data if available
+            if (questionnaireAnswers && strategicResult) {
+                // Add questionnaire industry terms to vocabulary
+                if (questionnaireAnswers.industryTerms?.length > 0) {
+                    const vocab = strategicResult.vocabulaireSectoriel || { termesMetier: [], termesClients: [], entitesGoogle: [] };
+                    vocab.termesMetier = [...new Set([...vocab.termesMetier, ...questionnaireAnswers.industryTerms])];
+                    strategicResult.vocabulaireSectoriel = vocab;
+                }
+
+                // Add client terms 
+                if (questionnaireAnswers.clientTerms) {
+                    const vocab = strategicResult.vocabulaireSectoriel || { termesMetier: [], termesClients: [], entitesGoogle: [] };
+                    const clientTerms = questionnaireAnswers.clientTerms.split(/[,\n]/).map(t => t.trim()).filter(Boolean);
+                    vocab.termesClients = [...new Set([...vocab.termesClients, ...clientTerms])];
+                    strategicResult.vocabulaireSectoriel = vocab;
+                }
+
+                // Add certifications as entities
+                if (questionnaireAnswers.certifications?.length > 0) {
+                    const vocab = strategicResult.vocabulaireSectoriel || { termesMetier: [], termesClients: [], entitesGoogle: [] };
+                    vocab.entitesGoogle = [...new Set([...vocab.entitesGoogle, ...questionnaireAnswers.certifications])];
+                    strategicResult.vocabulaireSectoriel = vocab;
+                }
+
+                // Enrich contexteBusiness with questionnaire data
+                strategicResult.contexteBusiness = {
+                    ...strategicResult.contexteBusiness,
+                    sousSecteur: questionnaireAnswers.subSector || strategicResult.contexteBusiness?.sousSecteur,
+                    zoneGeographique: questionnaireAnswers.targetCity || questionnaireAnswers.location || strategicResult.contexteBusiness?.zoneGeographique,
+                } as typeof strategicResult.contexteBusiness;
+
+                console.log('✅ Enriched with questionnaire data:', strategicResult.vocabulaireSectoriel);
+            }
+
             set({
                 strategicAnalysis: {
                     status: 'completed',

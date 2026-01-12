@@ -466,8 +466,30 @@ export function ResultDashboard() {
         coordinatorSummary,
         resetAll,
         toggleArticleValidation,
-        deleteArticle
+        deleteArticle,
+        runAllAgents,
+        questionnaireAnswers
     } = useAgentStore();
+
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const handleRefreshStrategy = async () => {
+        if (!questionnaireAnswers) {
+            alert('Aucune donnée de questionnaire disponible pour relancer la stratégie.');
+            return;
+        }
+
+        if (!confirm('Relancer l\'analyse complète ? Cela écrasera les résultats actuels.')) {
+            return;
+        }
+
+        setIsRefreshing(true);
+        try {
+            await runAllAgents();
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
 
     const isComplete = coordinatorSummary.status === 'completed';
 
@@ -475,6 +497,22 @@ export function ResultDashboard() {
 
     return (
         <section className="result-dashboard">
+            {/* Header with Refresh button */}
+            <div className="result-dashboard-header">
+                <h2 className="result-dashboard-title">
+                    <Zap className="section-icon" />
+                    Résultats de l'analyse SEO
+                </h2>
+                <button
+                    className="btn btn-refresh"
+                    onClick={handleRefreshStrategy}
+                    disabled={isRefreshing}
+                    title="Relancer l'analyse avec les données du questionnaire"
+                >
+                    <RefreshCcw size={18} className={isRefreshing ? 'spinning' : ''} />
+                    {isRefreshing ? 'Analyse en cours...' : 'Relancer l\'analyse'}
+                </button>
+            </div>
             <div className="result-container">
                 {/* Quick Wins Section */}
                 {coordinatorSummary.data && (

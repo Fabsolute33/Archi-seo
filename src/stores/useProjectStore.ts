@@ -37,6 +37,7 @@ interface ProjectStore {
     deleteProject: (id: string) => Promise<void>;
     resetProject: () => void;
     createNewProject: () => void;
+    prepareNewProjectContext: () => void; // Reset only project ID without clearing agent data
 
     // Auto-save actions
     setAutoSaveEnabled: (enabled: boolean) => void;
@@ -239,7 +240,30 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
         }
         // Reset agent store data first
         useAgentStore.getState().resetAll();
+        // Reset RSS store to ensure project data isolation
+        useRSSStore.getState().resetAll();
         // Reset project identifiers to create a fresh project
+        set({
+            currentProjectId: null,
+            currentProjectName: '',
+            error: null,
+            autoSaveStatus: 'idle',
+            hasUnsavedChanges: false,
+            lastAutoSave: null
+        });
+    },
+
+    // Prepare for a new project context without clearing agent data
+    // This is used when starting a new analysis to ensure we don't overwrite an existing project
+    prepareNewProjectContext: () => {
+        // Cancel any pending auto-save from previous project
+        if (autoSaveTimeout) {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = null;
+        }
+        // Reset RSS store for new project context
+        useRSSStore.getState().resetAll();
+        // Only reset project identifiers - agent data will be populated by the new analysis
         set({
             currentProjectId: null,
             currentProjectName: '',

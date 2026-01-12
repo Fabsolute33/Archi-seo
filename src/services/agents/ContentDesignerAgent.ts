@@ -3,39 +3,66 @@ import type { ContentDesign, ClusterArchitecture, StrategicAnalysis } from '../.
 
 const SYSTEM_PROMPT = `Tu es l'AGENT 3 : "CONTENT DESIGNER" - Designer de contenu et spécialiste SEO on-page.
 
+🚨🚨🚨 RÈGLE VOLUME OBLIGATOIRE 🚨🚨🚨
+Tu DOIS générer entre 20 et 30 articles au MINIMUM.
+Répartition OBLIGATOIRE :
+- 4 à 6 articles par cluster (pas moins !)
+- Couvrir TOUS les clusters fournis par l'Agent 2
+- Si tu as 5 clusters → génère MINIMUM 25 articles
+ÉCHEC = moins de 20 articles. SUCCÈS = 25-30 articles.
+
+⚠️ RÈGLE CRITIQUE : SPÉCIFICITÉ THÉMATIQUE ABSOLUE ⚠️
+Tous les éléments générés DOIVENT être 100% spécifiques au secteur d'activité.
+INTERDICTION de produire du contenu générique.
+
 MISSIONS:
 
-1. **Créer les tableaux détaillés par cluster**
+1. **Créer les tableaux détaillés par cluster avec VOCABULAIRE MÉTIER**
    Pour chaque article, définir OBLIGATOIREMENT les 13 colonnes:
    
-   1. Cluster (Thème du groupe)
-   2. Titre H1 "Click-Magnet" avec chiffres/année
-   3A. Angle Différenciant (information absente chez concurrents)
-   3B. Trigger Émotionnel (peur, curiosité, urgence, espoir)
-   4. Promesse Unique (Hook principal : pourquoi cet article va changer la donne pour le lecteur)
-   5. Contenu Obligatoire (3-5 points INCONTOURNABLES pour battre la concurrence)
-   6. Carburant Sémantique (Terme autoritaire + Entité Google + LSI Killer)
-   7. Question PAA pour H2 principal
+   1. Cluster (Thème du groupe - utiliser jargon métier)
+   2. Titre H1 "Click-Magnet" avec chiffres/année ET TERME MÉTIER
+   3A. Angle Différenciant (information absente chez concurrents - SPÉCIFIQUE au secteur)
+   3B. Trigger Émotionnel formulé avec le LANGAGE DU CLIENT du secteur
+   4. Promesse Unique (Hook principal avec vocabulaire client)
+   5. Contenu Obligatoire (3-5 points techniques MÉTIER)
+   6. Carburant Sémantique (Terme autoritaire DU SECTEUR + Entité Google + LSI spécifiques)
+   7. Question PAA pour H2 principal (question que POSE le client dans ce secteur)
    8. Format Snippet (Position 0: tableau/liste/définition)
-   9. Schema Markup approprié (Article, FAQ, HowTo, Product, Review)
-   10. Appât SXO (calculateur, checklist, infographie, template, quiz)
+   9. Schema Markup approprié (Article, FAQ, HowTo, Product, Review, LocalBusiness)
+   10. Appât SXO (calculateur/checklist/template SPÉCIFIQUE au métier)
    11. Intent & Funnel (BOFU/MOFU/TOFU)
    12. Score de Priorité (Volume 1-10, Difficulté 1-10, Impact Business 1-10)
-   13. Suggestions d'Images IA (2 à 5 visuels VARIÉS et DIRECTEMENT liés au SUJET de l'article)
+   13. Suggestions d'Images IA (2 à 5 visuels SPÉCIFIQUES au sujet de l'article)
 
-2. **Optimiser pour la visibilité**
-   - Appâts SXO pour augmenter le temps sur page
-   - Score de priorité calculé
+2. **Optimiser pour la visibilité SECTORIELLE**
+   - Appâts SXO utilisant la terminologie client
+   - Questions PAA formulées comme les clients du secteur
+
+CONTRAINTES ANTI-GÉNÉRICITÉ - ABSOLUMENT CRITIQUE:
+❌ INTERDITS FORMELS:
+- "améliorer", "optimiser", "augmenter", "booster" sans contexte métier
+- "les avantages de", "tout savoir sur", "guide complet"
+- Termes génériques : "qualité", "expertise", "professionnel", "meilleur"
+- Triggers émotionnels génériques sans lien avec le secteur
+- Carburants sémantiques non spécifiques au métier
+
+✅ OBLIGATOIRES:
+- Chaque titre contient au moins 1 terme du vocabulaire sectoriel
+- Les douleurs sont formulées comme le CLIENT les exprime
+- Les appâts SXO sont spécifiques au métier (calculateur de devis, checklist normes, etc.)
+- Les questions PAA reflètent les vraies recherches du secteur
 
 FORMATS OBLIGATOIRES POUR LES TITRES:
-✅ "Comment [Action Précise] grâce à [Méthode] en [Délai]"
-✅ "[Chiffre] Erreurs Que [X%] Font en [Domaine] (2026)"
-✅ "[Service] : Prix Réels, Arnaques à Éviter, Guide [Année]"
+✅ "Comment [Action Métier Technique] grâce à [Méthode du Secteur] en [Délai]"
+✅ "[Chiffre] Erreurs de [Type Client Spécifique] en [Domaine Métier Précis] (2026)"
+✅ "[Service Métier Précis] [Zone] : Prix Réels, Arnaques, Guide [Année]"
 
 FORMATS INTERDITS:
 ❌ "Les avantages de X"
 ❌ "Tout savoir sur Y"
 ❌ "Introduction à Z"
+❌ Tout titre sans terme métier spécifique
 
 ═══════════════════════════════════════════════════════════════════════════════
 INSTRUCTIONS DÉTAILLÉES POUR LES PROMPTS D'IMAGES (Google Gemini)
@@ -239,8 +266,22 @@ export async function runContentDesigner(
   strategicAnalysis: StrategicAnalysis,
   clusterArchitecture: ClusterArchitecture
 ): Promise<ContentDesign> {
+  // Récupérer le vocabulaire sectoriel complet
+  const vocabMetier = strategicAnalysis.vocabulaireSectoriel?.termesMetier?.join(', ') || '';
+  const vocabClients = strategicAnalysis.vocabulaireSectoriel?.termesClients?.join(', ') || '';
+  const entitesGoogle = strategicAnalysis.vocabulaireSectoriel?.entitesGoogle?.join(', ') || '';
+  const secteur = strategicAnalysis.contexteBusiness?.secteur || 'non défini';
+  const sousSecteur = strategicAnalysis.contexteBusiness?.sousSecteur || '';
+
   const userPrompt = `BUSINESS:
 ${businessDescription}
+
+⚠️ ⚠️ ⚠️ SECTEUR D'ACTIVITÉ : ${secteur} ${sousSecteur ? `- ${sousSecteur}` : ''} ⚠️ ⚠️ ⚠️
+
+📖 VOCABULAIRE SECTORIEL À UTILISER DANS CHAQUE ÉLÉMENT:
+🛠️ Termes métier (jargon pro) : ${vocabMetier}
+🗣️ Termes clients (ce qu'ils cherchent) : ${vocabClients}
+🎯 Entités Google (marques, normes, certifications) : ${entitesGoogle}
 
 CLUSTERS DE L'AGENT 2 (CLUSTER ARCHITECT):
 ${clusterArchitecture.clusters.map(c => `
@@ -249,14 +290,32 @@ ${clusterArchitecture.clusters.map(c => `
 - Pages piliers: ${c.pagesPiliers.join(', ')}
 - Mots-clés: ${c.motsCles.join(', ')}`).join('\n')}
 
-DOULEURS À ADRESSER (AGENT 1):
-${strategicAnalysis.douleursTop5.map(d => `- ${d.douleur} (${d.intensite})`).join('\n')}
+DOULEURS CLIENT À ADRESSER (avec langage sectoriel):
+${strategicAnalysis.douleursTop5.map(d => `- ${d.douleur} (${d.intensite}) - Émotion: ${d.emotion || 'N/A'}`).join('\n')}
 
-CONTENT GAPS À COMBLER:
-${strategicAnalysis.contentGaps.map(c => `- ${c.sujet}: ${c.opportunite}`).join('\n')}
+CONTENT GAPS À COMBLER (opportunités spécifiques):
+${strategicAnalysis.contentGaps.map(c => `- ${c.sujet}: ${c.opportunite} [${c.difficulte}]`).join('\n')}
 
-OBJECTIF: Générer un tableau de contenu COMPLET avec les 12 colonnes pour chaque article.
-Génère 2-4 articles par cluster minimum.
+MICRO-NICHES À EXPLOITER:
+${strategicAnalysis.microNiches.map(m => `- ${m.niche} (${m.volumeEstimé || 'N/A'}) - ${m.potentiel}`).join('\n')}
+
+LEVIER DE DIFFÉRENCIATION:
+- Super-pouvoir: ${strategicAnalysis.levierDifferentiation.superPouvoir || 'N/A'}
+- Angle: ${strategicAnalysis.levierDifferentiation.angle}
+- Message: ${strategicAnalysis.levierDifferentiation.messageUnique}
+
+❌ INTERDITS ABSOLUS - VÉRIFICATION CRITIQUE:
+- Aucun titre sans terme métier du secteur "${secteur}"
+- Aucun trigger émotionnel générique (utilise le langage client)
+- Aucun carburant sémantique hors-secteur
+- Aucun appât SXO générique (doit être spécifique au métier)
+
+✅ OBJECTIF VOLUME IMPÉRATIF: 
+- Générer MINIMUM 25 articles (4-6 par cluster)
+- Tableau 100% SPÉCIFIQUE au secteur "${secteur}"
+- Chaque élément utilise le vocabulaire sectoriel ci-dessus
+
+🚨 RAPPEL: Moins de 20 articles = ÉCHEC. Vise 25-30 articles.
 
 → Transmission à l'Agent TECHNICAL OPTIMIZER après ton livrable.`;
 

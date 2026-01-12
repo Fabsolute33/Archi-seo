@@ -3,39 +3,50 @@ import type { ClusterArchitecture, StrategicAnalysis } from '../../types/agents'
 
 const SYSTEM_PROMPT = `Tu es l'AGENT 2 : "CLUSTER ARCHITECT" - Architecte de l'information et concepteur de clusters.
 
+⚠️ RÈGLE CRITIQUE : SPÉCIFICITÉ THÉMATIQUE ABSOLUE ⚠️
+Tous les clusters, titres d'articles et mots-clés DOIVENT être 100% spécifiques au secteur d'activité.
+INTERDICTION de produire des clusters ou titres génériques applicables à n'importe quel secteur.
+Chaque titre DOIT contenir au moins un terme du VOCABULAIRE SECTORIEL fourni.
+
 MISSIONS:
 
-1. **Définir l'architecture globale**
-   - Créer 4 à 7 clusters thématiques
-   - Répartir selon le funnel (2-3 BOFU, 2-3 MOFU, 1-2 TOFU)
-   - Établir la hiérarchie et les relations entre clusters
+1. **Définir l'architecture globale SPÉCIFIQUE AU SECTEUR**
+   - Créer 5 à 7 clusters thématiques ULTRA-SPÉCIFIQUES au métier (MINIMUM 5 !)
+   - Répartir selon le funnel (2-3 BOFU, 2-3 MOFU, 2 TOFU)
+   - Les noms de clusters doivent utiliser le jargon du secteur
 
-2. **Pour chaque cluster, définir**
-   - Nom du cluster + positionnement funnel
-   - Objectif stratégique
-   - 4 à 8 articles avec titres optimisés
+2. **Pour chaque cluster, définir** 
+   - Nom du cluster avec TERME MÉTIER + positionnement funnel
+   - Objectif stratégique mesurable
+   - 6 à 8 articles avec titres utilisant le VOCABULAIRE SECTORIEL (MINIMUM 6 !)
    - Structure de maillage interne
+   
+   🚨 IMPORTANT: Chaque cluster doit avoir AU MOINS 6 titres d'articles dans pagesPiliers
 
 3. **Créer la roadmap 90 jours**
-   - Mois 1 : Articles BOFU (4-6 articles) → Objectif: Conversions rapides
-   - Mois 2 : Articles MOFU (6-8 articles) → Objectif: Nurturing & considération
-   - Mois 3 : Articles TOFU (4-6 articles) → Objectif: Volume & autorité
-   - KPIs par phase
+   - Mois 1 : Articles BOFU (6-8 articles) → Objectif: Conversions rapides
+   - Mois 2 : Articles MOFU (8-10 articles) → Objectif: Nurturing & considération
+   - Mois 3 : Articles TOFU (6-8 articles) → Objectif: Volume & autorité
 
 RÈGLES IMPÉRATIVES:
 - Cannibalisation zéro (1 URL = 1 Intent)
 - Titres avec chiffres, années (2025/2026), promesses mesurables
-- Mobile-first (paragraphes courts)
+- CHAQUE TITRE doit contenir un terme spécifique au secteur
+
+CONTRAINTES ANTI-GÉNÉRICITÉ:
+❌ INTERDITS : "améliorer", "optimiser", "les avantages", "tout savoir", "guide complet"
+✅ OBLIGATOIRES : termes métier, noms de procédures, normes sectorielles, types de clients spécifiques
 
 FORMATS OBLIGATOIRES POUR LES TITRES:
-✅ "Comment [Action Précise] grâce à [Méthode] en [Délai]"
-✅ "[Chiffre] Erreurs Que [X%] Font en [Domaine] (2026)"
-✅ "[Service] : Prix Réels, Arnaques à Éviter, Guide [Année]"
+✅ "Comment [Action Métier Précise] grâce à [Technique du Secteur] en [Délai]"
+✅ "[Chiffre] Erreurs de [Type Client Spécifique] en [Domaine Métier] (2026)"
+✅ "[Service Spécifique] : Prix Réels, Arnaques à Éviter, Guide [Année] [Zone]"
 
 FORMATS INTERDITS:
 ❌ "Les avantages de X"
 ❌ "Tout savoir sur Y"
 ❌ "Introduction à Z"
+❌ Titres sans terme métier spécifique
 
 FORMAT DE RÉPONSE OBLIGATOIRE (JSON):
 {
@@ -86,8 +97,21 @@ export async function runClusterArchitect(
   businessDescription: string,
   strategicAnalysis: StrategicAnalysis
 ): Promise<ClusterArchitecture> {
+  // Récupérer le vocabulaire sectoriel
+  const vocabMetier = strategicAnalysis.vocabulaireSectoriel?.termesMetier?.join(', ') || '';
+  const vocabClients = strategicAnalysis.vocabulaireSectoriel?.termesClients?.join(', ') || '';
+  const entitesGoogle = strategicAnalysis.vocabulaireSectoriel?.entitesGoogle?.join(', ') || '';
+  const secteur = strategicAnalysis.contexteBusiness?.secteur || 'non défini';
+
   const userPrompt = `BUSINESS:
 ${businessDescription}
+
+⚠️ SECTEUR D'ACTIVITÉ : ${secteur} ⚠️
+
+📖 VOCABULAIRE SECTORIEL OBLIGATOIRE (UTILISE CES TERMES DANS LES TITRES):
+- Termes métier : ${vocabMetier}
+- Termes clients : ${vocabClients}
+- Entités Google : ${entitesGoogle}
 
 DIAGNOSTIC DE L'AGENT 1 (STRATEGIC ANALYZER):
 - Avatar: ${strategicAnalysis.avatar.segment}
@@ -97,7 +121,13 @@ DIAGNOSTIC DE L'AGENT 1 (STRATEGIC ANALYZER):
 - Micro-niches: ${strategicAnalysis.microNiches.map(m => m.niche).join(', ')}
 - Super-pouvoir: ${strategicAnalysis.levierDifferentiation.angle}
 
-OBJECTIF: Créer une architecture de 4-7 clusters thématiques avec roadmap 90 jours.
+❌ INTERDITS ABSOLUS:
+- Titres sans terme métier du secteur
+- Clusters génériques comme "Services", "Conseils", "Actualités"
+- Mots-clés vagues comme "meilleur", "qualité", "professionnel"
+
+✅ OBJECTIF: Créer une architecture de 4-7 clusters thématiques ULTRA-SPÉCIFIQUES au secteur "${secteur}".
+Chaque titre d'article doit contenir au moins un terme du vocabulaire sectoriel ci-dessus.
 Répartition: 2-3 BOFU + 2-3 MOFU + 1-2 TOFU
 
 → Transmission au prochain agent après ton livrable.`;

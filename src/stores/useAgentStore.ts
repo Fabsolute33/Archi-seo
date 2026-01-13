@@ -453,16 +453,32 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
     },
 
     // Toggle validation status of an article
+    // When an article is marked as validated ("Rédigé"), move it to the end of the table
     toggleArticleValidation: (index: number) => {
         const state = get();
         const currentContent = state.contentDesign.data;
 
         if (currentContent && currentContent.tableauContenu[index]) {
             const updatedTableau = [...currentContent.tableauContenu];
-            updatedTableau[index] = {
-                ...updatedTableau[index],
-                validated: !updatedTableau[index].validated
+            const article = updatedTableau[index];
+            const newValidatedStatus = !article.validated;
+
+            // Update the validation status
+            const updatedArticle = {
+                ...article,
+                validated: newValidatedStatus
             };
+
+            // If being validated (marked as "Rédigé"), move to end of table
+            if (newValidatedStatus) {
+                // Remove the article from its current position
+                updatedTableau.splice(index, 1);
+                // Add it to the end
+                updatedTableau.push(updatedArticle);
+            } else {
+                // If being unvalidated, just update in place
+                updatedTableau[index] = updatedArticle;
+            }
 
             set({
                 contentDesign: {

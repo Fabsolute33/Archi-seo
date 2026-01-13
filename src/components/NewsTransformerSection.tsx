@@ -153,18 +153,14 @@ export function NewsTransformerSection({ prefilledUrl, onUrlConsumed }: NewsTran
 
     // Convert SEOAngle to ContentTableRow with image prompts
     const convertAngleToContentRow = (angle: SEOAngle): ContentTableRow => {
-        // Generate image suggestions based on angle content
+        // Generate image suggestions based on angle content (scène uniquement - les paramètres sont gérés par l'app)
         const imageSuggestions: ImageSuggestion[] = angle.visuels.map((visuel, idx) => {
             const types: ImageSuggestion['type'][] = ['infographie', 'illustration', 'schema', 'photo-produit'];
-            const categories: ImageSuggestion['category'][] = ['infographic', 'illustration', 'schema', 'photography'];
 
             return {
                 type: types[idx % types.length],
-                category: categories[idx % categories.length],
-                style: 'modern, professional, clean design',
                 description: visuel,
-                generationPrompt: `Créer une image professionnelle pour illustrer "${angle.titre}". Le visuel doit représenter: ${visuel}. Style moderne et épuré, adapté pour un article SEO sur ${formData.secteur}. Contexte: ${angle.promesseUnique}. En français.`,
-                negativePrompt: 'texte illisible, mauvaise qualité, flou, amateur, logo, watermark',
+                generationPrompt: `${visuel} dans le contexte de "${angle.titre}". ${angle.promesseUnique}. Secteur: ${formData.secteur}.`,
                 placement: idx === 0 ? 'hero-image' : `section-${idx + 1}`,
                 altText: `${visuel} - ${angle.motCleCible}`
             };

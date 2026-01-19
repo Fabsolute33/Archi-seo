@@ -13,6 +13,63 @@ export function getGeminiInstance(): GoogleGenerativeAI {
     return genAI;
 }
 
+/**
+ * Attempts to repair common JSON issues from LLM responses
+ */
+function repairJSON(text: string): string {
+    let repaired = text.trim();
+
+    // Remove any trailing commas before closing brackets/braces
+    repaired = repaired.replace(/,(\s*[\]\}])/g, '$1');
+
+    // Count unclosed braces and brackets
+    let braceCount = 0;
+    let bracketCount = 0;
+    let inString = false;
+    let escapeNext = false;
+
+    for (let i = 0; i < repaired.length; i++) {
+        const char = repaired[i];
+
+        if (escapeNext) {
+            escapeNext = false;
+            continue;
+        }
+
+        if (char === '\\') {
+            escapeNext = true;
+            continue;
+        }
+
+        if (char === '"') {
+            inString = !inString;
+            continue;
+        }
+
+        if (!inString) {
+            if (char === '{') braceCount++;
+            else if (char === '}') braceCount--;
+            else if (char === '[') bracketCount++;
+            else if (char === ']') bracketCount--;
+        }
+    }
+
+    // Close unclosed brackets/braces
+    while (bracketCount > 0) {
+        repaired += ']';
+        bracketCount--;
+    }
+    while (braceCount > 0) {
+        repaired += '}';
+        braceCount--;
+    }
+
+    // Remove trailing commas again after repairs
+    repaired = repaired.replace(/,(\s*[\]\}])/g, '$1');
+
+    return repaired;
+}
+
 export async function generateWithGemini<T>(
     systemPrompt: string,
     userPrompt: string,
@@ -37,7 +94,7 @@ export async function generateWithGemini<T>(
         day: 'numeric'
     })}. L'année en cours est ${now.getFullYear()}. Utilise UNIQUEMENT des données, tendances et références actualisées à cette date. Évite toute référence obsolète.`;
 
-    const fullPrompt = `${dateContext}\n\n${systemPrompt}\n\n---\n\n${userPrompt}\n\n---\n\nIMPORTANT: Réponds UNIQUEMENT avec un JSON valide, sans markdown, sans backticks, sans texte avant ou après.`;
+    const fullPrompt = `${dateContext}\n\n${systemPrompt}\n\n---\n\n${userPrompt}\n\n---\n\nIMPORTANT: Réponds UNIQUEMENT avec un JSON valide, sans markdown, sans backticks, sans texte avant ou après. Assure-toi que le JSON est complet et correctement fermé.`;
 
     const result = await model.generateContent(fullPrompt);
     const response = result.response;
@@ -45,6 +102,8 @@ export async function generateWithGemini<T>(
 
     // Clean the response - remove markdown code blocks if present
     let cleanedText = text.trim();
+
+    // Remove markdown code blocks
     if (cleanedText.startsWith('```json')) {
         cleanedText = cleanedText.slice(7);
     } else if (cleanedText.startsWith('```')) {
@@ -55,5 +114,21 @@ export async function generateWithGemini<T>(
     }
     cleanedText = cleanedText.trim();
 
-    return parseResponse(cleanedText);
+    // Try to find JSON boundaries if there's extra text
+    const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+        cleanedText = jsonMatch[0];
+    }
+
+    // Attempt JSON repair for truncated responses
+    cleanedText = repairJSON(cleanedText);
+
+    try {
+        return parseResponse(cleanedText);
+    } catch (parseError) {
+        console.error('JSON Parse Error. Raw response (first 500 chars):', cleanedText.substring(0, 500));
+        console.error('JSON Parse Error. Last 200 chars:', cleanedText.substring(cleanedText.length - 200));
+        console.error('Parse error details:', parseError);
+        throw new Error(`Erreur de parsing JSON: ${parseError instanceof Error ? parseError.message : 'Format invalide'}. Réessayez l'analyse.`);
+    }
 }

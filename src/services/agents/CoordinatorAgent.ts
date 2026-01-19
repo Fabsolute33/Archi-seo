@@ -100,7 +100,7 @@ export async function runCoordinator(
   clusterArchitecture: ClusterArchitecture,
   contentDesign: ContentDesign,
   technicalOptimization: TechnicalOptimization,
-  snippetStrategy: SnippetStrategy,
+  snippetStrategy: SnippetStrategy | null,
   authorityStrategy: AuthorityStrategy
 ): Promise<CoordinatorSummary> {
   const userPrompt = `BUSINESS:

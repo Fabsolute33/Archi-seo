@@ -216,16 +216,30 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
             });
 
             // Run snippet master with actual content
-            const snippetFinalResult = await runSnippetMaster(businessDescription, contentResult);
-            set({
-                snippetStrategy: {
-                    status: 'completed',
-                    data: snippetFinalResult,
-                    error: null,
-                    startedAt: get().snippetStrategy.startedAt,
-                    completedAt: Date.now()
-                }
-            });
+            let snippetFinalResult: Awaited<ReturnType<typeof runSnippetMaster>> | null = null;
+            try {
+                snippetFinalResult = await runSnippetMaster(businessDescription, contentResult);
+                set({
+                    snippetStrategy: {
+                        status: 'completed',
+                        data: snippetFinalResult,
+                        error: null,
+                        startedAt: get().snippetStrategy.startedAt,
+                        completedAt: Date.now()
+                    }
+                });
+            } catch (snippetError) {
+                console.warn('Snippet Master failed, continuing without snippet data:', snippetError);
+                set({
+                    snippetStrategy: {
+                        status: 'error',
+                        data: null,
+                        error: snippetError instanceof Error ? snippetError.message : 'Erreur Snippet Master',
+                        startedAt: get().snippetStrategy.startedAt,
+                        completedAt: Date.now()
+                    }
+                });
+            }
 
             // Agent SGE: Optimize content for AI Overviews
             try {

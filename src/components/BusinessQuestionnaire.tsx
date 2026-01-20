@@ -263,28 +263,30 @@ const QUESTIONS: Question[] = [
 interface Props {
     onComplete: (answers: QuestionnaireAnswers) => void;
     disabled?: boolean;
+    initialAnswers?: Partial<QuestionnaireAnswers>;
+    onCancel?: () => void;
 }
 
-export function BusinessQuestionnaire({ onComplete, disabled = false }: Props) {
+export function BusinessQuestionnaire({ onComplete, disabled = false, initialAnswers, onCancel }: Props) {
     const [currentStep, setCurrentStep] = useState(0);
     const [answers, setAnswers] = useState<QuestionnaireAnswers>({
-        projectName: '',
-        siteType: '',
-        sectorCategory: '',
-        sector: '',
-        subSector: '',
-        location: '',
-        targetCity: '',
-        domainAuthority: '',
-        budget: '',
-        teamSize: '',
-        mainGoal: '',
-        targetKeyword: '',
-        constraints: '',
-        industryTerms: [],
-        clientTerms: '',
-        certifications: [],
-        competitors: [],
+        projectName: initialAnswers?.projectName || '',
+        siteType: initialAnswers?.siteType || '',
+        sectorCategory: initialAnswers?.sectorCategory || '',
+        sector: initialAnswers?.sector || '',
+        subSector: initialAnswers?.subSector || '',
+        location: initialAnswers?.location || '',
+        targetCity: initialAnswers?.targetCity || '',
+        domainAuthority: initialAnswers?.domainAuthority || '',
+        budget: initialAnswers?.budget || '',
+        teamSize: initialAnswers?.teamSize || '',
+        mainGoal: initialAnswers?.mainGoal || '',
+        targetKeyword: initialAnswers?.targetKeyword || '',
+        constraints: initialAnswers?.constraints || '',
+        industryTerms: initialAnswers?.industryTerms || [],
+        clientTerms: initialAnswers?.clientTerms || '',
+        certifications: initialAnswers?.certifications || [],
+        competitors: initialAnswers?.competitors || [],
     });
     const [showSummary, setShowSummary] = useState(false);
 
@@ -370,6 +372,16 @@ export function BusinessQuestionnaire({ onComplete, disabled = false }: Props) {
                         ))}
                     </div>
                     <div className="questionnaire-actions">
+                        {onCancel && (
+                            <button
+                                type="button"
+                                className="btn btn-outline"
+                                onClick={onCancel}
+                                disabled={disabled}
+                            >
+                                Annuler
+                            </button>
+                        )}
                         <button
                             type="button"
                             className="btn btn-secondary"
@@ -393,7 +405,7 @@ export function BusinessQuestionnaire({ onComplete, disabled = false }: Props) {
                             ) : (
                                 <>
                                     <Zap size={20} />
-                                    Lancer l'analyse SEO
+                                    {initialAnswers ? "Relancer l'analyse SEO" : "Lancer l'analyse SEO"}
                                 </>
                             )}
                         </button>

@@ -25,17 +25,36 @@ function App() {
     const [currentView, setCurrentView] = useState<ViewType>('strategy');
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [prefilledUrl, setPrefilledUrl] = useState<string | null>(null);
+    const [isEditingQuestionnaire, setIsEditingQuestionnaire] = useState(false);
 
     const handleAnalyzeFromRSS = (url: string) => {
         setPrefilledUrl(url);
         setCurrentView('news-transformer');
     };
 
+    // Handler pour relancer l'analyse avec le questionnaire pré-rempli
+    const handleReanalyze = () => {
+        setIsEditingQuestionnaire(true);
+        setCurrentView('strategy');
+    };
+
+    // Handler pour terminer le mode édition
+    const handleEditComplete = () => {
+        setIsEditingQuestionnaire(false);
+        setCurrentView('results');
+    };
+
     return (
         <div className={`app ${isSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}>
             <Sidebar
                 currentView={currentView}
-                onViewChange={setCurrentView}
+                onViewChange={(view) => {
+                    setCurrentView(view);
+                    // Si on change de vue, on quitte le mode édition
+                    if (view !== 'strategy') {
+                        setIsEditingQuestionnaire(false);
+                    }
+                }}
                 isCollapsed={isSidebarCollapsed}
                 onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                 onOpenSettings={() => setIsSettingsOpen(true)}
@@ -49,8 +68,11 @@ function App() {
             <main className={`main-content ${currentView === 'results' ? 'full-width-view' : ''}`}>
                 {currentView === 'strategy' && (
                     <>
-                        <BusinessInputForm />
-                        <WorkflowProgress />
+                        <BusinessInputForm
+                            isEditMode={isEditingQuestionnaire}
+                            onEditComplete={handleEditComplete}
+                        />
+                        {!isEditingQuestionnaire && <WorkflowProgress />}
                     </>
                 )}
 
@@ -75,7 +97,7 @@ function App() {
 
                 {currentView === 'results' && (
                     <div className="results-container">
-                        <ResultDashboard />
+                        <ResultDashboard onReanalyze={handleReanalyze} />
                     </div>
                 )}
             </main>
@@ -110,3 +132,4 @@ function App() {
 }
 
 export default App;
+

@@ -11,17 +11,25 @@ Répondez à quelques questions pour que nos 7 agents IA analysent votre busines
 
 💡 Plus vous êtes précis, plus l'analyse sera chirurgicale.`;
 
-export function BusinessInputForm() {
-    const { setBusinessDescription, runAllAgents, apiKey, coordinatorSummary, setQuestionnaireAnswers } = useAgentStore();
+interface Props {
+    isEditMode?: boolean;
+    onEditComplete?: () => void;
+}
+
+export function BusinessInputForm({ isEditMode = false, onEditComplete }: Props) {
+    const { setBusinessDescription, runAllAgents, apiKey, coordinatorSummary, setQuestionnaireAnswers, questionnaireAnswers } = useAgentStore();
     const { setProjectName, saveCurrentProject, currentProjectName, isLoading: isSaving } = useProjectStore();
     const [isGenerating, setIsGenerating] = useState(false);
 
     const handleQuestionnaireComplete = async (answers: QuestionnaireAnswers) => {
         if (!apiKey) return;
 
-        // IMPORTANT: Prepare a fresh project context to avoid overwriting existing projects
-        // This resets currentProjectId to null so a new ID will be generated on save
-        useProjectStore.getState().prepareNewProjectContext();
+        // Si on est en mode édition, on ne prépare pas un nouveau contexte
+        if (!isEditMode) {
+            // IMPORTANT: Prepare a fresh project context to avoid overwriting existing projects
+            // This resets currentProjectId to null so a new ID will be generated on save
+            useProjectStore.getState().prepareNewProjectContext();
+        }
 
         // Set project name before running analysis
         setProjectName(answers.projectName);
@@ -35,8 +43,18 @@ export function BusinessInputForm() {
         setIsGenerating(true);
         try {
             await runAllAgents();
+            // Notifier la fin de l'édition si on était en mode édition
+            if (isEditMode && onEditComplete) {
+                onEditComplete();
+            }
         } finally {
             setIsGenerating(false);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        if (onEditComplete) {
+            onEditComplete();
         }
     };
 
@@ -56,9 +74,16 @@ export function BusinessInputForm() {
     return (
         <section className="business-input-section">
             <div className="business-input-container">
-                {!isComplete && !isGenerating && (
+                {!isComplete && !isGenerating && !isEditMode && (
                     <div className="startup-message">
                         <pre>{STARTUP_MESSAGE}</pre>
+                    </div>
+                )}
+
+                {isEditMode && (
+                    <div className="edit-mode-banner">
+                        <span className="edit-icon">✏️</span>
+                        <span>Mode édition - Modifiez vos réponses puis relancez l'analyse</span>
                     </div>
                 )}
 
@@ -66,14 +91,16 @@ export function BusinessInputForm() {
                     <div className="business-input-icon">
                         <Sparkles className="icon" />
                     </div>
-                    <h2>Décrivez votre Business</h2>
+                    <h2>{isEditMode ? 'Modifier votre analyse' : 'Décrivez votre Business'}</h2>
                     <p>
-                        Notre système de 7 agents IA spécialisés va analyser votre business
-                        et générer une stratégie SEO complète et exécutable.
+                        {isEditMode
+                            ? 'Modifiez vos réponses ci-dessous puis relancez l\'analyse pour obtenir de nouveaux résultats.'
+                            : 'Notre système de 7 agents IA spécialisés va analyser votre business et générer une stratégie SEO complète et exécutable.'
+                        }
                     </p>
                 </div>
 
-                {currentProjectName && (
+                {currentProjectName && !isEditMode && (
                     <div className="project-save-status">
                         <span className="project-name-badge">
                             📁 {currentProjectName}
@@ -92,6 +119,8 @@ export function BusinessInputForm() {
                 <BusinessQuestionnaire
                     onComplete={handleQuestionnaireComplete}
                     disabled={isGenerating}
+                    initialAnswers={isEditMode ? questionnaireAnswers || undefined : undefined}
+                    onCancel={isEditMode ? handleCancelEdit : undefined}
                 />
 
                 {!apiKey && (
@@ -105,3 +134,4 @@ export function BusinessInputForm() {
         </section>
     );
 }
+

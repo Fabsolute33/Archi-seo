@@ -21,10 +21,16 @@ function getProjectsCollection(userId: string) {
 /**
  * Deep clone and serialize nested arrays to JSON strings for Firestore compatibility
  * Firestore doesn't support nested arrays (arrays within arrays)
+ * Also removes undefined values as Firestore doesn't support them
  */
 function serializeForFirestore(obj: unknown): unknown {
-    if (obj === null || obj === undefined) {
-        return obj;
+    if (obj === null) {
+        return null;
+    }
+
+    // Firebase doesn't support undefined values - skip them
+    if (obj === undefined) {
+        return null;
     }
 
     if (Array.isArray(obj)) {
@@ -33,14 +39,23 @@ function serializeForFirestore(obj: unknown): unknown {
             // Serialize nested array as JSON string with marker
             return { __nestedArray: true, data: JSON.stringify(obj) };
         }
-        // Regular array - recursively process elements
-        return obj.map(item => serializeForFirestore(item));
+        // Regular array - recursively process elements, filtering out undefined
+        return obj
+            .filter(item => item !== undefined)
+            .map(item => serializeForFirestore(item));
     }
 
     if (typeof obj === 'object') {
         const result: Record<string, unknown> = {};
         for (const [key, value] of Object.entries(obj)) {
-            result[key] = serializeForFirestore(value);
+            // Skip undefined values - Firebase doesn't support them
+            if (value !== undefined) {
+                const serialized = serializeForFirestore(value);
+                // Only add if the serialized value is not undefined
+                if (serialized !== undefined) {
+                    result[key] = serialized;
+                }
+            }
         }
         return result;
     }

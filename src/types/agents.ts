@@ -1,5 +1,8 @@
 // Agent Output Types - Aligned with Original Prompt Specifications
 
+import type { CompetitorAnalysis } from './competitorTypes';
+export type { CompetitorAnalysis, CompetitorSEOProfile } from './competitorTypes';
+
 // Context Business (Agent 1)
 export interface ContexteBusiness {
     typeSite: 'WordPress' | 'Shopify' | 'Custom' | 'Neuf';
@@ -535,6 +538,7 @@ export interface AgentStore {
     technicalOptimization: AgentState<TechnicalOptimization>;
     snippetStrategy: AgentState<SnippetStrategy>;
     authorityStrategy: AgentState<AuthorityStrategy>;
+    competitorAnalysis: AgentState<CompetitorAnalysis>;  // Agent 8
     coordinatorSummary: AgentState<CoordinatorSummary>;
 
     // Content Audit State
@@ -621,6 +625,7 @@ export interface SEOProject {
     technicalOptimization: TechnicalOptimization | null;
     snippetStrategy: SnippetStrategy | null;
     authorityStrategy: AuthorityStrategy | null;
+    competitorAnalysis: CompetitorAnalysis | null;  // Agent 8
     coordinatorSummary: CoordinatorSummary | null;
     // News Transformer data - supports multiple analyses
     newsTransformerData?: {

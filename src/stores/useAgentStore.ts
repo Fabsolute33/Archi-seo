@@ -12,7 +12,8 @@ import type {
     ContentTableRow,
     NewsTransformerInput,
     NewsTransformerResult,
-    NewsAnalysis
+    NewsAnalysis,
+    CompetitorAnalysis
 } from '../types/agents';
 import type { ContentAuditResult } from '../types/auditTypes';
 import { initializeGemini } from '../services/GeminiService';
@@ -29,6 +30,7 @@ import { runSGEOptimizer, enrichArticlesWithSGE } from '../services/agents/SGEOp
 import { runNewsTransformer } from '../services/agents/NewsTransformerAgent';
 import { scrapeUrl } from '../services/WebScraperService';
 import { enrichSectorVocabulary } from '../services/KnowledgeGraphService';
+import { runCompetitorAnalyzer } from '../services/agents/CompetitorAnalyzerAgent';
 
 const createInitialAgentState = <T>(): AgentState<T> => ({
     status: 'idle',
@@ -50,6 +52,7 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
     technicalOptimization: createInitialAgentState<TechnicalOptimization>(),
     snippetStrategy: createInitialAgentState<SnippetStrategy>(),
     authorityStrategy: createInitialAgentState<AuthorityStrategy>(),
+    competitorAnalysis: createInitialAgentState<CompetitorAnalysis>(),  // Agent 8
     coordinatorSummary: createInitialAgentState<CoordinatorSummary>(),
 
     // Content Audit State
@@ -176,19 +179,34 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
                 }
             });
 
-            // Agents 3, 4, 5, 6 run in parallel after Agent 2
+            // Agents 3, 4, 5, 6, 8 run in parallel after Agent 2
+            // Agent 8 (Competitor Analyzer) runs only if competitors are provided
+            const hasCompetitors = questionnaireAnswers?.competitors && questionnaireAnswers.competitors.length > 0;
+
             set({
                 contentDesign: { ...createInitialAgentState(), status: 'running', startedAt: Date.now() },
                 technicalOptimization: { ...createInitialAgentState(), status: 'running', startedAt: Date.now() },
                 snippetStrategy: { ...createInitialAgentState(), status: 'running', startedAt: Date.now() },
                 authorityStrategy: { ...createInitialAgentState(), status: 'running', startedAt: Date.now() },
+                ...(hasCompetitors && { competitorAnalysis: { ...createInitialAgentState(), status: 'running', startedAt: Date.now() } }),
             });
 
-            const [contentResult, technicalResult, , authorityResult] = await Promise.all([
+            const [contentResult, technicalResult, , authorityResult, competitorResult] = await Promise.all([
                 runContentDesigner(businessDescription, strategicResult, clusterResult),
                 runTechnicalOptimizer(businessDescription, clusterResult),
                 runSnippetMaster(businessDescription, { tableauContenu: [], planningPublication: [] }).catch(() => null), // Will be called after content design
                 runAuthorityBuilder(businessDescription, strategicResult),
+                // Agent 8: Competitor Analyzer (runs only if competitors provided)
+                hasCompetitors
+                    ? runCompetitorAnalyzer(
+                        questionnaireAnswers!.competitors,
+                        businessDescription,
+                        strategicResult.contexteBusiness?.secteur || ''
+                    ).catch(err => {
+                        console.warn('Competitor analysis failed:', err);
+                        return null;
+                    })
+                    : Promise.resolve(null),
             ]);
 
             set({
@@ -213,6 +231,16 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
                     startedAt: get().authorityStrategy.startedAt,
                     completedAt: Date.now()
                 },
+                // Agent 8: Competitor Analysis result
+                ...(competitorResult && {
+                    competitorAnalysis: {
+                        status: 'completed' as const,
+                        data: competitorResult,
+                        error: null,
+                        startedAt: get().competitorAnalysis.startedAt,
+                        completedAt: Date.now()
+                    }
+                }),
             });
 
             // Run snippet master with actual content
@@ -272,7 +300,7 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
                 console.warn('SGE optimization failed, continuing without SGE data:', sgeError);
             }
 
-            // Agent 7: Coordinator (Final)
+            // Agent 7: Coordinator (Final) - includes Agent 8 results
             set({ coordinatorSummary: { ...createInitialAgentState(), status: 'running', startedAt: Date.now() } });
             const coordinatorResult = await runCoordinator(
                 businessDescription,
@@ -281,7 +309,8 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
                 contentResult,
                 technicalResult,
                 snippetFinalResult,
-                authorityResult
+                authorityResult,
+                competitorResult  // Agent 8: Competitor Analysis
             );
             set({
                 coordinatorSummary: {
@@ -320,6 +349,9 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
             if (state.coordinatorSummary.status === 'running') {
                 set({ coordinatorSummary: { ...state.coordinatorSummary, status: 'error', error: errorMessage } });
             }
+            if (state.competitorAnalysis.status === 'running') {
+                set({ competitorAnalysis: { ...state.competitorAnalysis, status: 'error', error: errorMessage } });
+            }
         }
     },
 
@@ -332,6 +364,7 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
         technicalOptimization: createInitialAgentState<TechnicalOptimization>(),
         snippetStrategy: createInitialAgentState<SnippetStrategy>(),
         authorityStrategy: createInitialAgentState<AuthorityStrategy>(),
+        competitorAnalysis: createInitialAgentState<CompetitorAnalysis>(),  // Agent 8
         coordinatorSummary: createInitialAgentState<CoordinatorSummary>(),
     }),
 
@@ -376,6 +409,13 @@ export const useAgentStore = create<AgentStore>((set, get) => ({
         authorityStrategy: {
             status: project.authorityStrategy ? 'completed' : 'idle',
             data: project.authorityStrategy,
+            error: null,
+            startedAt: project.createdAt,
+            completedAt: project.updatedAt,
+        },
+        competitorAnalysis: {
+            status: project.competitorAnalysis ? 'completed' : 'idle',
+            data: project.competitorAnalysis,
             error: null,
             startedAt: project.createdAt,
             completedAt: project.updatedAt,

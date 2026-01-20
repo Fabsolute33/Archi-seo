@@ -6,7 +6,8 @@ import type {
   ContentDesign,
   TechnicalOptimization,
   SnippetStrategy,
-  AuthorityStrategy
+  AuthorityStrategy,
+  CompetitorAnalysis
 } from '../../types/agents';
 
 const SYSTEM_PROMPT = `Tu es l'AGENT 7 : "COORDINATOR" - Coordinateur et synthétiseur final du système multi-agents.
@@ -101,7 +102,8 @@ export async function runCoordinator(
   contentDesign: ContentDesign,
   technicalOptimization: TechnicalOptimization,
   snippetStrategy: SnippetStrategy | null,
-  authorityStrategy: AuthorityStrategy
+  authorityStrategy: AuthorityStrategy,
+  competitorAnalysis?: CompetitorAnalysis | null  // Agent 8
 ): Promise<CoordinatorSummary> {
   const userPrompt = `BUSINESS:
 ${businessDescription}
@@ -138,6 +140,13 @@ ${businessDescription}
 🏆 AGENT 6 - AUTHORITY BUILDER:
 - Certifications: ${(authorityStrategy?.certifications || []).length}
 - Cibles backlinks: ${(authorityStrategy?.ciblesBacklinks || []).length}
+
+🔍 AGENT 8 - COMPETITOR ANALYZER:
+${competitorAnalysis ? `- Concurrents analysés: ${competitorAnalysis.competitors.length}
+- Niveau de concurrence: ${competitorAnalysis.syntheseGlobale?.niveauConcurrence || 'N/A'}
+- Concurrent le plus fort: ${competitorAnalysis.syntheseGlobale?.concurrentLePlusFort || 'N/A'}
+- Opportunités prioritaires: ${(competitorAnalysis.syntheseGlobale?.opportunitesPrioritaires || []).slice(0, 3).join(', ') || 'Aucune'}
+- Recommandations: ${(competitorAnalysis.recommandations || []).length}` : '- Non exécuté (aucun concurrent fourni)'}
 
 OBJECTIF: Consolider, valider la cohérence, et générer:
 1. Résumé de l'architecture

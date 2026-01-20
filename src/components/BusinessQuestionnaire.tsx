@@ -334,7 +334,62 @@ export function BusinessQuestionnaire({ onComplete, disabled = false, initialAns
     };
 
     const handleSubmit = () => {
-        onComplete(answers);
+        // Convert competitors textarea string to array of URLs
+        // The textarea stores a string, but the type expects string[]
+        const competitorsValue = answers.competitors as unknown as string | string[];
+        let competitorsArray: string[] = [];
+
+        if (typeof competitorsValue === 'string' && competitorsValue.trim()) {
+            // Split by newlines or commas, clean up each URL
+            competitorsArray = competitorsValue
+                .split(/[\n,]+/)
+                .map((url: string) => url.trim())
+                .filter((url: string) => url.length > 0)
+                .map((url: string) => {
+                    // Add https:// if no protocol specified
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                        return `https://${url}`;
+                    }
+                    return url;
+                });
+        } else if (Array.isArray(competitorsValue)) {
+            competitorsArray = competitorsValue.filter((url: string) => url.trim().length > 0);
+        }
+
+        // Similarly convert industryTerms and certifications if they're strings
+        const industryTermsValue = answers.industryTerms as unknown as string | string[];
+        let industryTermsArray: string[] = [];
+        if (typeof industryTermsValue === 'string' && industryTermsValue.trim()) {
+            industryTermsArray = industryTermsValue
+                .split(/[,\n]+/)
+                .map((term: string) => term.trim())
+                .filter((term: string) => term.length > 0);
+        } else if (Array.isArray(industryTermsValue)) {
+            industryTermsArray = industryTermsValue;
+        }
+
+        const certificationsValue = answers.certifications as unknown as string | string[];
+        let certificationsArray: string[] = [];
+        if (typeof certificationsValue === 'string' && certificationsValue.trim()) {
+            certificationsArray = certificationsValue
+                .split(/[,\n]+/)
+                .map((cert: string) => cert.trim())
+                .filter((cert: string) => cert.length > 0);
+        } else if (Array.isArray(certificationsValue)) {
+            certificationsArray = certificationsValue;
+        }
+
+        const processedAnswers: QuestionnaireAnswers = {
+            ...answers,
+            competitors: competitorsArray,
+            industryTerms: industryTermsArray,
+            certifications: certificationsArray,
+        };
+
+        console.log('📋 Processed questionnaire answers:', processedAnswers);
+        console.log('🔗 Competitors to analyze:', processedAnswers.competitors);
+
+        onComplete(processedAnswers);
     };
 
     const formatAnswerForDisplay = (questionId: keyof QuestionnaireAnswers, value: string | string[]) => {

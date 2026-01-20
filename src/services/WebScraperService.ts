@@ -1,44 +1,67 @@
 import type { ScrapedContent } from '../types/auditTypes';
 
 /**
+ * Liste des proxies CORS gratuits à essayer dans l'ordre
+ */
+const CORS_PROXIES = [
+    // CorsProxy.io - Gratuit et fiable
+    (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    // AllOrigins - Retourne du JSON avec le contenu
+    (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    // Cors.sh - Proxy alternatif
+    (url: string) => `https://proxy.cors.sh/${url}`,
+];
+
+/**
  * Service pour extraire le contenu HTML d'une URL
- * Utilise le proxy Vite local pour contourner CORS
- * En production, utilisera Jina AI Reader directement
+ * Utilise plusieurs proxies CORS gratuits avec fallback automatique
  */
 export async function scrapeUrl(url: string): Promise<ScrapedContent> {
     // Nettoyer l'URL (enlever les fragments comme #:~:text=)
     const cleanUrl = url.split('#')[0];
 
-    try {
-        // Utiliser le proxy Vite local (qui redirige vers Jina AI Reader)
-        const proxyUrl = `/api/scrape/${cleanUrl}`;
+    let lastError: Error | null = null;
 
-        const response = await fetch(proxyUrl, {
-            headers: {
-                'Accept': 'text/html',
-            },
-        });
+    // Essayer chaque proxy dans l'ordre
+    for (let i = 0; i < CORS_PROXIES.length; i++) {
+        const proxyUrl = CORS_PROXIES[i](cleanUrl);
+        console.log(`🔄 Tentative ${i + 1}/${CORS_PROXIES.length}: ${proxyUrl.substring(0, 60)}...`);
 
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP: ${response.status}`);
+        try {
+            const response = await fetch(proxyUrl, {
+                headers: {
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+
+            const html = await response.text();
+
+            // Vérifier que c'est bien du contenu valide
+            if (!html || html.length < 100) {
+                throw new Error('Contenu insuffisant récupéré');
+            }
+
+            console.log(`✅ Scraping réussi avec proxy ${i + 1}`);
+            return parseHtml(html, cleanUrl);
+        } catch (error) {
+            lastError = error instanceof Error ? error : new Error('Erreur inconnue');
+            console.warn(`⚠️ Proxy ${i + 1} échoué: ${lastError.message}`);
+            // Continuer avec le prochain proxy
         }
-
-        const html = await response.text();
-
-        // Vérifier que c'est bien du contenu valide
-        if (!html || html.length < 50) {
-            throw new Error('Contenu insuffisant récupéré');
-        }
-
-        return parseHtml(html, cleanUrl);
-    } catch (error) {
-        console.error('Erreur lors du scraping:', error);
-        throw new Error(
-            error instanceof Error
-                ? `Impossible de récupérer la page: ${error.message}`
-                : 'Impossible de récupérer la page. Vérifiez que l\'URL est accessible publiquement.'
-        );
     }
+
+    // Tous les proxies ont échoué
+    console.error('❌ Tous les proxies ont échoué');
+    throw new Error(
+        lastError
+            ? `Impossible de récupérer la page après ${CORS_PROXIES.length} tentatives: ${lastError.message}`
+            : 'Impossible de récupérer la page. Vérifiez que l\'URL est accessible publiquement.'
+    );
 }
 
 /**

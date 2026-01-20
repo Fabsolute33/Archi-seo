@@ -96,6 +96,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
                 technicalOptimization: agentStore.technicalOptimization.data,
                 snippetStrategy: agentStore.snippetStrategy.data,
                 authorityStrategy: agentStore.authorityStrategy.data,
+                competitorAnalysis: agentStore.competitorAnalysis.data,
                 coordinatorSummary: agentStore.coordinatorSummary.data,
                 // News Transformer data - new format with analyses array
                 newsTransformerData: agentStore.newsTransformer.savedAnalyses.length > 0 ? {

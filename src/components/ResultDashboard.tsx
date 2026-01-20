@@ -455,7 +455,11 @@ function CopyForGeneratorButton({ row }: { row: ContentTableRow }) {
     );
 }
 
-export function ResultDashboard() {
+interface ResultDashboardProps {
+    onReanalyze?: () => void;
+}
+
+export function ResultDashboard({ onReanalyze }: ResultDashboardProps) {
     const {
         strategicAnalysis,
         clusterArchitecture,
@@ -473,22 +477,27 @@ export function ResultDashboard() {
 
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const handleRefreshStrategy = async () => {
+    const handleRefreshStrategy = () => {
         if (!questionnaireAnswers) {
             alert('Aucune donnée de questionnaire disponible pour relancer la stratégie.');
             return;
         }
 
+        // Utiliser onReanalyze si fourni (ouvre le questionnaire pré-rempli)
+        if (onReanalyze) {
+            onReanalyze();
+            return;
+        }
+
+        // Fallback: relancer directement (ancien comportement)
         if (!confirm('Relancer l\'analyse complète ? Cela écrasera les résultats actuels.')) {
             return;
         }
 
         setIsRefreshing(true);
-        try {
-            await runAllAgents();
-        } finally {
+        runAllAgents().finally(() => {
             setIsRefreshing(false);
-        }
+        });
     };
 
     const isComplete = coordinatorSummary.status === 'completed';
@@ -507,7 +516,7 @@ export function ResultDashboard() {
                     className="btn btn-refresh"
                     onClick={handleRefreshStrategy}
                     disabled={isRefreshing}
-                    title="Relancer l'analyse avec les données du questionnaire"
+                    title="Modifier les réponses et relancer l'analyse"
                 >
                     <RefreshCcw size={18} className={isRefreshing ? 'spinning' : ''} />
                     {isRefreshing ? 'Analyse en cours...' : 'Relancer l\'analyse'}

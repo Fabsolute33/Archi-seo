@@ -58,7 +58,7 @@ FORMAT DE RÉPONSE OBLIGATOIRE (JSON):
     ],
     "regles": ["Règle de maillage 1", "Règle 2"]
   },
-  "robotsTxt": "User-agent: *\\nAllow: /\\nDisallow: /admin/\\nDisallow: /panier/\\nDisallow: /*?*\\nSitemap: https://example.com/sitemap.xml",
+  "robotsTxt": "User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /panier/\nDisallow: /*?*\nSitemap: https://example.com/sitemap.xml",
   "pagesNoindex": ["Liste des pages à mettre en noindex"],
   "strategieIndexation": {
     "frequencePublication": "X articles/semaine",
@@ -71,7 +71,7 @@ FORMAT DE RÉPONSE OBLIGATOIRE (JSON):
     {
       "titre": "Titre de l'article",
       "typeSchema": "Article|FAQ|HowTo|Product|Review|LocalBusiness",
-      "code": "{\\\"@context\\\": \\\"https://schema.org\\\", \\\"@type\\\": \\\"Article\\\", ...}"
+      "code": '{"@context": "https://schema.org", "@type": "Article", ...}'
     }
   ]
 }`;

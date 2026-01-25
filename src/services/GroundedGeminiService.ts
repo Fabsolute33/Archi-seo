@@ -86,7 +86,7 @@ export async function generateWithGrounding<T>(
     }
 
     // Clean the response text
-    let text = response.text || '';
+    const text = response.text || '';
     let cleanedText = text.trim();
     if (cleanedText.startsWith('```json')) {
         cleanedText = cleanedText.slice(7);

@@ -76,7 +76,7 @@ FORMAT DE RÉPONSE OBLIGATOIRE (JSON):
       "da": 45,
       "type": "Annuaire|Blog|Presse|Forum|BrokenLink",
       "approche": "Stratégie d'approche personnalisée",
-      "templateProspection": "Objet: [Objet accrocheur]\\n\\nBonjour [Prénom],\\n\\n[Corps du message personnalisé]\\n\\n[CTA]\\n\\n[Signature]",
+      "templateProspection": "Objet: [Objet accrocheur]\n\nBonjour [Prénom],\n\n[Corps du message personnalisé]\n\n[CTA]\n\n[Signature]",
       "chancesSucces": "élevées|moyennes|faibles"
     }
   ],

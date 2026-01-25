@@ -19,6 +19,10 @@ export function getGeminiInstance(): GoogleGenerativeAI {
 function repairJSON(text: string): string {
     let repaired = text.trim();
 
+    // Fix missing colon after property names: "key" [ -> "key": [
+    // This handles cases like "cibles [" which should be "cibles": [
+    repaired = repaired.replace(/"(\w+)"\s+(\[|\{|"|\d|true|false|null)/g, '"$1": $2');
+
     // Remove any trailing commas before closing brackets/braces
     repaired = repaired.replace(/,(\s*[\]\}])/g, '$1');
 

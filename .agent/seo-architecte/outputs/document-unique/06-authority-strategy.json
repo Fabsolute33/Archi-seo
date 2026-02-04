@@ -1,0 +1,173 @@
+{
+    "strategieAutorite": {
+        "niveauActuel": "DA 10-30 (faible)",
+        "objectif6Mois": "DA 25-35",
+        "objectif12Mois": "DA 35-45"
+    },
+    "backlinksStrategie": {
+        "priorite1_citationsLocales": [
+            {
+                "source": "CCI Bordeaux Gironde",
+                "type": "Annuaire membres",
+                "DA": 50,
+                "action": "S'inscrire comme membre, obtenir listing dans l'annuaire"
+            },
+            {
+                "source": "Pages Jaunes Pro",
+                "type": "Fiche entreprise",
+                "DA": 70,
+                "action": "Créer fiche optimisée avec lien"
+            },
+            {
+                "source": "Mappy Business",
+                "type": "Fiche entreprise",
+                "DA": 60,
+                "action": "Revendiquer fiche avec URL"
+            },
+            {
+                "source": "Yelp",
+                "type": "Fiche entreprise",
+                "DA": 90,
+                "action": "Créer profil complet"
+            },
+            {
+                "source": "LinkedIn Company Page",
+                "type": "Réseau pro",
+                "DA": 95,
+                "action": "Page entreprise avec lien site"
+            }
+        ],
+        "priorite2_annuairesNiche": [
+            {
+                "source": "Annuaire INRS",
+                "type": "Annuaire spécialisé prévention",
+                "action": "Vérifier éligibilité inscription"
+            },
+            {
+                "source": "Annuaire QSE",
+                "type": "Annuaire consultant QSE",
+                "action": "Inscription avec profil complet"
+            },
+            {
+                "source": "Portail TPE-PME",
+                "type": "Ressources entreprises",
+                "action": "Demande de référencement"
+            }
+        ],
+        "priorite3_guestPosting": [
+            {
+                "cible": "Blogs RH/Management locaux",
+                "sujet": "L'importance du DUERP pour la marque employeur",
+                "avantage": "Backlink + visibilité cible RH"
+            },
+            {
+                "cible": "Sites CCI/Chambre des métiers",
+                "sujet": "Témoignage expert sur la prévention des risques",
+                "avantage": "Backlink institutionnel"
+            },
+            {
+                "cible": "Médias économiques locaux (La Tribune Bordeaux)",
+                "sujet": "Interview sur les nouvelles obligations DUERP 2025",
+                "avantage": "Backlink média + notoriété"
+            }
+        ],
+        "priorite4_linkBait": [
+            {
+                "contenu": "Infographie: Les 10 risques les plus courants par secteur",
+                "format": "Image + embed code",
+                "cibles": "Blogs RH, sites Formation, médias entreprise"
+            },
+            {
+                "contenu": "Étude: Coût moyen des accidents du travail en Nouvelle-Aquitaine",
+                "format": "Rapport PDF + article",
+                "cibles": "Journalistes, blogs RH, institutionnels"
+            },
+            {
+                "contenu": "Modèle DUERP gratuit (le plus complet du web)",
+                "format": "Excel/PDF téléchargeable",
+                "cibles": "Forums entrepreneurs, groupes Facebook TPE/PME"
+            }
+        ]
+    },
+    "strategieContenuAutorite": {
+        "e-e-a-t": {
+            "expertise": [
+                "Afficher les certifications et formations (INRS, etc.)",
+                "Publier des études de cas détaillées",
+                "Créer une page 'À propos' avec parcours professionnel"
+            ],
+            "experience": [
+                "Témoignages clients avec photos et entreprises réelles",
+                "Portfolio de DUERP réalisés (anonymisés)",
+                "Années d'expérience mises en avant"
+            ],
+            "authority": [
+                "Citer et être cité par des sources officielles (INRS, Code du travail)",
+                "Obtenir des backlinks de sites institutionnels",
+                "Publier sur LinkedIn régulièrement"
+            ],
+            "trust": [
+                "Mentions légales complètes",
+                "Politique de confidentialité",
+                "Avis clients vérifiés (Google, Trustpilot)",
+                "Coordonnées clairement affichées"
+            ]
+        }
+    },
+    "relationsPubliques": {
+        "actions": [
+            {
+                "type": "Communiqué de presse",
+                "sujet": "Nouvelles obligations DUERP 2025 : un expert bordelais alerte les PME",
+                "cibles": [
+                    "Sud Ouest",
+                    "La Tribune Bordeaux",
+                    "Aqui.fr"
+                ]
+            },
+            {
+                "type": "Partenariat",
+                "sujet": "Offre groupée avec cabinet comptable local",
+                "avantage": "Recommandations croisées + lien partenaire"
+            },
+            {
+                "type": "Intervention",
+                "sujet": "Conférence CCI sur la prévention des risques",
+                "avantage": "Visibilité + backlink événement"
+            }
+        ]
+    },
+    "reseauxSociaux": {
+        "linkedin": {
+            "frequence": "3 posts/semaine",
+            "types": [
+                "Conseils DUERP (carousel)",
+                "Actualités réglementaires",
+                "Témoignages clients",
+                "Behind the scenes interventions"
+            ],
+            "engagement": "Commenter sur les posts RH/Prévention"
+        },
+        "facebook": {
+            "frequence": "2 posts/semaine",
+            "cible": "Groupes entrepreneurs locaux Bordeaux/Gironde"
+        }
+    },
+    "calendrierLinkBuilding": {
+        "mois1": [
+            "Créer/optimiser toutes les citations locales prioritaires",
+            "Configurer Google Business Profile complet",
+            "Publier page LinkedIn entreprise"
+        ],
+        "mois2": [
+            "Inscription annuaires niche QSE/Prévention",
+            "Premier article invité sur blog RH local",
+            "Lancer le modèle DUERP gratuit (link bait)"
+        ],
+        "mois3": [
+            "Communiqué de presse nouvelles obligations 2025",
+            "Partenariat avec un cabinet comptable",
+            "Infographie risques par secteur"
+        ]
+    }
+}

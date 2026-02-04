@@ -1,0 +1,121 @@
+{
+    "strategieSnippets": {
+        "featuredSnippets": [
+            {
+                "requete": "qu'est-ce que le DUERP",
+                "type": "paragraphe",
+                "pageCible": "/guide-duerp-complet",
+                "reponseOptimisee": "Le DUERP (Document Unique d'Évaluation des Risques Professionnels) est un document obligatoire pour toute entreprise employant au moins un salarié. Il recense l'ensemble des risques professionnels auxquels sont exposés les travailleurs et définit les mesures de prévention à mettre en place. Régi par les articles R4121-1 à R4121-4 du Code du travail, le DUERP doit être mis à jour au minimum une fois par an.",
+                "formatHTML": "<p><strong>Le DUERP</strong> (Document Unique d'Évaluation des Risques Professionnels) est...</p>"
+            },
+            {
+                "requete": "comment faire son DUERP",
+                "type": "liste",
+                "pageCible": "/comment-faire-duerp",
+                "reponseOptimisee": "Pour faire son DUERP, suivez ces 7 étapes : 1) Identifier les unités de travail 2) Inventorier les dangers 3) Évaluer les risques 4) Hiérarchiser les risques par priorité 5) Définir les mesures de prévention 6) Rédiger le document unique 7) Communiquer aux salariés et planifier les mises à jour",
+                "formatHTML": "<ol><li>Identifier les unités de travail</li><li>Inventorier les dangers</li>..."
+            },
+            {
+                "requete": "DUERP obligatoire combien de salariés",
+                "type": "paragraphe",
+                "pageCible": "/duerp-obligatoire",
+                "reponseOptimisee": "Le DUERP est obligatoire dès le premier salarié. Toute entreprise employant au moins un salarié, quelle que soit sa taille ou son secteur d'activité, doit rédiger et tenir à jour un Document Unique d'Évaluation des Risques Professionnels. L'absence de DUERP expose l'employeur à une amende de 1 500€ (3 000€ en cas de récidive).",
+                "formatHTML": "<p><strong>Le DUERP est obligatoire dès le premier salarié.</strong>..."
+            },
+            {
+                "requete": "sanctions absence DUERP",
+                "type": "tableau",
+                "pageCible": "/sanctions-absence-duerp",
+                "tableau": {
+                    "colonnes": [
+                        "Infraction",
+                        "Sanction"
+                    ],
+                    "lignes": [
+                        [
+                            "Absence de DUERP",
+                            "1 500€ d'amende"
+                        ],
+                        [
+                            "Récidive",
+                            "3 000€ d'amende"
+                        ],
+                        [
+                            "Non mise à jour",
+                            "1 500€ d'amende"
+                        ],
+                        [
+                            "Défaut de communication aux salariés",
+                            "450€ d'amende"
+                        ]
+                    ]
+                }
+            },
+            {
+                "requete": "mise à jour DUERP quand",
+                "type": "liste",
+                "pageCible": "/mise-a-jour-duerp-bordeaux",
+                "reponseOptimisee": "Le DUERP doit être mis à jour : 1) Au minimum une fois par an 2) Après tout accident du travail 3) Lors d'un aménagement modifiant les conditions de travail 4) À l'apparition d'un nouveau risque 5) Après une maladie professionnelle 6) Suite aux évolutions réglementaires (ex: risque chaleur 2025)"
+            }
+        ],
+        "faq": [
+            {
+                "question": "Combien coûte un DUERP ?",
+                "reponse": "Le coût d'un DUERP varie selon la taille de l'entreprise et la complexité des risques. Comptez entre 300€ et 800€ pour une TPE, et de 500€ à 2000€ pour une PME. À Bordeaux, nos tarifs commencent à partir de 350€ pour une création et 200€ pour une mise à jour annuelle.",
+                "pageCible": "/duerp-bordeaux"
+            },
+            {
+                "question": "Qui peut rédiger le DUERP ?",
+                "reponse": "Le DUERP peut être rédigé par l'employeur lui-même, un salarié compétent (responsable QHSE), ou un prestataire externe spécialisé. Faire appel à un expert garantit la conformité et fait gagner du temps précieux aux dirigeants.",
+                "pageCible": "/redaction-document-unique-bordeaux"
+            },
+            {
+                "question": "Quel est le délai pour rédiger un DUERP ?",
+                "reponse": "La rédaction d'un DUERP prend généralement entre 1 et 3 semaines selon la taille de l'entreprise. Notre cabinet propose des interventions express sous 5 jours ouvrés pour les urgences.",
+                "pageCible": "/redaction-document-unique-bordeaux"
+            },
+            {
+                "question": "Le DUERP doit-il être signé ?",
+                "reponse": "Oui, le DUERP doit être daté et signé par l'employeur ou son représentant. Cette signature engage la responsabilité de l'employeur sur la sincérité de l'évaluation des risques.",
+                "pageCible": "/guide-duerp-complet"
+            },
+            {
+                "question": "Comment conserver le DUERP ?",
+                "reponse": "Le DUERP doit être conservé pendant 40 ans minimum. Il doit être accessible aux salariés, aux représentants du personnel, au médecin du travail et aux agents de l'inspection du travail.",
+                "pageCible": "/guide-duerp-complet"
+            }
+        ],
+        "peopleAlsoAsk": [
+            "Qu'est-ce que le DUERP en entreprise ?",
+            "Qui est responsable du DUERP ?",
+            "Comment remplir un document unique ?",
+            "Quelle est la sanction si pas de DUERP ?",
+            "Le DUERP est-il obligatoire pour les auto-entrepreneurs ?",
+            "Combien de temps dure un DUERP ?",
+            "Peut-on faire son DUERP en ligne ?"
+        ]
+    },
+    "richSnippets": {
+        "reviews": {
+            "strategie": "Collecter des avis Google 5 étoiles, afficher les témoignages avec AggregateRating schema",
+            "objectif": "Obtenir 15+ avis avec note moyenne > 4.5",
+            "actions": [
+                "Demander un avis après chaque prestation",
+                "Répondre à tous les avis (positifs et négatifs)",
+                "Intégrer widget avis sur le site"
+            ]
+        },
+        "howTo": {
+            "pageCible": "/comment-faire-duerp",
+            "schema": {
+                "@type": "HowTo",
+                "name": "Comment faire son DUERP en 7 étapes",
+                "estimatedCost": {
+                    "currency": "EUR",
+                    "value": "0-800"
+                },
+                "totalTime": "P7D"
+            }
+        }
+    }
+}

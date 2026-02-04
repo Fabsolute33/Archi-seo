@@ -1,0 +1,239 @@
+{
+    "clusters": [
+        {
+            "id": "pilier-duerp-bordeaux",
+            "nom": "DUERP Bordeaux - Page Pilier",
+            "type": "pillar",
+            "motClePrincipal": "DUERP Bordeaux",
+            "urlSuggérée": "/duerp-bordeaux",
+            "description": "Page pilier principale ciblant la recherche locale transactionnelle",
+            "objectif": "Conversion - Génération de leads locaux",
+            "sousPages": [
+                "cluster-secteurs",
+                "cluster-services",
+                "cluster-guide"
+            ]
+        },
+        {
+            "id": "cluster-secteurs",
+            "nom": "DUERP par Secteur d'Activité",
+            "type": "cluster",
+            "pilierParent": "pilier-duerp-bordeaux",
+            "description": "Cluster de pages ciblant les recherches sectorielles locales",
+            "pages": [
+                {
+                    "titre": "DUERP Restaurant et Restauration Bordeaux",
+                    "url": "/duerp-restaurant-bordeaux",
+                    "motCle": "DUERP restaurant Bordeaux",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "DUERP BTP et Chantier Gironde",
+                    "url": "/duerp-btp-gironde",
+                    "motCle": "DUERP BTP Gironde",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "DUERP Commerce et Boutique Bordeaux",
+                    "url": "/duerp-commerce-bordeaux",
+                    "motCle": "DUERP commerce Bordeaux",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "DUERP Cabinet Médical Bordeaux",
+                    "url": "/duerp-cabinet-medical-bordeaux",
+                    "motCle": "DUERP cabinet médical Bordeaux",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "DUERP Garage Automobile Gironde",
+                    "url": "/duerp-garage-automobile-gironde",
+                    "motCle": "DUERP garage Gironde",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "DUERP Salon de Coiffure Bordeaux",
+                    "url": "/duerp-salon-coiffure-bordeaux",
+                    "motCle": "DUERP coiffure Bordeaux",
+                    "intention": "transactionnel"
+                }
+            ]
+        },
+        {
+            "id": "cluster-services",
+            "nom": "Services DUERP",
+            "type": "cluster",
+            "pilierParent": "pilier-duerp-bordeaux",
+            "description": "Pages de services pour différentes prestations",
+            "pages": [
+                {
+                    "titre": "Rédaction Document Unique Bordeaux",
+                    "url": "/redaction-document-unique-bordeaux",
+                    "motCle": "rédaction DUERP Bordeaux",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "Mise à Jour DUERP Bordeaux",
+                    "url": "/mise-a-jour-duerp-bordeaux",
+                    "motCle": "mise à jour DUERP Bordeaux",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "Audit Risques Professionnels Gironde",
+                    "url": "/audit-risques-professionnels-gironde",
+                    "motCle": "audit risques professionnels Gironde",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "Formation DUERP Bordeaux",
+                    "url": "/formation-duerp-bordeaux",
+                    "motCle": "formation DUERP Bordeaux",
+                    "intention": "transactionnel"
+                }
+            ]
+        },
+        {
+            "id": "cluster-guide",
+            "nom": "Guide DUERP - Contenu Éducatif",
+            "type": "cluster",
+            "pilierParent": "pilier-duerp-bordeaux",
+            "description": "Contenu informationnel pour attirer du trafic organique",
+            "pages": [
+                {
+                    "titre": "Qu'est-ce que le DUERP ? Guide Complet 2025",
+                    "url": "/guide-duerp-complet",
+                    "motCle": "qu'est-ce que le DUERP",
+                    "intention": "informationnel"
+                },
+                {
+                    "titre": "Comment Faire son DUERP en 7 Étapes",
+                    "url": "/comment-faire-duerp",
+                    "motCle": "comment faire son DUERP",
+                    "intention": "informationnel"
+                },
+                {
+                    "titre": "DUERP Obligatoire : Qui est Concerné ?",
+                    "url": "/duerp-obligatoire",
+                    "motCle": "DUERP obligatoire",
+                    "intention": "informationnel"
+                },
+                {
+                    "titre": "Mise à Jour DUERP 2025 : Nouvelles Obligations",
+                    "url": "/mise-a-jour-duerp-2025",
+                    "motCle": "mise à jour DUERP 2025",
+                    "intention": "informationnel"
+                },
+                {
+                    "titre": "Sanctions Absence DUERP : Risques pour l'Employeur",
+                    "url": "/sanctions-absence-duerp",
+                    "motCle": "sanctions absence DUERP",
+                    "intention": "informationnel"
+                },
+                {
+                    "titre": "DUERP et Risques Psychosociaux : Ce Qui Change",
+                    "url": "/duerp-risques-psychosociaux",
+                    "motCle": "DUERP risques psychosociaux",
+                    "intention": "informationnel"
+                },
+                {
+                    "titre": "Risque Chaleur DUERP 2025 : Nouvelle Obligation",
+                    "url": "/duerp-risque-chaleur-2025",
+                    "motCle": "DUERP risque chaleur 2025",
+                    "intention": "informationnel"
+                }
+            ]
+        },
+        {
+            "id": "cluster-zones",
+            "nom": "DUERP par Zone Géographique",
+            "type": "cluster",
+            "pilierParent": "pilier-duerp-bordeaux",
+            "description": "Extension géographique pour la Nouvelle-Aquitaine",
+            "pages": [
+                {
+                    "titre": "DUERP Gironde",
+                    "url": "/duerp-gironde",
+                    "motCle": "DUERP Gironde",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "DUERP Nouvelle-Aquitaine",
+                    "url": "/duerp-nouvelle-aquitaine",
+                    "motCle": "DUERP Nouvelle-Aquitaine",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "DUERP Mérignac",
+                    "url": "/duerp-merignac",
+                    "motCle": "DUERP Mérignac",
+                    "intention": "transactionnel"
+                },
+                {
+                    "titre": "DUERP Pessac",
+                    "url": "/duerp-pessac",
+                    "motCle": "DUERP Pessac",
+                    "intention": "transactionnel"
+                }
+            ]
+        }
+    ],
+    "maillageInterne": {
+        "strategie": "Structure en silo avec page pilier centrale",
+        "regles": [
+            "Chaque page cluster lie vers la page pilier",
+            "La page pilier lie vers tous les clusters",
+            "Les pages d'un même cluster se lient entre elles",
+            "Les articles de blog lient vers les pages de service pertinentes",
+            "Utiliser des ancres optimisées avec mots-clés cibles"
+        ],
+        "ancresSuggérées": {
+            "vers-pilier": [
+                "DUERP Bordeaux",
+                "document unique Bordeaux",
+                "nos services DUERP"
+            ],
+            "vers-services": [
+                "rédaction DUERP",
+                "mise à jour document unique",
+                "audit risques"
+            ],
+            "vers-guides": [
+                "en savoir plus sur le DUERP",
+                "guide complet",
+                "comprendre les obligations"
+            ]
+        }
+    },
+    "prioritéPublication": [
+        {
+            "ordre": 1,
+            "page": "/duerp-bordeaux",
+            "raison": "Page pilier principale - fondation SEO"
+        },
+        {
+            "ordre": 2,
+            "page": "/redaction-document-unique-bordeaux",
+            "raison": "Service principal à fort potentiel conversion"
+        },
+        {
+            "ordre": 3,
+            "page": "/mise-a-jour-duerp-bordeaux",
+            "raison": "Service récurrent, fidélisation client"
+        },
+        {
+            "ordre": 4,
+            "page": "/guide-duerp-complet",
+            "raison": "Contenu informatif pour SEO longue traîne"
+        },
+        {
+            "ordre": 5,
+            "page": "/duerp-restaurant-bordeaux",
+            "raison": "Première page sectorielle, secteur porteur"
+        },
+        {
+            "ordre": 6,
+            "page": "/mise-a-jour-duerp-2025",
+            "raison": "Actualité SEO, trafic immédiat"
+        }
+    ]
+}

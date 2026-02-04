@@ -9,11 +9,12 @@ import {
     Sparkles,
     Info,
     Newspaper,
-    Rss
+    Rss,
+    Download
 } from 'lucide-react';
 import './Sidebar.css';
 
-export type ViewType = 'strategy' | 'audit' | 'results' | 'projects' | 'settings' | 'news-transformer' | 'rss-watch';
+export type ViewType = 'strategy' | 'audit' | 'results' | 'projects' | 'settings' | 'news-transformer' | 'rss-watch' | 'ide-import';
 
 interface SidebarProps {
     currentView: ViewType;
@@ -59,6 +60,12 @@ export function Sidebar({
             label: 'Audit de Contenu',
             icon: <Search size={20} />,
             action: () => onViewChange('audit')
+        },
+        {
+            id: 'ide-import',
+            label: 'Import IDE',
+            icon: <Download size={20} />,
+            action: () => onViewChange('ide-import')
         },
         {
             id: 'results',

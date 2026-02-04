@@ -1,0 +1,418 @@
+{
+    "tableauContenu": [
+        {
+            "id": 1,
+            "priorite": "P1",
+            "type": "Page Pilier",
+            "titre": "DUERP Bordeaux : Rédaction et Mise à Jour de votre Document Unique",
+            "url": "/duerp-bordeaux",
+            "motClePrincipal": "DUERP Bordeaux",
+            "motsClésSecondaires": [
+                "document unique Bordeaux",
+                "DUERP Gironde",
+                "rédaction DUERP Bordeaux"
+            ],
+            "intention": "transactionnel",
+            "persona": "Dirigeant PME Débordé",
+            "longueurMots": 2000,
+            "structure": {
+                "h1": "DUERP Bordeaux : Expert en Rédaction et Mise à Jour du Document Unique",
+                "h2": [
+                    "Pourquoi nous confier votre DUERP à Bordeaux ?",
+                    "Nos services DUERP en Gironde",
+                    "Le DUERP : une obligation légale pour toutes les entreprises",
+                    "Notre méthodologie en 5 étapes",
+                    "Tarifs et devis gratuit",
+                    "Nos clients témoignent",
+                    "FAQ DUERP Bordeaux"
+                ]
+            },
+            "cta": "Demander un devis gratuit",
+            "elementsRiches": [
+                "FAQ schema",
+                "LocalBusiness schema",
+                "Témoignages",
+                "Formulaire devis"
+            ]
+        },
+        {
+            "id": 2,
+            "priorite": "P1",
+            "type": "Service",
+            "titre": "Rédaction Document Unique Bordeaux | DUERP clé en main",
+            "url": "/redaction-document-unique-bordeaux",
+            "motClePrincipal": "rédaction DUERP Bordeaux",
+            "motsClésSecondaires": [
+                "faire rédiger son DUERP",
+                "DUERP externalisé",
+                "consultant DUERP Bordeaux"
+            ],
+            "intention": "transactionnel",
+            "persona": "Dirigeant PME Débordé",
+            "longueurMots": 1500,
+            "structure": {
+                "h1": "Rédaction de votre Document Unique à Bordeaux",
+                "h2": [
+                    "Un DUERP rédigé par un expert certifié",
+                    "Ce que comprend notre prestation",
+                    "Processus de rédaction",
+                    "Délais et tarifs",
+                    "Demandez votre devis"
+                ]
+            },
+            "cta": "Obtenir un devis sous 24h",
+            "elementsRiches": [
+                "Service schema",
+                "Prix",
+                "Délais"
+            ]
+        },
+        {
+            "id": 3,
+            "priorite": "P1",
+            "type": "Service",
+            "titre": "Mise à Jour DUERP Bordeaux | Actualisation annuelle obligatoire",
+            "url": "/mise-a-jour-duerp-bordeaux",
+            "motClePrincipal": "mise à jour DUERP Bordeaux",
+            "motsClésSecondaires": [
+                "actualisation DUERP",
+                "révision document unique",
+                "DUERP annuel"
+            ],
+            "intention": "transactionnel",
+            "persona": "Responsable QHSE",
+            "longueurMots": 1200,
+            "structure": {
+                "h1": "Mise à Jour de votre DUERP à Bordeaux",
+                "h2": [
+                    "Pourquoi mettre à jour votre DUERP chaque année ?",
+                    "Quand devez-vous actualiser votre document unique ?",
+                    "Notre service de mise à jour",
+                    "Nouveautés réglementaires 2025",
+                    "Tarifs mise à jour"
+                ]
+            },
+            "cta": "Planifier la mise à jour",
+            "elementsRiches": [
+                "FAQ schema",
+                "Checklist mise à jour"
+            ]
+        },
+        {
+            "id": 4,
+            "priorite": "P1",
+            "type": "Blog",
+            "titre": "Mise à Jour DUERP 2025 : Nouvelles Obligations et Changements",
+            "url": "/mise-a-jour-duerp-2025",
+            "motClePrincipal": "mise à jour DUERP 2025",
+            "motsClésSecondaires": [
+                "nouveautés DUERP 2025",
+                "obligations DUERP 2025",
+                "chaleur DUERP"
+            ],
+            "intention": "informationnel",
+            "persona": "Responsable QHSE",
+            "longueurMots": 1800,
+            "structure": {
+                "h1": "DUERP 2025 : Toutes les nouvelles obligations à connaître",
+                "h2": [
+                    "Risque chaleur : nouvelle obligation dès juillet 2025",
+                    "Risques psychosociaux (RPS) dans le DUERP",
+                    "PAPRIPACT obligatoire pour les +50 salariés",
+                    "Conservation 40 ans du DUERP",
+                    "Comment se mettre en conformité ?",
+                    "Besoin d'aide pour votre mise à jour 2025 ?"
+                ]
+            },
+            "cta": "Mettre à jour mon DUERP",
+            "elementsRiches": [
+                "Article schema",
+                "FAQ",
+                "Table des matières"
+            ]
+        },
+        {
+            "id": 5,
+            "priorite": "P2",
+            "type": "Blog",
+            "titre": "Comment Faire son DUERP : Guide Pratique en 7 Étapes",
+            "url": "/comment-faire-duerp",
+            "motClePrincipal": "comment faire son DUERP",
+            "motsClésSecondaires": [
+                "rédiger DUERP",
+                "créer document unique",
+                "étapes DUERP"
+            ],
+            "intention": "informationnel",
+            "persona": "Créateur d'Entreprise",
+            "longueurMots": 2500,
+            "structure": {
+                "h1": "Comment Faire son DUERP : Guide Complet en 7 Étapes",
+                "h2": [
+                    "Étape 1 : Identifier les unités de travail",
+                    "Étape 2 : Inventorier les dangers",
+                    "Étape 3 : Évaluer les risques",
+                    "Étape 4 : Hiérarchiser les risques",
+                    "Étape 5 : Définir les mesures de prévention",
+                    "Étape 6 : Rédiger le document unique",
+                    "Étape 7 : Communiquer et mettre à jour",
+                    "Modèle DUERP gratuit à télécharger",
+                    "Vous manquez de temps ? Confiez-nous votre DUERP"
+                ]
+            },
+            "cta": "Télécharger le modèle gratuit",
+            "elementsRiches": [
+                "HowTo schema",
+                "Modèle PDF",
+                "Vidéo tutoriel"
+            ]
+        },
+        {
+            "id": 6,
+            "priorite": "P2",
+            "type": "Sectoriel",
+            "titre": "DUERP Restaurant Bordeaux : Document Unique Restauration",
+            "url": "/duerp-restaurant-bordeaux",
+            "motClePrincipal": "DUERP restaurant Bordeaux",
+            "motsClésSecondaires": [
+                "document unique restauration",
+                "DUERP cuisine",
+                "risques restaurant"
+            ],
+            "intention": "transactionnel",
+            "persona": "Dirigeant PME Débordé",
+            "longueurMots": 1500,
+            "structure": {
+                "h1": "DUERP Restaurant à Bordeaux : Protégez votre équipe",
+                "h2": [
+                    "Risques spécifiques en restauration",
+                    "Contenu du DUERP restaurant",
+                    "Nos références en restauration",
+                    "Tarifs DUERP restauration",
+                    "Demandez votre devis"
+                ]
+            },
+            "cta": "Devis DUERP Restaurant",
+            "elementsRiches": [
+                "Service schema",
+                "Témoignages restaurateurs"
+            ]
+        },
+        {
+            "id": 7,
+            "priorite": "P2",
+            "type": "Sectoriel",
+            "titre": "DUERP BTP Gironde : Document Unique Chantier et Construction",
+            "url": "/duerp-btp-gironde",
+            "motClePrincipal": "DUERP BTP Gironde",
+            "motsClésSecondaires": [
+                "document unique chantier",
+                "DUERP construction",
+                "risques BTP"
+            ],
+            "intention": "transactionnel",
+            "persona": "Dirigeant PME Débordé",
+            "longueurMots": 1500,
+            "structure": {
+                "h1": "DUERP BTP en Gironde : Sécurisez vos chantiers",
+                "h2": [
+                    "Risques majeurs dans le BTP",
+                    "Spécificités du DUERP chantier",
+                    "Intervention sur site possible",
+                    "Nos réalisations BTP",
+                    "Tarifs et devis"
+                ]
+            },
+            "cta": "Devis DUERP BTP",
+            "elementsRiches": [
+                "Service schema",
+                "Études de cas"
+            ]
+        },
+        {
+            "id": 8,
+            "priorite": "P2",
+            "type": "Blog",
+            "titre": "DUERP Obligatoire : Qui est Concerné ? Que Risquez-vous ?",
+            "url": "/duerp-obligatoire",
+            "motClePrincipal": "DUERP obligatoire",
+            "motsClésSecondaires": [
+                "obligation DUERP",
+                "document unique obligatoire",
+                "sanctions DUERP"
+            ],
+            "intention": "informationnel",
+            "persona": "Créateur d'Entreprise",
+            "longueurMots": 1500,
+            "structure": {
+                "h1": "Le DUERP est-il Obligatoire ? Tout Savoir sur vos Obligations",
+                "h2": [
+                    "Qui doit faire un DUERP ?",
+                    "À partir de combien de salariés ?",
+                    "Quelles sont les sanctions ?",
+                    "Qui contrôle le DUERP ?",
+                    "Comment se mettre en conformité rapidement ?"
+                ]
+            },
+            "cta": "Vérifier ma conformité",
+            "elementsRiches": [
+                "FAQ schema",
+                "Tableau sanctions"
+            ]
+        },
+        {
+            "id": 9,
+            "priorite": "P3",
+            "type": "Blog",
+            "titre": "Qu'est-ce que le DUERP ? Guide Complet du Document Unique",
+            "url": "/guide-duerp-complet",
+            "motClePrincipal": "qu'est-ce que le DUERP",
+            "motsClésSecondaires": [
+                "définition DUERP",
+                "document unique définition",
+                "DUERP c'est quoi"
+            ],
+            "intention": "informationnel",
+            "persona": "Créateur d'Entreprise",
+            "longueurMots": 3000,
+            "structure": {
+                "h1": "DUERP : Le Guide Complet du Document Unique d'Évaluation des Risques",
+                "h2": [
+                    "Définition du DUERP",
+                    "Historique et cadre légal",
+                    "Contenu obligatoire du document unique",
+                    "Comment évaluer les risques professionnels ?",
+                    "Mise à jour et conservation",
+                    "Qui peut consulter le DUERP ?",
+                    "Les erreurs à éviter",
+                    "FAQ complète"
+                ]
+            },
+            "cta": "Télécharger notre guide PDF",
+            "elementsRiches": [
+                "Article schema",
+                "FAQ schema",
+                "Infographie"
+            ]
+        },
+        {
+            "id": 10,
+            "priorite": "P3",
+            "type": "Blog",
+            "titre": "DUERP et Risques Psychosociaux : Obligations et Bonnes Pratiques",
+            "url": "/duerp-risques-psychosociaux",
+            "motClePrincipal": "DUERP risques psychosociaux",
+            "motsClésSecondaires": [
+                "RPS document unique",
+                "stress au travail DUERP",
+                "burn-out prévention"
+            ],
+            "intention": "informationnel",
+            "persona": "Responsable QHSE",
+            "longueurMots": 1800,
+            "structure": {
+                "h1": "Intégrer les Risques Psychosociaux dans votre DUERP",
+                "h2": [
+                    "Qu'est-ce que les RPS ?",
+                    "Obligation légale depuis 2021",
+                    "Comment identifier les RPS ?",
+                    "Exemples de mesures de prévention",
+                    "Accompagnement spécialisé"
+                ]
+            },
+            "cta": "Audit RPS gratuit",
+            "elementsRiches": [
+                "Article schema",
+                "Questionnaire RPS"
+            ]
+        }
+    ],
+    "calendrierEditorial": {
+        "mois1": [
+            {
+                "semaine": 1,
+                "contenu": "Page pilier DUERP Bordeaux",
+                "priorite": "P1"
+            },
+            {
+                "semaine": 2,
+                "contenu": "Rédaction Document Unique Bordeaux",
+                "priorite": "P1"
+            },
+            {
+                "semaine": 3,
+                "contenu": "Mise à Jour DUERP Bordeaux",
+                "priorite": "P1"
+            },
+            {
+                "semaine": 4,
+                "contenu": "Mise à Jour DUERP 2025",
+                "priorite": "P1"
+            }
+        ],
+        "mois2": [
+            {
+                "semaine": 1,
+                "contenu": "Comment Faire son DUERP",
+                "priorite": "P2"
+            },
+            {
+                "semaine": 2,
+                "contenu": "DUERP Restaurant Bordeaux",
+                "priorite": "P2"
+            },
+            {
+                "semaine": 3,
+                "contenu": "DUERP BTP Gironde",
+                "priorite": "P2"
+            },
+            {
+                "semaine": 4,
+                "contenu": "DUERP Obligatoire",
+                "priorite": "P2"
+            }
+        ],
+        "mois3": [
+            {
+                "semaine": 1,
+                "contenu": "Guide DUERP Complet",
+                "priorite": "P3"
+            },
+            {
+                "semaine": 2,
+                "contenu": "DUERP Risques Psychosociaux",
+                "priorite": "P3"
+            },
+            {
+                "semaine": 3,
+                "contenu": "DUERP Commerce Bordeaux",
+                "priorite": "P3"
+            },
+            {
+                "semaine": 4,
+                "contenu": "DUERP Cabinet Médical Bordeaux",
+                "priorite": "P3"
+            }
+        ]
+    },
+    "leadMagnets": [
+        {
+            "nom": "Modèle DUERP Gratuit",
+            "format": "PDF/Excel",
+            "pageAssociée": "/comment-faire-duerp",
+            "objectif": "Capture email pour nurturing vers rédaction externalisée"
+        },
+        {
+            "nom": "Checklist Conformité DUERP 2025",
+            "format": "PDF",
+            "pageAssociée": "/mise-a-jour-duerp-2025",
+            "objectif": "Capture email pour vente mise à jour"
+        },
+        {
+            "nom": "Guide RPS pour DUERP",
+            "format": "PDF",
+            "pageAssociée": "/duerp-risques-psychosociaux",
+            "objectif": "Positionnement expert, vente audit RPS"
+        }
+    ]
+}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Check, Building2, MapPin, TrendingUp, Target, Euro, Users, Globe, Zap, MessageSquare, FolderOpen, Award } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Building2, MapPin, TrendingUp, Target, Euro, Users, Globe, Zap, MessageSquare, FolderOpen, Award, Copy } from 'lucide-react';
 import './BusinessQuestionnaire.css';
 
 export interface QuestionnaireAnswers {
@@ -465,6 +465,28 @@ export function BusinessQuestionnaire({ onComplete, disabled = false, initialAns
                             )}
                         </button>
                     </div>
+
+                    {/* Copy Brief Button */}
+                    <div className="copy-brief-section">
+                        <p className="copy-brief-hint">💡 Ou copiez le brief pour une analyse manuelle par l'agent :</p>
+                        <button
+                            type="button"
+                            className="btn btn-outline copy-brief-btn"
+                            onClick={() => {
+                                const brief = formatAnswersForBrief(answers);
+                                navigator.clipboard.writeText(brief);
+                                // Show feedback - we'll use a simple alert for now
+                                const btn = document.querySelector('.copy-brief-btn');
+                                if (btn) {
+                                    btn.classList.add('copied');
+                                    setTimeout(() => btn.classList.remove('copied'), 2000);
+                                }
+                            }}
+                        >
+                            <Copy size={18} />
+                            Copier le Brief pour l'Agent
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -658,4 +680,66 @@ export function formatAnswersForAgent(answers: QuestionnaireAnswers): string {
     }
 
     return description;
+}
+
+/**
+ * Format answers for Agent Brief (to be copied and pasted to the AI agent)
+ */
+export function formatAnswersForBrief(answers: QuestionnaireAnswers): string {
+    const date = new Date().toLocaleDateString('fr-FR');
+    const projectSlug = answers.projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    const industryTermsStr = Array.isArray(answers.industryTerms)
+        ? answers.industryTerms.join(', ')
+        : answers.industryTerms;
+    const certificationsStr = Array.isArray(answers.certifications)
+        ? answers.certifications.join(', ')
+        : answers.certifications || '';
+    const competitorsStr = Array.isArray(answers.competitors)
+        ? answers.competitors.join('\n- ')
+        : answers.competitors || '';
+
+    return `# Brief SEO - ${answers.projectName}
+
+**ID:** brief_${projectSlug}_${Date.now()}
+**Date:** ${date}
+
+---
+
+## Contexte Business
+
+- **Type de site:** ${answers.siteType}
+- **Secteur:** ${answers.sectorCategory} → ${answers.sector}
+${answers.subSector ? `- **Spécialité:** ${answers.subSector}` : ''}
+- **Zone géographique:** ${answers.location}${answers.targetCity ? ` (${answers.targetCity})` : ''}
+- **Autorité domaine (DA):** ${answers.domainAuthority}
+
+## Ressources
+
+- **Budget SEO:** ${answers.budget}
+- **Taille équipe:** ${answers.teamSize}
+
+## Objectifs
+
+- **Objectif principal:** ${answers.mainGoal}
+${answers.targetKeyword ? `- **Mot-clé cible:** ${answers.targetKeyword}` : ''}
+
+## Vocabulaire Sectoriel
+
+- **Termes métier:** ${industryTermsStr || 'Non renseigné'}
+- **Langage client:** ${answers.clientTerms || 'Non renseigné'}
+${certificationsStr ? `- **Certifications:** ${certificationsStr}` : ''}
+
+${competitorsStr ? `## Concurrents
+
+- ${competitorsStr}` : ''}
+
+${answers.constraints ? `## Contraintes
+
+${answers.constraints}` : ''}
+
+---
+
+> Lance l'analyse avec: \`/seo-analysis\`
+`;
 }

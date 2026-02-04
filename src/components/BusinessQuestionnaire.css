@@ -338,3 +338,45 @@
         text-align: left;
     }
 }
+
+/* Copy Brief Section */
+.copy-brief-section {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--glass-border);
+    text-align: center;
+}
+
+.copy-brief-hint {
+    font-size: 0.875rem;
+    color: var(--neutral-400);
+    margin-bottom: var(--spacing-md);
+}
+
+.copy-brief-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid var(--accent-500);
+    color: var(--accent-400);
+    border-radius: var(--radius-xl);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.copy-brief-btn:hover {
+    background: rgba(16, 185, 129, 0.2);
+    transform: translateY(-2px);
+}
+
+.copy-brief-btn.copied {
+    background: var(--accent-500);
+    color: white;
+}
+
+.copy-brief-btn.copied::after {
+    content: ' ✓ Copié!';
+}

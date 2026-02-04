@@ -1,0 +1,253 @@
+{
+    "contexteBusiness": {
+        "secteur": "Audit QSE / Prévention des risques professionnels",
+        "specialite": "DUERP - Document Unique d'Évaluation des Risques Professionnels",
+        "zoneGeographique": "Bordeaux (Gironde, Nouvelle-Aquitaine)",
+        "autoriteDomaine": "10-30 (faible, à développer)",
+        "budget": "500-1500€",
+        "equipe": "Solo"
+    },
+    "analyseMarche": {
+        "obligationLegale": "DUERP obligatoire dès le 1er salarié (Code du travail R4121-1 à R4121-4)",
+        "miseAJour2025": [
+            "Risque chaleur obligatoire dès juillet 2025",
+            "Risques psychosociaux (RPS) depuis 2021",
+            "PAPRIPACT obligatoire pour +50 salariés",
+            "Conservation 40 ans obligatoire"
+        ],
+        "concurrentsLocaux": [
+            "Ingenerisk (Bordeaux)",
+            "FPI2S",
+            "QSE Consult 33",
+            "CCI Bordeaux Gironde"
+        ]
+    },
+    "personas": [
+        {
+            "nom": "Le Dirigeant PME Débordé",
+            "profil": "Dirigeant de TPE/PME (1-50 salariés), peu de temps, obligation légale à remplir",
+            "intentionRecherche": "Comment faire son DUERP rapidement, déléguer la rédaction",
+            "motsClésAssociés": [
+                "faire rédiger son DUERP",
+                "DUERP externalisé",
+                "aide DUERP Bordeaux"
+            ],
+            "problematiques": [
+                "Manque de temps",
+                "Méconnaissance réglementaire",
+                "Peur des sanctions"
+            ]
+        },
+        {
+            "nom": "Le Responsable QHSE",
+            "profil": "Chargé sécurité en entreprise, besoin de mise à jour annuelle",
+            "intentionRecherche": "Mise à jour DUERP, nouveautés réglementaires, méthodologie",
+            "motsClésAssociés": [
+                "mise à jour DUERP 2025",
+                "nouveautés DUERP",
+                "modèle DUERP"
+            ],
+            "problematiques": [
+                "Suivre les évolutions légales",
+                "Optimiser le processus",
+                "Gain de temps"
+            ]
+        },
+        {
+            "nom": "Le Créateur d'Entreprise",
+            "profil": "Nouvel entrepreneur, découvre l'obligation DUERP",
+            "intentionRecherche": "Qu'est-ce que le DUERP, par où commencer",
+            "motsClésAssociés": [
+                "DUERP obligatoire",
+                "document unique c'est quoi",
+                "premier DUERP"
+            ],
+            "problematiques": [
+                "Incompréhension totale",
+                "Budget limité",
+                "Besoin d'accompagnement"
+            ]
+        }
+    ],
+    "motsClePrincipaux": {
+        "transactionnels": [
+            {
+                "keyword": "rédaction DUERP Bordeaux",
+                "volume": "50-100",
+                "difficulte": "faible",
+                "priorite": 1
+            },
+            {
+                "keyword": "faire son DUERP Bordeaux",
+                "volume": "30-50",
+                "difficulte": "faible",
+                "priorite": 1
+            },
+            {
+                "keyword": "accompagnement DUERP Gironde",
+                "volume": "20-40",
+                "difficulte": "faible",
+                "priorite": 2
+            },
+            {
+                "keyword": "consultant DUERP Bordeaux",
+                "volume": "20-30",
+                "difficulte": "faible",
+                "priorite": 2
+            },
+            {
+                "keyword": "devis DUERP Bordeaux",
+                "volume": "10-30",
+                "difficulte": "très faible",
+                "priorite": 1
+            }
+        ],
+        "informationnels": [
+            {
+                "keyword": "qu'est-ce que le DUERP",
+                "volume": "500-1000",
+                "difficulte": "élevée",
+                "priorite": 3
+            },
+            {
+                "keyword": "comment faire son DUERP",
+                "volume": "300-500",
+                "difficulte": "moyenne",
+                "priorite": 2
+            },
+            {
+                "keyword": "modèle DUERP gratuit",
+                "volume": "500-800",
+                "difficulte": "élevée",
+                "priorite": 3
+            },
+            {
+                "keyword": "mise à jour DUERP 2025",
+                "volume": "200-400",
+                "difficulte": "moyenne",
+                "priorite": 1
+            },
+            {
+                "keyword": "DUERP obligatoire",
+                "volume": "300-500",
+                "difficulte": "moyenne",
+                "priorite": 2
+            },
+            {
+                "keyword": "sanctions absence DUERP",
+                "volume": "100-200",
+                "difficulte": "moyenne",
+                "priorite": 2
+            }
+        ],
+        "longueTraîne": [
+            {
+                "keyword": "DUERP restaurant Bordeaux",
+                "volume": "10-20",
+                "difficulte": "très faible",
+                "priorite": 1
+            },
+            {
+                "keyword": "DUERP BTP Gironde",
+                "volume": "20-30",
+                "difficulte": "faible",
+                "priorite": 1
+            },
+            {
+                "keyword": "DUERP cabinet médical Bordeaux",
+                "volume": "10-15",
+                "difficulte": "très faible",
+                "priorite": 1
+            },
+            {
+                "keyword": "DUERP commerce Bordeaux",
+                "volume": "10-20",
+                "difficulte": "très faible",
+                "priorite": 1
+            },
+            {
+                "keyword": "DUERP risque chaleur 2025",
+                "volume": "50-100",
+                "difficulte": "faible",
+                "priorite": 1
+            },
+            {
+                "keyword": "DUERP risques psychosociaux",
+                "volume": "100-200",
+                "difficulte": "moyenne",
+                "priorite": 2
+            }
+        ]
+    },
+    "intentionsRecherche": {
+        "informationnel": {
+            "description": "L'utilisateur cherche à comprendre ce qu'est le DUERP et pourquoi il est obligatoire",
+            "exemples": [
+                "qu'est-ce que le DUERP",
+                "document unique obligatoire",
+                "pourquoi faire un DUERP"
+            ],
+            "formatContenu": "Guides explicatifs, articles de blog, FAQ"
+        },
+        "navigationnel": {
+            "description": "L'utilisateur cherche un prestataire local pour le DUERP",
+            "exemples": [
+                "DUERP Bordeaux",
+                "consultant QSE Gironde",
+                "expert prévention risques Bordeaux"
+            ],
+            "formatContenu": "Page service géolocalisée, Google Business Profile"
+        },
+        "transactionnel": {
+            "description": "L'utilisateur est prêt à acheter/commander un service DUERP",
+            "exemples": [
+                "devis DUERP",
+                "tarif rédaction document unique",
+                "commander DUERP en ligne"
+            ],
+            "formatContenu": "Page de vente, formulaire devis, landing page"
+        },
+        "commercial": {
+            "description": "L'utilisateur compare les solutions avant d'acheter",
+            "exemples": [
+                "meilleur logiciel DUERP",
+                "DUERP en ligne ou consultant",
+                "prix DUERP freelance"
+            ],
+            "formatContenu": "Comparatifs, études de cas, témoignages"
+        }
+    },
+    "opportunitésSEO": [
+        {
+            "opportunite": "Local Pack Bordeaux",
+            "description": "Dominer les recherches locales 'DUERP Bordeaux' via Google Business Profile optimisé",
+            "potentiel": "élevé",
+            "effort": "faible"
+        },
+        {
+            "opportunite": "Contenu actualité 2025",
+            "description": "Articles sur les nouvelles obligations (chaleur, RPS) pour capter le trafic informationnel",
+            "potentiel": "moyen",
+            "effort": "moyen"
+        },
+        {
+            "opportunite": "Pages sectorielles",
+            "description": "Pages dédiées par secteur (BTP, restauration, commerce) pour la longue traîne locale",
+            "potentiel": "élevé",
+            "effort": "moyen"
+        },
+        {
+            "opportunite": "Lead magnet modèle DUERP",
+            "description": "Offrir un modèle DUERP gratuit en échange d'email pour capturer des leads",
+            "potentiel": "élevé",
+            "effort": "faible"
+        }
+    ],
+    "recommandationsStrategiques": [
+        "Prioriser le SEO local (fiche Google, citations locales, avis clients)",
+        "Créer des pages de service géolocalisées (Bordeaux, Gironde, Nouvelle-Aquitaine)",
+        "Publier du contenu d'actualité sur les évolutions DUERP 2025",
+        "Développer des pages sectorielles pour capturer la longue traîne",
+        "Mettre en place un lead magnet (modèle DUERP gratuit) pour la conversion"
+    ]
+}

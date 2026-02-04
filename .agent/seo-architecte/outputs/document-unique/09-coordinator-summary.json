@@ -1,0 +1,100 @@
+{
+    "projetId": "brief_document-unique_1770221898297",
+    "dateAnalyse": "2026-02-04",
+    "resumeExecutif": {
+        "contexte": "Audit QSE / Rédaction DUERP à Bordeaux - Solo avec budget SEO 500-1500€",
+        "opportunite": "Marché local peu concurrentiel avec demande constante (obligation légale). Actualités réglementaires 2025 créent un pic d'intérêt.",
+        "strategieRecommandee": "Domination locale via SEO géolocalisé + contenu d'expertise pour capturer le trafic informationnel"
+    },
+    "kpisCibles": {
+        "mois3": {
+            "traficOrganique": "200-400 visites/mois",
+            "positionsTop10": "5-8 mots-clés locaux",
+            "leadsGenérés": "10-15 demandes devis/mois"
+        },
+        "mois6": {
+            "traficOrganique": "500-800 visites/mois",
+            "positionsTop10": "15-20 mots-clés (locaux + informationnels)",
+            "leadsGenérés": "25-40 demandes devis/mois"
+        },
+        "mois12": {
+            "traficOrganique": "1000-1500 visites/mois",
+            "positionsTop10": "30+ mots-clés",
+            "leadsGenérés": "50-80 demandes devis/mois",
+            "DA": "35-45"
+        }
+    },
+    "actionsImmédiates": [
+        {
+            "priorite": 1,
+            "action": "Créer/optimiser Google Business Profile",
+            "délai": "Semaine 1",
+            "impact": "Élevé - Visibilité locale immédiate"
+        },
+        {
+            "priorite": 2,
+            "action": "Publier la page pilier /duerp-bordeaux",
+            "délai": "Semaine 1-2",
+            "impact": "Élevé - Fondation SEO"
+        },
+        {
+            "priorite": 3,
+            "action": "Créer les 2 pages services principales",
+            "délai": "Semaine 2-3",
+            "impact": "Élevé - Pages de conversion"
+        },
+        {
+            "priorite": 4,
+            "action": "Publier l'article 'Mise à jour DUERP 2025'",
+            "délai": "Semaine 3",
+            "impact": "Moyen - Trafic actualité"
+        },
+        {
+            "priorite": 5,
+            "action": "Inscriptions citations locales (Pages Jaunes, Mappy, etc.)",
+            "délai": "Semaine 3-4",
+            "impact": "Moyen - SEO local + backlinks"
+        }
+    ],
+    "budgetRecommandé": {
+        "création": {
+            "siteWeb": "Inclus (si existant) ou 1500-3000€",
+            "contenu10Pages": "800-1200€ (si externalisé) ou temps interne",
+            "schemasMicrodata": "200-400€ (si externalisé)"
+        },
+        "mensuel": {
+            "hebergement": "10-30€/mois",
+            "outilsSEO": "50-100€/mois (optionnel: Ubersuggest, SEMrush)",
+            "maintenance": "2-4h/mois de mise à jour contenu"
+        }
+    },
+    "risques": [
+        {
+            "risque": "Concurrence accrue sur mots-clés nationaux",
+            "mitigation": "Se concentrer sur le local et longue traîne sectorielle"
+        },
+        {
+            "risque": "Temps limité (équipe solo)",
+            "mitigation": "Prioriser les 4-5 pages à plus fort ROI, automatiser le possible"
+        },
+        {
+            "risque": "Changements algorithme Google",
+            "mitigation": "Stratégie E-E-A-T solide, contenu de qualité"
+        }
+    ],
+    "fichiersProduits": [
+        "01-strategic-analysis.json - Analyse stratégique complète",
+        "02-cluster-architecture.json - Architecture de contenu en silos",
+        "03-content-table.json - Tableau éditorial avec 10 contenus prioritaires",
+        "04-technical-optimization.json - Optimisations techniques et schemas",
+        "05-snippet-strategy.json - Stratégie Featured Snippets et FAQ",
+        "06-authority-strategy.json - Stratégie backlinks et E-E-A-T"
+    ],
+    "prochainEtapes": [
+        "Valider l'architecture de contenu proposée",
+        "Prioriser les pages à créer selon les ressources disponibles",
+        "Commencer par Google Business Profile + page pilier",
+        "Planifier le calendrier éditorial sur 3 mois",
+        "Mettre en place le tracking (GA4, Search Console)"
+    ]
+}

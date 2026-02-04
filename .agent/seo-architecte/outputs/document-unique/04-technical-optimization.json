@@ -1,0 +1,214 @@
+{
+    "optimisationsTechniques": {
+        "prioritaire": [
+            {
+                "action": "Optimisation Google Business Profile",
+                "description": "Créer/optimiser la fiche GBP avec catégorie 'Consultant en sécurité', photos, services, posts réguliers",
+                "impact": "élevé",
+                "effort": "faible",
+                "checklist": [
+                    "Vérifier la fiche Google Business Profile",
+                    "Catégorie principale: Consultant en sécurité / Consultant en entreprise",
+                    "Ajouter les services: DUERP, Document unique, Audit risques",
+                    "Photos: bureau, équipe, intervention sur site",
+                    "Horaires d'ouverture",
+                    "Zone de service: Bordeaux et 50km",
+                    "Posts hebdomadaires (actualités DUERP)"
+                ]
+            },
+            {
+                "action": "Schema LocalBusiness",
+                "description": "Implémenter le schema LocalBusiness sur toutes les pages",
+                "impact": "moyen",
+                "effort": "faible",
+                "code": {
+                    "type": "application/ld+json",
+                    "schema": {
+                        "@context": "https://schema.org",
+                        "@type": "LocalBusiness",
+                        "name": "[Nom entreprise]",
+                        "description": "Expert en rédaction et mise à jour de DUERP à Bordeaux. Accompagnement personnalisé pour votre Document Unique.",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "[Adresse]",
+                            "addressLocality": "Bordeaux",
+                            "postalCode": "33000",
+                            "addressRegion": "Nouvelle-Aquitaine",
+                            "addressCountry": "FR"
+                        },
+                        "geo": {
+                            "@type": "GeoCoordinates",
+                            "latitude": "44.837789",
+                            "longitude": "-0.57918"
+                        },
+                        "telephone": "[Téléphone]",
+                        "email": "[Email]",
+                        "url": "[URL site]",
+                        "areaServed": [
+                            "Bordeaux",
+                            "Gironde",
+                            "Nouvelle-Aquitaine"
+                        ],
+                        "priceRange": "€€",
+                        "openingHours": "Mo-Fr 09:00-18:00"
+                    }
+                }
+            },
+            {
+                "action": "Schema FAQ",
+                "description": "Ajouter le schema FAQ sur les pages guides et services",
+                "impact": "moyen",
+                "effort": "faible"
+            },
+            {
+                "action": "Schema Service",
+                "description": "Implémenter Service schema sur les pages de prestation",
+                "impact": "moyen",
+                "effort": "faible"
+            }
+        ],
+        "technique": [
+            {
+                "action": "Core Web Vitals",
+                "description": "Optimiser LCP, FID, CLS pour toutes les pages",
+                "checklist": [
+                    "LCP < 2.5s: Optimiser images hero, lazy loading",
+                    "FID < 100ms: Différer JS non critique",
+                    "CLS < 0.1: Dimensionner images, réserver espace fonts"
+                ]
+            },
+            {
+                "action": "Optimisation images",
+                "description": "WebP, compression, alt text optimisés",
+                "checklist": [
+                    "Convertir toutes les images en WebP",
+                    "Compression 80-85%",
+                    "Alt text descriptif avec mots-clés",
+                    "Lazy loading sauf images above-the-fold"
+                ]
+            },
+            {
+                "action": "Structure URLs",
+                "description": "URLs courtes, avec mots-clés, sans paramètres inutiles",
+                "exemples": [
+                    "✓ /duerp-bordeaux",
+                    "✓ /duerp-restaurant-bordeaux",
+                    "✗ /services/duerp/bordeaux/restauration",
+                    "✗ /page?id=123&cat=duerp"
+                ]
+            },
+            {
+                "action": "Sitemap XML",
+                "description": "Sitemap dynamique avec toutes les pages, priorités et lastmod",
+                "priorites": {
+                    "accueil": 1.0,
+                    "pages-piliers": 0.9,
+                    "pages-services": 0.8,
+                    "pages-sectorielles": 0.7,
+                    "articles-blog": 0.6
+                }
+            },
+            {
+                "action": "Mobile-first",
+                "description": "Design responsive, boutons 48px minimum, formulaire simplifié mobile",
+                "checklist": [
+                    "Test Google Mobile-Friendly",
+                    "Boutons CTA visibles et cliquables",
+                    "Formulaire de contact simplifié",
+                    "Numéro cliquable (tel:)"
+                ]
+            }
+        ],
+        "onPage": [
+            {
+                "element": "Title tag",
+                "format": "[Mot-clé principal] | [Localisation] - [Marque]",
+                "exemple": "DUERP Bordeaux : Rédaction Document Unique | [Marque]",
+                "longueurMax": 60
+            },
+            {
+                "element": "Meta description",
+                "format": "Accroche + Bénéfice + CTA + Localisation",
+                "exemple": "Expert en rédaction et mise à jour de DUERP à Bordeaux. Devis gratuit sous 24h. Conformité garantie ✓ Intervention rapide.",
+                "longueurMax": 155
+            },
+            {
+                "element": "H1",
+                "regle": "Un seul H1 par page, contenant le mot-clé principal",
+                "exemple": "DUERP Bordeaux : Expert en Document Unique"
+            },
+            {
+                "element": "Structure Hn",
+                "regle": "Hiérarchie logique H1 > H2 > H3, mots-clés secondaires en H2"
+            },
+            {
+                "element": "Contenu",
+                "regles": [
+                    "Minimum 1000 mots pour pages piliers",
+                    "Densité mot-clé 1-2%",
+                    "LSI keywords naturellement intégrés",
+                    "Paragraphes courts (3-4 lignes max)",
+                    "Listes à puces pour la lisibilité"
+                ]
+            },
+            {
+                "element": "Liens internes",
+                "regles": [
+                    "3-5 liens internes par page minimum",
+                    "Ancres variées et optimisées",
+                    "Liens vers les pages de conversion depuis le contenu"
+                ]
+            }
+        ]
+    },
+    "citationsLocales": {
+        "prioritaires": [
+            {
+                "site": "Google Business Profile",
+                "priorite": 1,
+                "type": "Fiche"
+            },
+            {
+                "site": "Pages Jaunes",
+                "priorite": 2,
+                "type": "Annuaire"
+            },
+            {
+                "site": "LinkedIn Company",
+                "priorite": 2,
+                "type": "Réseau social"
+            },
+            {
+                "site": "Yelp",
+                "priorite": 3,
+                "type": "Avis"
+            },
+            {
+                "site": "Mappy",
+                "priorite": 3,
+                "type": "Cartographie"
+            }
+        ],
+        "niches": [
+            {
+                "site": "CCI Bordeaux Gironde",
+                "priorite": 1,
+                "type": "Institutionnel"
+            },
+            {
+                "site": "Annuaire Prévention",
+                "priorite": 2,
+                "type": "Spécialisé"
+            },
+            {
+                "site": "Bordeaux Business",
+                "priorite": 3,
+                "type": "Local"
+            }
+        ],
+        "coherence": {
+            "importance": "NAP (Nom, Adresse, Téléphone) identique partout",
+            "format": "[Nom Entreprise] | [Adresse complète] | [Téléphone format international]"
+        }
+    }
+}

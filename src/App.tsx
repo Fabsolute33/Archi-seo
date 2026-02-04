@@ -13,6 +13,7 @@ import { FloatingSaveButton } from './components/FloatingSaveButton';
 import { NewsTransformerSection } from './components/NewsTransformerSection';
 import { RSSWatchSection } from './components/RSSWatchSection';
 import { AutoSaveIndicator } from './components/AutoSaveIndicator';
+import { IDEResultsLoader } from './components/IDEResultsLoader';
 import { useAutoSave } from './hooks/useAutoSave';
 import './App.css';
 
@@ -92,6 +93,12 @@ function App() {
                     <div className="audit-container">
                         <ContentAuditInput />
                         <ContentAuditResults />
+                    </div>
+                )}
+
+                {currentView === 'ide-import' && (
+                    <div className="ide-import-container">
+                        <IDEResultsLoader />
                     </div>
                 )}
 
